@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root{
+  --white: #FFFFFF;
+  --black: #000000;
+  --main-black: #242424;
+  --main-yellow: #F9BD24;
+
+  --btn-bg: #1a1a1a;
+  
+  --main-yellow-light: #FFD600;
+  --secondary-color: #f4f4f4;
+  --secondary-color-dark: #e6e6e6;
+
+  --sidebar-width: 200px;
+}
+
+@font-face {
+  font-family: 'rubik-regular';
+  src: url('../public/fonts/Rubik-Regular.ttf');
+}
+
+body{
+  min-height: 100vh;
+  background-color: white;
+  // background-color: var(--secondary-color);
+}
+
+*{
+  box-sizing: border-box;
+  font-family: 'rubik-regular';
+}
+
+a{
+  text-decoration: none;
+}
+
+.requird-tag {
+  color: #F53741;
+  margin-right: 5px;
+}
+
+.app-content,
+.admin-header {
+  width: calc(100vw - var(--sidebar-width));
+  margin-right: var(--sidebar-width);
+}
+
+.app-content {
+  padding: 40px;
+}
+
+.admin-home-echarts {
+  min-width: 200px;
+  max-width: 400px;
+}
+
+.ql-editor.ql-blank {
+  min-height: 300px;
+  text-align: right !important;
+}
+.ql-toolbar.ql-snow {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
+.ql-toolbar.ql-snow + .ql-container.ql-snow {
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
+.ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg {
+  right: auto !important;
+  left: 0px;
+}

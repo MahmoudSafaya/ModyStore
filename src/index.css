@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: rgb(226, 226, 226);
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(193, 193, 193);
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(167, 167, 167);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    @apply text-gray-800
+}
+
+button {
+    cursor: pointer;
+}
+
+.custom-bg-white {
+    @apply p-4 md:p-8 rounded-2xl bg-white shadow-md
+}
+.custom-header {
+    @apply block text-lg font-medium mb-6
+}
+.custom-input-field {
+    @apply w-full p-2 border border-gray-300 rounded-lg focus:border-indigo-300 outline-none
+}
+.custom-label-field {
+    @apply block text-gray-700 font-medium mb-2
+}

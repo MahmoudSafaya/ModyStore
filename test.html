@@ -1,0 +1,434 @@
+/*
+*@Description: 新增选择地址
+*@ComponentAuthor: Xu Jian
+*/
+<template>
+  <div>
+    <el-dialog lock-scroll
+               :modal-append-to-body="false"
+               :append-to-body="true"
+               :title="$lang('从地址簿选择')"
+               custom-class="jms-dialog MTAuto"
+               :close-on-click-modal="false"
+               :visible.sync="visible"
+               @close="close"
+               width="900px">
+      <div class="overflow">
+        <div class="search">
+          <el-input v-model="pageData.keyword" :placeholder="$lang('姓名/联系电话/地址')" class="input" @keyup.enter.native="search">
+          </el-input>
+          <el-button type="primary" icon="iconfont iconchaxun" class="h32" @click="search">{{ $lang('查询') }}</el-button>
+          <!-- <div class="add pointer" @click="addNew"><i class="iconfont iconxinzeng"></i>新增地址</div> -->
+        </div>
+        <JmsTable :option="listOpt"
+                  :data="tableList"
+                  :page="page"
+                  :table-loading="loading"
+                  @size-change="sizeChange"
+                  @select-change="selectionChange"
+                  @row-click="currentRowChange"
+                  @current-change="currentChange">
+          <template slot="singleSelect" slot-scope="{ row }">
+            <div v-if="current.id === row.id"><i class="iconfont iconchenggong"></i></div>
+          </template>
+        </JmsTable>
+      </div>
+      <div class="dialog-footer">
+        <!-- <el-button @click="close">{{$lang('关 闭')}}</el-button> -->
+        <el-button type="primary" style="width:125px;" :disabled="current.cityId?false:true" :loading="isLoading" @click="comfirm" class="h40 h104">{{ $lang('确定') }}</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog lock-scroll
+               :modal-append-to-body="false"
+               :append-to-body="true"
+               :close-on-click-modal="false"
+               :visible.sync="addrFormVisible"
+               @close="addrClose"
+               width="900px">
+      <template slot="title">
+        <div class="form-title"><i class="iconfont iconfanhui pointer" @click="back"></i>{{ $lang('新增地址') }}</div>
+      </template>
+      <div class="overflow" v-if="addrFormVisible">
+        <el-form class="el-form-edit" ref="sizeForm" :rules="rules" :inline="true" :model="formData" label-position="left" label-suffix=" :">
+          <el-form-item :label="$lang('姓名')" prop="name">
+            <el-input v-model="formData.name" :minlength="1" :maxlength="12" :placeholder="$lang('请输入')">
+            </el-input>
+          </el-form-item>
+          <el-form-item :label="$lang('联系电话')" prop="mobile">
+            <el-input v-model="formData.mobile" :maxlength='15' :placeholder="$lang('请输入')"></el-input>
+          </el-form-item>
+          <el-form-item class="el-form-item item-col-3 el-form-item--small" :label="$lang('省/市/区')" prop="local">
+            <BaseAddress ref="senderProvinceSearch" :showLevel="3" v-model="formData.local"></BaseAddress>
+          </el-form-item>
+          <el-form-item class="el-form-item item-col-3 el-form-item--small" :label="$lang('详细地址')" prop="detailedAddress">
+            <el-input v-model="formData.detailedAddress" :placeholder="$lang('请输入')" :minlength="4" :maxlength="80"></el-input>
+          </el-form-item>
+          <el-form-item :label="$lang('设为默认地址')" prop="isDefault">
+            <el-switch v-model="formData.isDefault" active-value='1' inactive-value='2' active-color="#13ce66" inactive-color="#ccc"></el-switch>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="dialog-footer">
+        <!-- <el-button @click="addrClose">{{$lang('关 闭')}}</el-button> -->
+        <el-button type="primary" style="width:125px;" @click="comfirmSelect('sizeForm')" size="big">{{ $lang('确定') }}</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+// import { RESPONSE_SUCCESS } from '@constants'
+import JmsTable from '@/components/jms-widget/jms-table'
+import { RULES, phoneAndMobile, checkAddressFormat } from '@utils/rules'
+import mixin from '@/mixins/mixin.js'
+import { mapGetters } from 'vuex'
+import { addressPage, addressAdd, checkArea } from '@api/module/customer'
+
+export default {
+  name: 'AddressBook',
+  props: {
+    value: {},
+    spotType: {
+      type: String,
+      default: '',
+    },
+    selectType: {
+      type: Number,
+      default: 1,
+    },
+  },
+  components: {
+    JmsTable,
+  },
+  mixins: [mixin],
+  data() {
+    return {
+      COM_HTTP: {
+        reqList: addressPage,
+      },
+      visible: false,
+      addrFormVisible: false,
+      isShowFirst: false,
+      tableList: [],
+      page: { // 分页配置
+        current: 1,
+        size: 50,
+        total: 0,
+      },
+      loading: false,
+      rules: {
+        name: [RULES.requiredTrim],
+        mobile: [RULES.required, { validator: phoneAndMobile }],
+        local: [RULES.requiredSelect],
+        detailedAddress: [RULES.required, { validator: checkAddressFormat }],
+      },
+      addrBook: true,
+      smartSpot: false,
+      formData: {
+        name: '', // 姓名
+        mobile: '', // 电话
+        local: '', // 省/市/区
+        provinceId: '', // 省份id
+        provinceName: '', // 省份名称
+        cityId: '', // 城市id
+        cityName: '', // 城市名称
+        areaId: '', // 区域id
+        areaName: '', // 区域名称
+        detailedAddress: '', // 详细地址
+        isDefault: '2', // 是否设置为默认地址 1设置默认地址 2 不设置
+        type: 1, // 1 寄件 2收件
+      },
+      pageData: {
+        current: 1, // 当前页码
+        size: 50, // 分页数量
+        type: 1, // 1寄件2取件
+        keyword: '', // 姓名/电话/地址
+      },
+      current: {
+        cityId: '',
+      },
+      isLoading: false,
+    }
+  },
+  watch: {
+    value: {
+      handler(val) {
+        this.visible = val
+      },
+      deep: true,
+    },
+    'formData.local': { // 区省/市/区
+      deep: true,
+      handler(newVal, oldVal) {
+        const local = newVal
+        if (local) {
+          this.formData.provinceId = local.provinceId // 省份id
+          this.formData.provinceName = local.provinceName // 省份名称
+          this.formData.cityId = local.cityId // 城市id
+          this.formData.cityName = local.cityName // 城市名称
+          this.formData.areaId = local.areaId // 区域id
+          this.formData.areaName = local.areaName // 区域名称
+        } else {
+          this.formData.provinceId = '' // 省份id
+          this.formData.provinceName = '' // 省份名称
+          this.formData.cityId = '' // 城市id
+          this.formData.cityName = '' // 城市名称
+          this.formData.areaId = '' // 区域id
+          this.formData.areaName = '' // 区域名称
+        }
+      },
+    },
+    selectType: {
+      handler(val) {
+        this.formData.type = val
+        this.pageData.type = val
+        this.current = {
+          cityId: '',
+        }
+        this.addressPage(this.pageData)// 列表带分页
+      },
+      immediate: true,
+    },
+  },
+  computed: {
+    ...mapGetters({
+      user: 'user',
+    }),
+    listOpt() {
+      return {
+        border: true,
+        selection: false,
+        menu: false,
+        tableHeight: 490,
+        currentRow: true,
+        //  搜索框和表格列及其字段
+        column: [
+          {
+            label: this.$lang('姓名'),
+            prop: 'name',
+          },
+          {
+            label: this.$lang('联系电话'), //  扫描员
+            prop: 'mobile',
+            width: 120,
+          },
+          {
+            label: this.$lang('联系电话') + '2',
+            prop: 'alternateMobile',
+            width: 120,
+          },
+          {
+            label: this.$lang('省'),
+            prop: 'provinceName',
+          },
+          {
+            label: this.$lang('城市'),
+            prop: 'cityName',
+          },
+          {
+            label: this.$lang('区域'),
+            prop: 'areaName',
+          },
+          {
+            label: this.$lang('街道'),
+            prop: 'street',
+            // width: 100,
+          },
+          {
+            label: this.$lang('楼号'),
+            prop: 'buildingNo',
+            // width: 100,
+          },
+          {
+            label: this.$lang('楼层'),
+            prop: 'buildingFloor',
+            // width: 100,
+          },
+          {
+            label: this.$lang('房号'),
+            prop: 'roomNumber',
+            // width: 100,
+          },
+          // {
+          //   label: this.$lang('详细地址'),
+          //   prop: 'detailedAddress',
+          //   width: 300,
+          // },
+          {
+            prop: this.$lang('singleSelect'),
+            width: 100,
+            slot: true,
+          },
+        ],
+      }
+    },
+  },
+  created() {
+  },
+  mounted() {
+  },
+  methods: {
+    search() { // 搜索
+      this.addressPage(this.pageData)// 列表带分页
+    },
+    updateBtnStauts(addressData) {
+      if (addressData) {
+        this.current = addressData
+      } else {
+        this.current = {
+          cityId: '',
+        }
+      }
+    },
+    initData() {
+      this.disabled = true
+    },
+    async comfirm() { // 确定选择2
+      await this.checkArea(this.current)
+    },
+    comfirmSelect(formName) { // 确定选择2
+      this.$refs[formName].validate(async valid => {
+        if (valid) {
+          this.keyBtn = true
+          this.addressAdd(this.formData)// 新增地址
+        } else {
+          return false
+        }
+      })
+    },
+    addNew() { // 新增地址-跳转
+      this.visible = false
+      this.addrFormVisible = true
+    },
+    back() { // 新增地址-返回
+      this.visible = true
+      this.addrFormVisible = false
+    },
+    close() { // 关 闭
+      this.visible = false
+      this.current = {
+        cityId: '',
+      }
+      this.$emit('input', this.visible)
+      this.$emit('change', this.visible)
+    },
+    addrClose() { // 关 闭
+      this.addrFormVisible = false
+    },
+    getParams() {
+      return { type: this.pageData.type, keyword: this.pageData.keyword }
+    },
+    // 单选-选中
+    currentRowChange(val) {
+      // debugger
+      if (val) {
+        this.disabled = false
+        this.current = val
+      }
+    },
+    // 检查省市区地址
+    async checkArea(obj) {
+      const { provinceId, cityId, areaId } = obj
+      this.isLoading = true
+      const { code, data } = await checkArea({ provinceId, cityId, areaId })
+      this.isLoading = false
+      if (code === 1 && data) {
+        console.log(this.current)
+        console.log(this.selectType)
+        this.$emit('single-row-select', this.current, this.selectType)
+        this.visible = false
+      } else {
+        const msg = this.selectType === 1 ? this.$lang('该寄件地址尚未开放，敬请期待') : this.$lang('该收件地址尚未开放，敬请期待')
+        this.$message.warning(this.$lang(msg))
+      }
+    },
+    // 单选操作（复选框）
+    selectionChange(val) {
+      this.selectedRows = val
+    },
+    async addressPage(reqData) { // 列表带分页
+      const { code, data, msg } = await addressPage(reqData)
+      if (code === 1) {
+        this.tableList = data.records
+        this.page.total = data.total
+      } else {
+        this.$message.error(msg)
+      }
+    },
+    async addressAdd(reqData) { // 新增地址
+      const resData = await addressAdd(reqData)
+      this.keyBtn = false
+      if (resData.code === 1) {
+        this.visible = true
+        this.addrFormVisible = false
+        this.formData.name = ''
+        this.formData.mobile = ''
+        this.formData.local = ''
+        this.formData.provinceId = ''
+        this.formData.provinceName = ''
+        this.formData.cityId = ''
+        this.formData.cityName = ''
+        this.formData.areaId = ''
+        this.formData.areaName = ''
+        this.formData.detailedAddress = ''
+        this.formData.isDefault = '2'
+        this.formData.type = 1
+        this.$refs['sizeForm'].resetFields()
+        setTimeout(() => {
+          this.addressPage(this.pageData)
+        })
+      } else {
+        this.$message.warning(this.$lang(resData.msg))
+      }
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.search {
+  height: 32px;
+  line-height: 32px;
+  margin-bottom: 16px;
+
+  .input {
+    width: 240px !important;
+    margin-right: 24px;
+  }
+
+  .icon-search {
+    display: inline-block;
+    width: 20px;
+    height: 32px;
+    line-height: 32px;
+  }
+
+  .add {
+    color: #e60012;;
+
+    .iconxinzeng {
+      margin-right: 4px;
+    }
+  }
+}
+
+.form-title {
+  font-size: 16px;
+  font-weight: bold;
+
+  i {
+    margin-right: 7px;
+  }
+}
+
+.iconchaxun:hover {
+  color: #e60012;
+}
+</style>
+<style lang="scss">
+.MTAuto {
+  .el-table {
+    max-height: 430px;
+  }
+}
+</style>

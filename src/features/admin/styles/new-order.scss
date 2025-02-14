@@ -1,0 +1,67 @@
+
+.new-order-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+
+  .new-order-page-box {
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .single-form {
+      background: #e6e6e6;
+      padding: 20px;
+      border-radius: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+
+      label {
+        color: #828282;
+      }
+
+      input {
+        width: 100%;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: 1px solid #828282;
+        outline: none;
+        margin-top: 5px;
+
+        &:focus {
+          border-color: blue;
+        }
+      }
+    }
+  }
+
+  .product-order-box,
+  .new-order-btn {
+    grid-column: span 2;
+  }
+
+  .product-order-box {
+    .single-form {
+      grid-template-columns: repeat(4, 1fr);
+      // input {
+
+      // }
+    }
+  }
+
+  .new-order-btn {
+    width: 170px;
+    margin: 0 auto;
+    background-color: var(--main-black);
+    color: var(--white);
+    padding: 5px 0px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+      background-color: var(--btn-bg);
+      color: var(--main-yellow);
+    }
+  }
+}
