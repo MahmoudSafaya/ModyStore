@@ -4,6 +4,8 @@
 /* width */
 ::-webkit-scrollbar {
     width: 10px;
+    position: fixed;
+    left: 0;
 }
 ::-webkit-scrollbar-track {
     background: rgb(226, 226, 226);

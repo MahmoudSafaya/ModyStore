@@ -1,85 +1,105 @@
 import { Link } from "react-router-dom";
 import { Heart, Eye } from "lucide-react";
+import { useCart } from "../../../context/CartContext";
+import { useFavorites } from "../../../context/FavoritesContext";
 
 const productsData = [
     {
         id: 1,
         name: "فستان حريمي صوف قصير",
         category: "ملابس نساء",
-        price: "458.00",
-        amount: 20,
+        price: 458.00,
+        storageAmount: 20,
         rating: 5,
         image: "category-image.jpg",
         discount: "خصم 14%",
+        quantity: 1,
+        quantityPrice: 458.00,
     },
     {
         id: 2,
         name: "فستان حريمي صوف قصير",
         category: "ملابس نساء",
-        price: "458.00",
-        oldPrice: '620.00',
-        amount: 20,
+        price: 458.00,
+        oldPrice: 620.00,
+        storageAmount: 20,
         rating: 5,
         image: "category-image.jpg",
         discount: "خصم 14%",
+        quantity: 1,
+        quantityPrice: 458.00,
     },
     {
         id: 3,
         name: "فستان حريمي صوف قصير",
         category: "ملابس نساء",
-        price: "458.00",
-        oldPrice: '620.00',
-        amount: 0,
+        price: 458.00,
+        oldPrice: 620.00,
+        storageAmount: 0,
         rating: 5,
         image: "category-image.jpg",
         discount: "-30%",
+        quantity: 1,
+        quantityPrice: 458.00,
     },
     {
         id: 4,
         name: "فستان حريمي صوف قصير",
         category: "ملابس نساء",
-        price: "458.00",
-        amount: 20,
+        price: 458.00,
+        storageAmount: 20,
         rating: 5,
         image: "category-image.jpg",
         discount: "خصم 14%",
+        quantity: 1,
+        quantityPrice: 458.00,
     },
     {
         id: 5,
         name: "فستان حريمي صوف قصير",
         category: "ملابس نساء",
-        price: "458.00",
-        oldPrice: '620.00',
-        amount: 20,
+        price: 458.00,
+        oldPrice: 620.00,
+        storageAmount: 20,
         rating: 5,
         image: "category-image.jpg",
         discount: "خصم 14%",
+        quantity: 1,
+        quantityPrice: 458.00,
     },
     {
         id: 6,
         name: "فستان حريمي صوف قصير",
         category: "ملابس نساء",
-        price: "458.00",
-        oldPrice: '620.00',
-        amount: 0,
+        price: 458.00,
+        oldPrice: 620.00,
+        storageAmount: 0,
         rating: 5,
         image: "category-image.jpg",
         discount: "-30%",
+        quantity: 1,
+        quantityPrice: 458.00,
     },
 ];
 
 const Products = () => {
+
+    const { addToCart } = useCart();
+    const { addToFavorites } = useFavorites();
+
     return (
-        <div className="p-6 bg-gray-100">
+        <div className="bg-gray-100">
             <h2 className="text-2xl font-semibold mb-6">بعض المنتجات</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {productsData.map((product, index) => (
-                    <div key={index} className="bg-white p-6 rounded-xl shadow-md relative">
-                        <div className="max-w-max absolute top-6 right-6 z-20 rounded-lg bg-white shadow-md p-4 flex flex-col gap-6">
-                            <div>
-                                <Eye className="cursor-pointer duration-500 hover:text-indigo-500" />
-                            </div>
-                            <div>
+                    <div key={index} className="group bg-white p-6 rounded-xl shadow-md relative overflow-hidden">
+                        <div className="max-w-max absolute top-4 -right-14 z-20 opacity-0 duration-500 group-hover:right-4 group-hover:opacity-100 rounded-lg bg-white shadow-md flex flex-col">
+                            <Link to={`/products/${product.id}`}>
+                                <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-gray-800 border-b border-gray-300">
+                                    <Eye />
+                                </div>
+                            </Link>
+                            <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-gray-800" onClick={() => addToFavorites(product)}>
                                 <Heart />
                             </div>
                         </div>
@@ -107,8 +127,8 @@ const Products = () => {
                                     <span key={i} className="text-yellow-500">★</span>
                                 ))}
                         </div>
-                        <p className={`mb-2 ${product.amount > 0 ? 'text-gray-400' : 'text-red-500'}`}>
-                            {product.amount > 0 ? `متوفر: ${product.amount} قطعة` : 'تم نفاذ المنتج'}
+                        <p className={`mb-2 ${product.storageAmount > 0 ? 'text-gray-400' : 'text-red-500'}`}>
+                            {product.storageAmount > 0 ? `متوفر: ${product.storageAmount} قطعة` : 'تم نفاذ المنتج'}
                         </p>
                         <div className="flex items-center gap-2">
                             <p className="text-indigo-500 text-lg font-semibold">{product.price}</p>
@@ -116,7 +136,7 @@ const Products = () => {
                                 <p className="text-gray-500 line-through text-sm">{product.oldPrice}</p>
                             )}
                         </div>
-                        <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600">
+                        <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product)}>
                             أضف إلى السلة
                         </button>
                     </div>

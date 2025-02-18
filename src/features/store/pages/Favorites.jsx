@@ -1,9 +1,76 @@
-import React from 'react'
+import { useFavorites } from "../../../context/FavoritesContext";
+import { Link } from "react-router-dom";
+import { X } from 'lucide-react'
 
 const Favorites = () => {
-  return (
-    <div>Favorites</div>
-  )
-}
+  const { favorites, removeFromFavorites } = useFavorites();
 
-export default Favorites
+  return (
+    <div className="">
+      <h2 className="text-xl font-bold mb-6">منتجاتك المفضلة</h2>
+      {favorites.length === 0 ? (
+        <p className="text-gray-500">No favorites added yet.</p>
+      ) : (
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {favorites.map((item) => {
+            const { id, hashedId, name, category, price, oldPrice, qunatityPrice, image, discount, rating, storageAmount } = item;
+
+            return (
+              <div key={hashedId}>
+                <div className="mb-4">
+                  <button
+                    onClick={() => removeFromFavorites(hashedId)}
+                    className="flex items-center gap-1 text-gray-500 duration-500 hover:text-gray-700 text-lg"
+                  >
+                    <X />
+                    <span>حذف من القائمة</span>
+                  </button>
+                </div>
+                <div className="group bg-white p-6 rounded-xl shadow-md relative overflow-hidden">
+                  {discount && (
+                    <span className="absolute top-2 left-2 z-40 bg-red-500 text-white text-xs px-3 py-1 rounded-full">
+                      {discount}
+                    </span>
+                  )}
+                  <div className="relative w-full h-60 overflow-hidden rounded-lg">
+                    <Link to={`/products/${id}`}>
+                      <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 hover:scale-110"
+                        style={{ backgroundImage: `url(${image})` }}></div>
+                    </Link>
+                  </div>
+                  <h3 className="text-lg font-medium my-2">
+                    <Link to={`/products/${id}`} className="duration-500 hover:text-indigo-500">
+                      {name}
+                    </Link>
+                  </h3>
+                  <p className="text-gray-500 text-sm">{category}</p>
+                  <div className="flex items-center mb-2">
+                    {Array(rating)
+                      .fill()
+                      .map((_, i) => (
+                        <span key={i} className="text-yellow-500">★</span>
+                      ))}
+                  </div>
+                  <p className={`mb-2 ${storageAmount > 0 ? 'text-gray-400' : 'text-red-500'}`}>
+                    {storageAmount > 0 ? `متوفر: ${storageAmount} قطعة` : 'تم نفاذ المنتج'}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-indigo-500 text-lg font-semibold">{price}</p>
+                    {oldPrice && (
+                      <p className="text-gray-500 line-through text-sm">{oldPrice}</p>
+                    )}
+                  </div>
+                  <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product)}>
+                    أضف إلى السلة
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+        </section>
+      )}
+    </div>
+  );
+};
+
+export default Favorites;

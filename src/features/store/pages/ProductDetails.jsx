@@ -1,5 +1,10 @@
 import { useState } from "react";
-import ProductTest from "./ProductTest";
+import { useCart } from "../../../context/CartContext";
+import proImage01 from '../../../assets/product/01.webp';
+import proImage02 from '../../../assets/product/02.webp';
+import proImage03 from '../../../assets/product/03.webp';
+import proImage04 from '../../../assets/product/04.webp';
+
 const product = {
 
     id: 1,
@@ -7,7 +12,7 @@ const product = {
     category: "ملابس نساء",
     amount: 20,
     rating: 5,
-    image: "category-image.jpg",
+    image: proImage01,
     discount: "خصم 14%",
     price: 458.00,
     oldPrice: 350,
@@ -18,7 +23,8 @@ const product = {
     colors: ["ازرق", "احمر"],
 };
 
-const ProductDetails = () => {
+const ProductDetails = ({}) => {
+    const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [selectedColor, setSelectedColor] = useState("احمر");
 
@@ -26,10 +32,10 @@ const ProductDetails = () => {
     console.log(mainImage)
 
     const thumbnails = [
-        "https://images.pexels.com/assets/static/images/canva/photo-background-remover.png?w=600",
-        "https://images.pexels.com/photos/1906658/pexels-photo-1906658.jpeg?auto=compress&cs=tinysrgb&w=600",
-        "https://images.pexels.com/photos/2088210/pexels-photo-2088210.jpeg?auto=compress&cs=tinysrgb&w=600",
-        "https://images.pexels.com/photos/848573/pexels-photo-848573.jpeg?auto=compress&cs=tinysrgb&w=600",
+        proImage01,
+        proImage02,
+        proImage03,
+        proImage04,
     ];
 
     const handleThumbnailHover = (image) => {
@@ -40,28 +46,29 @@ const ProductDetails = () => {
     const decreaseQty = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
     return (
-        <div className="container mx-auto p-6">
+        <div className="container">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Image Section */}
-                <div className="relative">
-                    <div className="h-full overflow-hidden rounded-lg border">
-                        <img
-                            src={mainImage}
-                            alt={product.name}
-                            className="w-full h-auto transition-transform duration-300 ease-in-out transform hover:scale-110"
-                        />
-                    </div>
+                <div className="relative flex gap-2">
                     {/* Thumbnails */}
-                    <div className="flex gap-4 mt-4">
+                    <div className="flex flex-col gap-4">
                         {thumbnails.map((thumbnail, index) => (
                             <img
                                 key={index}
                                 src={thumbnail}
                                 alt={`Thumbnail ${index + 1}`}
-                                className="w-20 h-20 cursor-pointer border-2 border-transparent hover:border-gray-400 transition-all duration-200"
-                                onMouseEnter={() => handleThumbnailHover(thumbnail)}
+                                className="w-20 h-24 cursor-pointer border border-gray-300 rounded-lg hover:border-gray-500 transition-all duration-300"
+                                onClick={() => handleThumbnailHover(thumbnail)}
                             />
                         ))}
+                    </div>
+                    {/* Displayed Image */}
+                    <div className="h-60% overflow-hidden rounded-xl border border-gray-300">
+                        <img
+                            src={mainImage}
+                            alt={product.name}
+                            className="w-full transition-transform duration-300 ease-in-out transform hover:scale-110"
+                        />
                     </div>
                 </div>
 
@@ -131,7 +138,7 @@ const ProductDetails = () => {
                         <button className="min-w-60 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm">
                             اشتري الان
                         </button>
-                        <button className="min-w-60 bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm">
+                        <button className="min-w-60 bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product)}>
                             أضف إلى السلة
                         </button>
                     </div>
