@@ -12,7 +12,7 @@ const StoreLayout = () => {
     return (
         <div className="app-layout">
             <S_Header toggleSidebar={toggleSidebar} />
-            <S_Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+            <S_Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
             <S_Cart />
             <main className={`w-full lg:w-[calc(100%-50px)] lg:mr-[50px] p-4 md:p-12 pt-8 bg-slate-100 h-full`}>
                 <Outlet /> {/* Render the specific route's component */}

@@ -4,6 +4,7 @@ import { useAuth } from "../../../context/AdminContext";
 import { useLocation } from "react-router-dom";
 import { GiClothes } from "react-icons/gi";
 import { MdOutlineAddBusiness } from "react-icons/md";
+import { IoStorefront } from "react-icons/io5";
 import { Menu, House, ChevronsRight, ChevronsLeft, Settings, PackagePlus, PackageOpen, LogOut, ScanBarcode } from "lucide-react";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -21,6 +22,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { icon: <House />, label: "الرئيسية", link: '/admin' },
     { icon: <PackagePlus />, label: "تسجيل اوردر", link: '/admin/place-order' },
     { icon: <PackageOpen />, label: "قائمة الطلبات", link: '/admin/orders' },
+    { icon: <IoStorefront />, label: "طلبات الموقع", link: '/admin/unconfirmed-orders' },
     { icon: <Settings />, label: "الإعدادات", link: '/admin/settings' },
   ];
   const storeNav = [
@@ -38,7 +40,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <button onClick={toggleSidebar} className="w-full">
             <div className={`flex items-center text-indigo-600 justify-between gap-4 px-6 py-6 hover:bg-gray-100 ${isOpen ? '' : 'justify-center'}`}>
               {isOpen && <span className="text-base">ModyStore</span>}
-              <div className="hidden lg:block text-xl">{isOpen ? <ChevronsLeft /> : <ChevronsRight />}</div>
+              <div className="hidden lg:block text-xl">{isOpen ? <ChevronsRight /> : <ChevronsLeft />}</div>
               <div className="lg:hidden text-xl"><Menu /></div>
             </div>
           </button>

@@ -1,9 +1,27 @@
+import { useEffect } from "react";
 import { useFavorites } from "../../../context/FavoritesContext";
 import { Link } from "react-router-dom";
 import { X } from 'lucide-react'
+import { useCart } from "../../../context/CartContext";
 
 const Favorites = () => {
-  const { favorites, removeFromFavorites } = useFavorites();
+  const { favorites, setFavorites, saveFavoritesItems, getFavoritesItems, removeFromFavorites } = useFavorites();
+  const { addToCart } = useCart();
+
+  // Load cart from local storage on component mount
+  useEffect(() => {
+    const savedFavorites = getFavoritesItems();
+    if (savedFavorites) {
+      setFavorites(savedFavorites);
+    }
+  }, []);
+
+  // Save cart to local storage whenever it changes
+  useEffect(() => {
+    if (favorites.length > 0) {
+      saveFavoritesItems(favorites);
+    }
+  }, [favorites]);
 
   return (
     <div className="">
@@ -13,13 +31,13 @@ const Favorites = () => {
       ) : (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {favorites.map((item) => {
-            const { id, hashedId, name, category, price, oldPrice, qunatityPrice, image, discount, rating, storageAmount } = item;
+            const { id, name, category, price, oldPrice, image, discount, rating, storageAmount } = item;
 
             return (
-              <div key={hashedId}>
+              <div key={id}>
                 <div className="mb-4">
                   <button
-                    onClick={() => removeFromFavorites(hashedId)}
+                    onClick={() => removeFromFavorites(id)}
                     className="flex items-center gap-1 text-gray-500 duration-500 hover:text-gray-700 text-lg"
                   >
                     <X />
@@ -60,7 +78,7 @@ const Favorites = () => {
                       <p className="text-gray-500 line-through text-sm">{oldPrice}</p>
                     )}
                   </div>
-                  <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product)}>
+                  <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(item)}>
                     أضف إلى السلة
                   </button>
                 </div>

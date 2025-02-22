@@ -102,7 +102,7 @@ const Products = () => {
       {/* Table */}
       <div className="custom-bg-white mt-8 overflow-x-auto">
         <table className="w-full bg-white">
-          <thead className="text-gray-600 border-b border-gray-200 font-bold text-center">
+          <thead className="text-gray-700 border-b border-gray-300 font-bold text-center whitespace-nowrap">
             <tr>
               <th></th>
               <th className='p-3'>المنتج</th>

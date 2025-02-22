@@ -1,34 +1,119 @@
 import React from "react";
+import { useOrders } from "../../../context/OrdersContext";
+import { X } from "lucide-react";
 
 const OrderInfo = ({ info }) => {
-  const { barcodeID, sender, receiver, product } = info;
+  const { setOrderPopup, handleDeleteOrder, confirmOrderToJNT } = useOrders();
+
+  const { _id, itemsValue, remark, sender, receiver, items } = info;
 
   return (
-    <div className="order-info-popup">
-      <div className="container">
-        <h2>
-          Order Code:{" "}
-          <span onClick={() => navigator.clipboard.writeText(barcodeID)}>
-            {barcodeID}
+    <div className="w-full h-full absolute top-0 left-0 z-60 bg-[#00000070] flex items-center justify-center py-16">
+      <div className="w-5/6 custom-bg-white">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="mb-4">
+            <span className="ml-2 font-bold">بيانات أوردر:-</span>
+            <span onClick={() => navigator.clipboard.writeText(_id)} className="text-indigo-400 cursor-pointer duration-500 hover:text-indigo-500">
+              {_id}
+            </span>
+          </h2>
+          <span
+            className="text-gray-500 cursor-pointer duration-500 hover:text-gray-900 hover:rotate-90"
+            onClick={() =>
+              setOrderPopup({ display: false, editing: false, info: {} })
+            }
+          >
+            <X />
           </span>
-        </h2>
-        <div className="order-status-btns">
-          <button>Sign</button>
-          <button>Cancel</button>
-          <button>Returned</button>
         </div>
-        <div className="info-boxes">
-          <div className="info-box">
-            <h2>Sender Info</h2>
-            <InfoBox obj={sender} />
+
+        {/* Sender Info */}
+        <div className="flex flex-col gap-4">
+          <h2 className="text-indigo-400 font-bold">بيانات الراسل</h2>
+          <div className="grid grid-flow-col gap-6 border border-gray-300 rounded-lg p-4">
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">الاسم:</h5>
+              <p className="text-gray-500 text-base">{sender.name}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">رقم الهاتف:</h5>
+              <p className="text-gray-500 text-base">{sender.mobile}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">المحافطة:</h5>
+              <p className="text-gray-500 text-base">{sender.prov}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">المدينة:</h5>
+              <p className="text-gray-500 text-base">{sender.city}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">المنطقة:</h5>
+              <p className="text-gray-500 text-base">{sender.area}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">الشارع:</h5>
+              <p className="text-gray-500 text-base">{sender.street}</p>
+            </div>
           </div>
-          <div className="info-box">
-            <h2>Receiver Info</h2>
-            <InfoBox obj={receiver} />
+        </div>
+        {/* Receiver Info */}
+        <div className="flex flex-col gap-6">
+          <h2 className="text-indigo-400 font-bold">بيانات العميل</h2>
+          <div className="grid grid-flow-col items-center gap-6 border border-gray-300 rounded-lg p-4">
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">الاسم:</h5>
+              <p className="text-gray-500 text-base">{receiver.name}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">رقم الهاتف:</h5>
+              <p className="text-gray-500 text-base">{receiver.mobile}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">المحافطة:</h5>
+              <p className="text-gray-500 text-base">{receiver.prov}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">المدينة:</h5>
+              <p className="text-gray-500 text-base">{receiver.city}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">المنطقة:</h5>
+              <p className="text-gray-500 text-base">{receiver.area}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-medium text-gray-700">الشارع:</h5>
+              <p className="text-gray-500 text-base">{receiver.street}</p>
+            </div>
           </div>
-          <div className="info-box">
-            <h2>Product Info</h2>
-            <InfoBox obj={product} />
+        </div>
+
+        {/* Product Info */}
+        <div className="flex flex-col gap-6  my-4">
+          <h2 className="text-indigo-400 font-bold">بيانات المنتج</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-6 border border-gray-300 rounded-lg p-4">
+            {items && items.map(product => {
+              return (
+                <div key={product._id} className="border-l border-gray-300">
+                  <div className="text-gray-500">
+                    <a href={product.itemUrl}>{product.englishName}</a>
+                    <p>{product.desc}</p>
+                    <p>{product.itemType}</p>
+                    <p className="text-indigo-400">{product.itemValue}</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+        {/* Order Operations */}
+        <div className="w-full flex flex-col md:flex-row items-center justify-between">
+          <div>
+            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => confirmOrderToJNT(info._id)}>Sign</button>
+          </div>
+          <div className="flex gap-6">
+            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-200 text-gray-700 duration-500 hover:bg-gray-300" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>Edit</button>
+            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-100 text-red-500 duration-500 hover:bg-red-200" onClick={() => handleDeleteOrder(info._id)}>Delete</button>
           </div>
         </div>
       </div>
@@ -37,19 +122,3 @@ const OrderInfo = ({ info }) => {
 };
 
 export default OrderInfo;
-
-const InfoBox = ({ obj }) => {
-  const definedObj = Object.keys(obj);
-  return (
-    <>
-      {definedObj.map((key) => {
-        return (
-          <div className="content" key={key}>
-            <h4>{key}</h4>
-            <p>{obj[key]}</p>
-          </div>
-        );
-      })}
-    </>
-  );
-};

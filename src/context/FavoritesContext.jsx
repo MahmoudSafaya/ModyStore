@@ -1,4 +1,19 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import CryptoJS from 'crypto-js';
+import { createContext, useContext, useState } from "react";
+
+// Secret key for hashing (keep this secure)
+const SECRET_KEY = import.meta.env.VITE_FAVS_SECRET_KEY;
+
+// Function to encrypt data
+const encryptData = (data) => {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
+};
+
+// Function to decrypt data
+const decryptData = (ciphertext) => {
+  const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+};
 
 // Create context
 const FavoritesContext = createContext();
@@ -6,44 +21,44 @@ const FavoritesContext = createContext();
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
 
-  // Load favorites from localStorage
-  useEffect(() => {
-    const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(savedFavorites);
-  }, []);
-
-  // Save to localStorage whenever favorites change
-  const saveToFavorites = () => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }
-
-  // Hash function (SHA-256)
-  const hashProductId = async (id) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(id);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-    return Array.from(new Uint8Array(hashBuffer))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
+  // Function to save favorites to local storage
+  const saveFavoritesItems = (favItmes) => {
+    const encryptedFAVs = encryptData(favItmes);
+    localStorage.setItem('mody-favorites', encryptedFAVs);
   };
 
-  // Add to favorites
-  const addToFavorites = async (product) => {
-    const hashedId = await hashProductId(product.id);
-    if (!favorites.some((item) => item.hashedId === hashedId)) {
-      setFavorites([...favorites, { ...product, hashedId }]);
-      saveToFavorites();
+  // Function to get favorites from local storage
+  const getFavoritesItems = () => {
+    const encryptedFAVs = localStorage.getItem('mody-favorites');
+    if (!encryptedFAVs) return null;
+
+    try {
+      return decryptData(encryptedFAVs);
+    } catch (error) {
+      console.error('Failed to decrypt favorites data:', error);
+      return null;
     }
   };
 
-  // Remove from favorites
-  const removeFromFavorites = (hashedId) => {
-    setFavorites(favorites.filter((item) => item.hashedId !== hashedId));
-    saveToFavorites();
+  // Add item to favorites
+  const addToFavorites = (item) => {
+    if (favorites.find(favItem => favItem.id === item.id)) {
+        return false;
+    }
+    const newFAVs = [...favorites, item];
+    setFavorites(newFAVs);
+    saveFavoritesItems(newFAVs);
+};
+
+  const removeFromFavorites = (itemId) => {
+    const newFAVs = favorites.filter(item => item.id !== itemId);
+    setFavorites(newFAVs);
+    saveFavoritesItems(newFAVs);
   };
 
+
   return (
-    <FavoritesContext.Provider value={{ favorites, addToFavorites, removeFromFavorites }}>
+    <FavoritesContext.Provider value={{ favorites, setFavorites, saveFavoritesItems, getFavoritesItems, addToFavorites, removeFromFavorites }}>
       {children}
     </FavoritesContext.Provider>
   );

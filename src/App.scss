@@ -16,19 +16,18 @@
 }
 
 @font-face {
-  font-family: 'rubik-regular';
+  font-family: 'cairo-regular';
   src: url('../public/fonts/Rubik-Regular.ttf');
 }
 
 body{
   min-height: 100vh;
   background-color: white;
-  // background-color: var(--secondary-color);
 }
 
 *{
   box-sizing: border-box;
-  font-family: 'rubik-regular';
+  font-family: 'cairo-regular';
 }
 
 a{

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import { TiHome } from "react-icons/ti";
 import { GrStatusGoodSmall } from "react-icons/gr";
 import ProductVariations from "./components/ProductVariations";
-import { Tag } from "lucide-react";
+import { Tag, House } from "lucide-react";
 import ProductDetails from "./components/ProductDetails";
 import ProductPrice from "./components/ProductPrice";
 import ProductImages from "./components/ProductImages";
@@ -27,7 +26,7 @@ const AddProduct = () => {
             <div className='custom-bg-white flex items-center justify-between'>
                 <h2 className='text-lg'>اضافة منتج جديد</h2>
                 <Link to='/admin/products' className='text-2xl bg-white rounded-xl transition-all duration-300 hover:bg-indigo-600 hover:text-white p-2'>
-                    <TiHome />
+                    <House />
                 </Link>
             </div>
             {/* Component Content */}

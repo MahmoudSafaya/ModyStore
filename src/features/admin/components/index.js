@@ -10,3 +10,4 @@ export { default as A_ProductForm } from './ProductForm';
 export { default as A_ReceiverFrom } from './ReceiverFrom';
 export { default as A_RequireAuth } from './RequireAuth';
 export { default as A_SenderForm } from './SenderForm';
+export { default as A_OrderEdit } from './OrderEdit';

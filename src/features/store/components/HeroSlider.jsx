@@ -1,58 +1,89 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+
+const slides = [
+  {
+    id: 1,
+    image: 'https://img.freepik.com/free-photo/computer-mouse-paper-bag-blue-background-top-view_169016-43756.jpg?t=st=1740239789~exp=1740243389~hmac=dae3f01f050c1e9e0fc60a89be699f0f9a86dde39dbc4aee6e3575d02c25a426&w=1380',
+    title: 'Slide 1',
+    description: 'This is the first slide.',
+  },
+  {
+    id: 2,
+    image: 'https://img.freepik.com/free-photo/computer-mouse-green-background-isolated-flat-lay_169016-26573.jpg?t=st=1740239892~exp=1740243492~hmac=68451a2620cc4467316375daa690415b37f52c3488acfcdced4620e02f08da66&w=1380',
+    title: 'Slide 2',
+    description: 'This is the second slide.',
+  },
+  {
+    id: 3,
+    image: 'https://img.freepik.com/free-photo/top-view-blue-computer-mouse-with-yellow-background_23-2148226814.jpg?t=st=1740239913~exp=1740243513~hmac=fcb1c5f97b884e24967a936c9e3a6e7dd6cfee28160e99fc61c97c7e7ce05b65&w=1380',
+    title: 'Slide 3',
+    description: 'This is the third slide.',
+  },
+];
 
 const HeroSlider = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const slides = [
-    {
-      id: 1,
-      title: "أفضل العروض على أحدث المنتجات",
-      description: "اكتشف تشكيلتنا الواسعة من المنتجات بأسعار لا تُقاوم.",
-      image: "https://plus.unsplash.com/premium_photo-1664201889922-66bc3c778c1e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 2,
-      title: "تسوق بأمان وراحة",
-      description: "مع خدمة التوصيل السريع والدفع عند الاستلام.",
-      image: "https://images.pexels.com/photos/6214383/pexels-photo-6214383.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-    {
-      id: 3,
-      title: "خصومات تصل إلى 50%",
-      description: "اغتنم الفرصة الآن قبل نفاد الكمية!",
-      image: "https://images.pexels.com/photos/5926462/pexels-photo-5926462.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    },
-  ];
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? slides.length - 1 : prevIndex - 1
-    );
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  return (
-    <div className="hero-slider">
-      <div
-        className="slide"
-        style={{ backgroundImage: `url(${slides[currentIndex].image})` }}
-      >
-        <div className="slide-content">
-          <h1>{slides[currentIndex].title}</h1>
-          <p>{slides[currentIndex].description}</p>
-          <button className="shop-now-btn">تسوق الآن</button>
-        </div>
-      </div>
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 10000); // Auto slide every 10 seconds
+    return () => clearInterval(interval);
+  }, []);
 
-      <button className="next-btn" onClick={nextSlide}>
-        &#x276F;
+  return (
+    <div className="relative w-full h-96 overflow-hidden">
+      {slides.map((slide, index) => (
+        <div
+          key={slide.id}
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            index === currentSlide ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <img
+            src={slide.image}
+            alt={slide.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#00000020] text-white">
+            <h2 className="text-4xl font-bold">{slide.title}</h2>
+            <p className="text-xl">{slide.description}</p>
+          </div>
+        </div>
+      ))}
+
+      {/* Navigation Arrows */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-r"
+      >
+        &#10094;
       </button>
-      <button className="prev-btn" onClick={prevSlide}>
-        &#x276E;
+      <button
+        onClick={nextSlide}
+        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-l"
+      >
+        &#10095;
       </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-3 h-3 rounded-full ${
+              index === currentSlide ? 'bg-white' : 'bg-gray-300'
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 };

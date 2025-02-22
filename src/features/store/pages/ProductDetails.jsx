@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../../context/CartContext";
 import proImage01 from '../../../assets/product/01.webp';
 import proImage02 from '../../../assets/product/02.webp';
@@ -10,10 +11,12 @@ const product = {
     id: 1,
     name: "فستان حريمي صوف قصير",
     category: "ملابس نساء",
-    amount: 20,
+    storageAmount: 20,
     rating: 5,
     image: proImage01,
     discount: "خصم 14%",
+    quantity: 1,
+    quantityPrice: 458.00,
     price: 458.00,
     oldPrice: 350,
     inStock: true,
@@ -23,14 +26,15 @@ const product = {
     colors: ["ازرق", "احمر"],
 };
 
-const ProductDetails = ({}) => {
+const ProductDetails = ({ }) => {
     const { addToCart } = useCart();
     const [quantity, setQuantity] = useState(1);
     const [selectedColor, setSelectedColor] = useState("احمر");
 
+    const navigate = useNavigate();
+
     const [mainImage, setMainImage] = useState(product.image);
     console.log(mainImage)
-
     const thumbnails = [
         proImage01,
         proImage02,
@@ -44,6 +48,11 @@ const ProductDetails = ({}) => {
 
     const increaseQty = () => setQuantity(quantity + 1);
     const decreaseQty = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
+
+    const handleBuyNow = (product) => {
+        addToCart(product);
+        navigate('/checkout');
+    }
 
     return (
         <div className="container">
@@ -63,11 +72,11 @@ const ProductDetails = ({}) => {
                         ))}
                     </div>
                     {/* Displayed Image */}
-                    <div className="h-60% overflow-hidden rounded-xl border border-gray-300">
+                    <div className="h-[60%] overflow-hidden rounded-xl border border-gray-300">
                         <img
                             src={mainImage}
                             alt={product.name}
-                            className="w-full transition-transform duration-300 ease-in-out transform hover:scale-110"
+                            className="w-full transition-transform duration-300 ease-in-out transform hover:scale-120"
                         />
                     </div>
                 </div>
@@ -135,7 +144,7 @@ const ProductDetails = ({}) => {
 
                     {/* Buttons */}
                     <div className="flex gap-6 mt-6">
-                        <button className="min-w-60 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm">
+                        <button className="min-w-60 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => handleBuyNow(product)}>
                             اشتري الان
                         </button>
                         <button className="min-w-60 bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product)}>
@@ -144,10 +153,7 @@ const ProductDetails = ({}) => {
                     </div>
 
                     {/* Shipping Info */}
-                    {/* <p className="text-gray-500 mt-4">Dispatched in 2-3 weeks</p>
-                    <a href="#" className="text-blue-500 underline">
-                        Why the longer time for delivery?
-                    </a> */}
+                    {/* <p className="text-gray-500 mt-4">يتم التوصيل خلال 2 إلى 5 أيام عمل</p> */}
                 </div>
             </div>
         </div>
