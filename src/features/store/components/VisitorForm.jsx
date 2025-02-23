@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { visitorOrderSchema } from "../../../schemas/VisitorOrderSchema";
+import { visitorOrderSchema } from "../../../schemas/addressesSchema";
 import axios from "../../../api/axios";
 import { useCart } from "../../../context/CartContext";
 import toast, { Toaster } from 'react-hot-toast';

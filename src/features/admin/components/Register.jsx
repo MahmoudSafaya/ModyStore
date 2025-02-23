@@ -45,7 +45,6 @@ const Register = () => {
                             className="custom-input-field"
                         >
                             <option value="employee">موظف</option>
-                            <option value="delivery">دليفري</option>
                             <option value="admin">مسؤل</option>
                         </select>
                     </div>

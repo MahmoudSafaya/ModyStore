@@ -2,8 +2,8 @@ import React from "react";
 import { useOrders } from "../../../context/OrdersContext";
 import { X } from "lucide-react";
 
-const OrderInfo = ({ info }) => {
-  const { setOrderPopup, handleDeleteOrder, confirmOrderToJNT } = useOrders();
+const OrderInfo = ({ info, inConfirmed }) => {
+  const { setOrderPopup, handleDeleteOrder, confirmOrderToJNT, printOrderPdf } = useOrders();
 
   const { _id, itemsValue, remark, sender, receiver, items } = info;
 
@@ -17,14 +17,21 @@ const OrderInfo = ({ info }) => {
               {_id}
             </span>
           </h2>
-          <span
-            className="text-gray-500 cursor-pointer duration-500 hover:text-gray-900 hover:rotate-90"
-            onClick={() =>
-              setOrderPopup({ display: false, editing: false, info: {} })
-            }
-          >
-            <X />
-          </span>
+
+          <div className="flex items-center gap-6">
+            {inConfirmed && (
+              <button onClick={() => printOrderPdf(_id)} className="max-w-max py-2 px-4 bg-indigo-500 text-white rounded-lg duration-500 hover:bg-indigo-600">Print Bill</button>
+            )}
+
+            <span
+              className="text-gray-500 cursor-pointer duration-500 hover:text-gray-900 hover:rotate-90"
+              onClick={() =>
+                setOrderPopup({ display: false, editing: false, info: {} })
+              }
+            >
+              <X />
+            </span>
+          </div>
         </div>
 
         {/* Sender Info */}

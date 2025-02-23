@@ -8,7 +8,7 @@ import { A_OrderEdit, A_OrderInfo } from "./";
 import { useOrders } from "../../../context/OrdersContext";
 import { Toaster } from 'react-hot-toast';
 
-const OrdersTable = ({ orders, handleDelete }) => {
+const OrdersTable = ({ inConfirmed, orders, handleDelete }) => {
     const { orderPopup, setOrderPopup } = useOrders();
     const [live, setLive] = useState(null);
     const [checkedOrders, setCheckedOrders] = useState([]);
@@ -126,7 +126,7 @@ const OrdersTable = ({ orders, handleDelete }) => {
                 </div>
 
 
-                {orderPopup.display && <A_OrderInfo info={orderPopup.info} />}
+                {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} />}
                 {orderPopup.editing && <A_OrderEdit />}
             </div>
             {/* Success notify*/}

@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { A_BarcodeReader, A_Register } from '../components'
 import { House } from 'lucide-react'
+import { A_AddressBlock } from '../components'
 
 const Settings = () => {
   return (
@@ -14,6 +15,7 @@ const Settings = () => {
         </Link>
       </div>
       <A_Register />
+      <A_AddressBlock />
       {/* <A_BarcodeReader /> */}
     </div>
   )

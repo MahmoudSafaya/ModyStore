@@ -17,7 +17,7 @@ export const OrdersProvider = ({ children }) => {
         setOrderPopup({ ...orderPopup, ...data });
     };
 
-    const deleteNotify = () => toast.success('تم حذف الطلب بنجاح!');  
+    const deleteNotify = () => toast.success('تم حذف الطلب بنجاح!');
 
     const getUnconfirmedOrders = async () => {
         try {
@@ -65,14 +65,56 @@ export const OrdersProvider = ({ children }) => {
         }
     }
 
+    const cancelOrderFromJNT = async (orderID) => {
+        try {
+            const response = await axios.delete(`/jnt/orders/${orderID}`);
+            console.log(response);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const printOrderPdf = async (orderID) => {
+        try {
+          const response = await axios.post(
+            `/jnt/orders/print/${orderID}`,
+            {
+              printcod: 0,
+              printSize: 0,
+              showCustomerOrderId: 0
+            },
+            {
+              responseType: 'blob', // Important for handling binary data like PDFs
+            }
+          );
     
-      
+          // Create a Blob from the PDF Stream
+          const file = new Blob([response.data], { type: 'application/pdf' });
+    
+          // Create a link element
+          const fileURL = URL.createObjectURL(file);
+    
+          // Create a temporary anchor element to trigger the download
+          const link = document.createElement('a');
+          link.href = fileURL;
+          link.setAttribute('download', 'waybill.pdf'); // Name of the file to be downloaded
+          document.body.appendChild(link);
+          link.click();
+    
+          // Clean up
+          document.body.removeChild(link);
+          URL.revokeObjectURL(fileURL);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
 
     return (
         <OrdersContext.Provider value={{
-            unconfirmedOrders, setUnconfirmedOrders, getUnconfirmedOrders, handleDeleteOrder, orderPopup, setOrderPopup, 
+            unconfirmedOrders, setUnconfirmedOrders, getUnconfirmedOrders, handleDeleteOrder, orderPopup, setOrderPopup,
             handleOrderPopup, jntOrders, setJNTOrders, getJNTOrders,
-            confirmOrderToJNT
+            confirmOrderToJNT, cancelOrderFromJNT, printOrderPdf
         }}>
             {children}
         </OrdersContext.Provider>

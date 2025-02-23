@@ -15,3 +15,13 @@ export const visitorOrderSchema = Yup.object({
         additionalInfo: Yup.string().max(500, "Maximum 500 characters allowed"),
     }),
 });
+
+
+// Validation schema using Yup
+export const blockedAddress = Yup.object({
+
+    Province: Yup.string().required("هذا الحقل مطلوب"),
+    City: Yup.string().required("هذا الحقل مطلوب"),
+    Area: Yup.string().required("هذا الحقل مطلوب"),
+
+});
