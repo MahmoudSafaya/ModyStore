@@ -83,8 +83,6 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
     if (editMode) {
       try {
         await axios.put(`/visitors/orders/${values._id}`, values);
-        const newConfirmed = jntOrders.map(item => item._id === values._id ? item = values : item)
-        setJNTOrders(newConfirmed)
         // update unconfirmedOrder state
         const newOrders = unconfirmedOrders.map(item => item._id === values._id ? item = values : item)
         setUnconfirmedOrders(newOrders)
@@ -118,7 +116,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
         validationSchema={newOrderSchema}
         onSubmit={handleOrderSubmit}
       >
-        {({ values, setFieldValue, handleBlur }) => (
+        {({ values, isSubmitting, setFieldValue, handleBlur }) => (
           <Form className="mt-8">
             <div className="grid grid-cols-1 lg:flex gap-8">
               <div className="custom-bg-white lg:w-1/2">
@@ -128,7 +126,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
 
               <div className="custom-bg-white lg:w-1/2">
                 <h2 className="font-bold mb-4 text-center">بيانات العميل</h2>
-                <JNTAddresses values={values} parent='receiver' setFieldValue={setFieldValue} handleBlur={handleBlur} />
+                <JNTAddresses values={values} isSubmitting={isSubmitting} parent='receiver' setFieldValue={setFieldValue} handleBlur={handleBlur} />
               </div>
             </div>
 
@@ -192,14 +190,17 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
             </div>
 
             <button type="submit" className="block mt-8 min-w-50 p-3 text-center bg-indigo-500 text-white font-bold hover:bg-indigo-400 hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto">
-              {editMode ? 'Update' : 'Order'}
+              {editMode ? (isSubmitting ? 'جار التعديل...' : '  تعديل') : (isSubmitting ? 'جار التسجيل...' : 'تسجيل')}
             </button>
           </Form>
         )}
       </Formik>
 
       {/* Notify popup */}
-      <Toaster />
+      <Toaster toastOptions={{
+        duration: 5000,
+        removeDelay: 1000,
+      }} />
     </div>
   );
 };

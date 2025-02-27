@@ -7,9 +7,13 @@ import toast, { Toaster } from 'react-hot-toast';
 import JNTAddresses from "../../../shared/components/JNTAddresses";
 
 const OrderForm = () => {
-    const { cart, totalPrice } = useCart();
+    const { cart, setCart, totalPrice, setTotalPrice } = useCart();
 
-    const notify = () => toast.success('تم تسجيل طلبك بنجاح!');
+    const emptyCart = () => {
+        localStorage.removeItem('mody_store_cart');
+        setCart([]);
+        setTotalPrice(0);
+    }
 
     // Initial Order Data (including receiver object)
     const initialValues = {
@@ -80,10 +84,12 @@ const OrderForm = () => {
             const response = await axios.post('/visitors/orders/', visitorOrderData);
             console.log(response);
             if (response.status === 201) {
-                notify();
+                toast.success('تم تسجيل طلبك بنجاح!');
+                emptyCart();
             }
             setSubmitting(false);
             resetForm();
+            values.receiver.prov = '';
         } catch (error) {
             console.error(error);
         }
@@ -94,12 +100,11 @@ const OrderForm = () => {
             <Formik
                 initialValues={initialValues}
                 validationSchema={visitorOrderSchema}
-                validateOnChange={true} // Ensure validation runs on change
                 onSubmit={submitViritorOrder}
             >
-                {({ values, setFieldValue, handleBlur, handleChange, isSubmitting }) => (
+                {({ values, setFieldValue, handleBlur, isSubmitting }) => (
                     <Form className="space-y-4">
-                        <JNTAddresses values={values} setFieldValue={setFieldValue} handleChange={handleChange} handleBlur={handleBlur} />
+                        <JNTAddresses values={values} isSubmitting={isSubmitting} parent='receiver' setFieldValue={setFieldValue} handleBlur={handleBlur} />
 
                         {/* Additional Info */}
                         <div>
@@ -120,14 +125,14 @@ const OrderForm = () => {
                             className="w-full bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 disabled:bg-gray-400"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Submitting..." : "Submit Order"}
+                            {isSubmitting ? "تسجيل الاوردر..." : "تسجيل"}
                         </button>
                     </Form>
                 )}
             </Formik>
 
             {/* Success notify*/}
-            <Toaster />
+            <Toaster toastOptions={{ duration: 5000, removeDelay: 1000 }} />
         </div>
     );
 };

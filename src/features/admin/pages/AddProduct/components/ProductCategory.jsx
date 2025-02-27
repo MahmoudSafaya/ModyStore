@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import { IoClose } from "react-icons/io5";
+import { Field, ErrorMessage } from "formik";
+import axios from '../../../../../api/axios';
+import { useEffect } from 'react';
 
 const categoriesList = ["Computer", "Watches", "Headphones", "Beauty", "Fashion", "Accessories"];
 
 const ProductCategory = () => {
     // Code for Category Section
+    const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState(["Watches"]);
     const [inputValue, setInputValue] = useState("");
-    const [filteredCategories, setFilteredCategories] = useState(categoriesList);
+    const [filteredCategories, setFilteredCategories] = useState(categories);
     const [isFocused, setIsFocused] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [newCategory, setNewCategory] = useState('');
@@ -50,10 +54,39 @@ const ProductCategory = () => {
         setNewCategory('');
     }
 
+    const getAllCategories = async () => {
+        try {
+            const res = await axios.get('/categories');
+            console.log(res);
+            setCategories(res.data)
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        getAllCategories();
+    }, [])
+
     return (
         <div className="mt-8 custom-bg-white">
             <h2 className="custom-header">Product Details</h2>
-            <label className="custom-label-field mt-4 text-sm">Categories</label>
+            <div className="flex flex-col gap-2">
+                <label className="text-gray-500 cursor-pointer">نوع المنتج:</label>
+                <Field as="select" name='category' className='custom-input-field max-h-40 text-gray-800' >
+                    <option value="">اختر نوع المنتج</option>
+                    {/* <option value="clothes">Clothes</option>
+                    <option value="ITN2">Document</option>
+                    <option value="ITN3">Food</option> */}
+                    {categories && categories.map(item => {
+                        return (
+                            <option key={item._id} value={item._id}>{item.name}</option>
+                        )
+                    })}
+                </Field>
+                <ErrorMessage name="category" component="div" className="text-red-500" />
+            </div>
+            {/* <label className="custom-label-field mt-4 text-sm">Categories</label>
             <div className="mt-2 flex flex-wrap gap-2 border border-gray-300 p-2 rounded-lg">
                 {selectedCategories.map((category) => (
                     <div
@@ -69,15 +102,17 @@ const ProductCategory = () => {
                         </button>
                     </div>
                 ))}
-                <input
-                    type="text"
+                <Field name="category" type="text"
                     value={inputValue}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                        handleInputChange(e);
+                        setFieldValue('category', e.target.value)
+                    }}
                     onFocus={handleInputFocus}
                     onBlur={handleInputBlur}
                     className="outline-none px-2 text-sm flex-1"
-                    placeholder="Add category"
-                />
+                    placeholder="Add category" />
+                <ErrorMessage name="category" component="div" className="text-red-500" />
             </div>
             <div className="relative">
                 {isFocused && (
@@ -93,8 +128,8 @@ const ProductCategory = () => {
                         ))}
                     </div>
                 )}
-            </div>
-            <button className="block mt-8 min-w-content py-3 px-5 text-center bg-indigo-200 text-indigo-600 duration-500 rounded-xl cursor-pointer hover:bg-indigo-500 hover:text-white"
+            </div> */}
+            <button type='button' className="block mt-8 min-w-content py-3 px-5 text-center bg-indigo-200 text-indigo-600 duration-500 rounded-xl cursor-pointer hover:bg-indigo-500 hover:text-white"
                 onClick={() => setIsAdding(!isAdding)}
             >
                 {isAdding ? '-' : '+'} إضافة قسم جديد

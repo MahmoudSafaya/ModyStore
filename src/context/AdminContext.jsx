@@ -33,7 +33,6 @@ export const AdminProvider = ({ children }) => {
         .catch(console.error);
     }
     setLoading(false);
-    getOrders();
 
     // cancel any future `setData`
     return () => (isSubscribed = false);
@@ -52,39 +51,9 @@ export const AdminProvider = ({ children }) => {
     sessionStorage.removeItem("user");
   };
 
-  const getOrders = async () => {
-    try {
-      const response = await axios.get("/api/order/orders");
-      saveOrders(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const saveOrders = (data) => {
-    setOrders(data);
-  };
-
-  const deleteOrder = async (id) => {
-    try {
-      const response = await axios.delete(`/api/order/delete/${id}`);
-      const data = response.data;
-      console.log(response);
-      if (response.statusText === "OK") {
-        // Update the state by filtering out the deleted item
-        setOrders((prevItems) => prevItems.filter((item) => item._id !== id));
-        console.log("Item Deleted Successfully");
-      } else {
-        alert(data.error || data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  };
-
   return (
     <AdminContext.Provider
-      value={{ auth, login, logout, loading, orders, setOrders, getOrders, deleteOrder }}
+      value={{ auth, login, logout, loading, orders, setOrders }}
     >
       {children}
     </AdminContext.Provider>

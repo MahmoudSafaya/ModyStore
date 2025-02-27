@@ -6,11 +6,7 @@ import { useOrders } from "../../../context/OrdersContext";
 import OrdersTable from "../components/OrdersTable";
 
 const UnconfirmedOrders = () => {
-    const { unconfirmedOrders, getUnconfirmedOrders, handleDeleteOrder } = useOrders();
-
-    useEffect(() => {
-        getUnconfirmedOrders();
-    }, []);
+    const { handleDeleteOrder } = useOrders();
 
     return (
         <div>
@@ -22,7 +18,8 @@ const UnconfirmedOrders = () => {
                 </Link>
             </div>
 
-            <OrdersTable orders={unconfirmedOrders} handleDelete={handleDeleteOrder} />
+            <OrdersTable apiUrl='/visitors/orders/' handleDelete={handleDeleteOrder} />
+
 
             {/* Success notify*/}
             <Toaster />

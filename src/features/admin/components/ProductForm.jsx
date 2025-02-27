@@ -32,7 +32,7 @@ const ProductForm = ({ values }) => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-gray-500 cursor-pointer">نوع المنتج: <span className="text-red-400">*</span></label>
+                <label className="text-gray-500 cursor-pointer">نوع المنتج:</label>
                 <Field as="select" name={`items.${index}.itemType`} className='custom-input-field max-h-40 text-gray-800' >
                   <option value="">اختر نوع المنتج</option>
                   <option value="ITN1">Clothes</option>

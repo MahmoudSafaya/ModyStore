@@ -5,7 +5,9 @@ import { Menu, ChevronsRight, ChevronsLeft } from "lucide-react";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
-  const { modyStoreCategories } = useStore();
+  const { categories } = useStore();
+
+  const baseUrl = import.meta.env.VITE_SERVER_URL;
 
   return (
     <div className="flex fixed top-0 right-0 z-40">
@@ -22,11 +24,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </button>
 
           <div>
-            {modyStoreCategories.map((item, index) => (
-              <nav key={index}>
-                <Link to={item.link} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === item.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
+            {categories && categories.map((item) => (
+              <nav key={item._id}>
+                <Link to={`/products/?category=${item._id}`} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === item.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
                   <div className={`w-[34px] h-[34px] flex justify-center items-center rounded-lg`}>
-                    <img src={item.icon} alt={item.name} />
+                    <img src={`${baseUrl}/${item.icon.url.replace(/\\/g, '/')}`} alt={item.icon.alt} />
                   </div>
                   {isOpen && <span className="text-base">{item.name}</span>}
                 </Link>

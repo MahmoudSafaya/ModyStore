@@ -21,11 +21,15 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [isCartOpen, setIsCartOpen] = useState(false);
 
+    const toggleCart = () => {
+      setIsCartOpen(!isCartOpen)
+    }
 
     // Calculate total price
     const calculateTotalPrice = (cartItems) => {
-        return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        return cartItems.reduce((total, item) => total + (item.discount > 0 ? (item.price - (item.price * (item.discount / 100))) * item.quantity : item.price), 0);
     };
 
     // Function to save cart to local storage
@@ -51,20 +55,22 @@ export const CartProvider = ({ children }) => {
     };
 
     // Add item to cart
-    const addToCart = (item) => {
-        if (cart.find(cartItem => cartItem.id === item.id)) {
+    const addToCart = (item, quantity) => {
+        if (cart.find(cartItem => cartItem._id === item._id)) {
             return false;
         }
+        item.quantity = quantity;
         const newCart = [...cart, item];
         setCart(newCart);
         setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
         saveCartItems(newCart);
+        setIsCartOpen(true);
     };
 
     // Increase item quantity
     const increaseQuantity = (itemId) => {
         let newCart = cart.map((item) =>
-            item.id === itemId ? { ...item, quantity: item.quantity + 1, quantityPrice: item.quantityPrice + item.price } : item
+            item._id === itemId ? { ...item, quantity: item.quantity + 1, quantityPrice: item.quantityPrice + item.price } : item
         )
 
         setCart(newCart);
@@ -74,7 +80,7 @@ export const CartProvider = ({ children }) => {
     // Decrease item quantity (or remove if it reaches 0)
     const decreaseQuantity = (itemId) => {
         let newCart = cart.map((item) =>
-            item.id === itemId ? { ...item, quantity: item.quantity - 1, quantityPrice: item.quantityPrice - item.price } : item
+            item._id === itemId ? { ...item, quantity: item.quantity - 1, quantityPrice: item.quantityPrice - item.price } : item
         ).filter((item) => item.quantity > 0); // remove item if quantity reach 0
 
         setCart(newCart);
@@ -84,7 +90,7 @@ export const CartProvider = ({ children }) => {
 
     // Remove item from cart
     const removeFromCart = (itemId) => {
-        const newCart = cart.filter(item => item.id !== itemId);
+        const newCart = cart.filter(item => item._id !== itemId);
         setCart(newCart);
         saveCartItems(newCart);
     };
@@ -95,7 +101,7 @@ export const CartProvider = ({ children }) => {
     }, []);
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, increaseQuantity, decreaseQuantity, removeFromCart, totalPrice }}>
+        <CartContext.Provider value={{ cart, setCart, isCartOpen, toggleCart, addToCart, increaseQuantity, decreaseQuantity, removeFromCart, totalPrice, setTotalPrice }}>
             {children}
         </CartContext.Provider>
     );

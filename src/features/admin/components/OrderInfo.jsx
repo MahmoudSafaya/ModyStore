@@ -1,11 +1,19 @@
 import React from "react";
 import { useOrders } from "../../../context/OrdersContext";
 import { X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const OrderInfo = ({ info, inConfirmed }) => {
-  const { setOrderPopup, handleDeleteOrder, confirmOrderToJNT, printOrderPdf } = useOrders();
+const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
+  const naviagte = useNavigate();
+
+  const { setOrderPopup, confirmOrderToJNT, printOrderPdf } = useOrders();
 
   const { _id, itemsValue, remark, sender, receiver, items } = info;
+
+  const handleIdClick = () => {
+    navigator.clipboard.writeText(_id);
+    naviagte(`/admin/track-order/${_id}`)
+  }
 
   return (
     <div className="w-full h-full absolute top-0 left-0 z-60 bg-[#00000070] flex items-center justify-center py-16">
@@ -13,7 +21,7 @@ const OrderInfo = ({ info, inConfirmed }) => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="mb-4">
             <span className="ml-2 font-bold">بيانات أوردر:-</span>
-            <span onClick={() => navigator.clipboard.writeText(_id)} className="text-indigo-400 cursor-pointer duration-500 hover:text-indigo-500">
+            <span onClick={() => handleIdClick()} className="text-indigo-400 cursor-pointer duration-500 hover:text-indigo-500">
               {_id}
             </span>
           </h2>
@@ -116,11 +124,15 @@ const OrderInfo = ({ info, inConfirmed }) => {
         {/* Order Operations */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between">
           <div>
-            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => confirmOrderToJNT(info._id)}>Sign</button>
+            {!inConfirmed && (
+              <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => confirmOrderToJNT(info._id)}>Sign</button>
+            )}
           </div>
           <div className="flex gap-6">
-            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-200 text-gray-700 duration-500 hover:bg-gray-300" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>Edit</button>
-            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-100 text-red-500 duration-500 hover:bg-red-200" onClick={() => handleDeleteOrder(info._id)}>Delete</button>
+            {!inConfirmed && (
+              <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-200 text-gray-700 duration-500 hover:bg-gray-300" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>Edit</button>
+            )}
+            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-100 text-red-500 duration-500 hover:bg-red-200" onClick={() => handleDelete(info._id)}>Delete</button>
           </div>
         </div>
       </div>

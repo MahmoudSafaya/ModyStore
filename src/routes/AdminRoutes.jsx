@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { A_Home, A_Settings, A_Login, A_NewOrder, A_Orders, A_AddProduct, A_Products, A_HandleStorage, A_UnconfirmedOrders } from "../features/admin/pages";
+import { A_Home, A_Settings, A_Login, A_NewOrder, A_Orders, A_AddProduct, A_Products, A_HandleStorage, A_UnconfirmedOrders, A_TrackOrder } from "../features/admin/pages";
 import { A_RequireAuth } from "../features/admin/components";
 import Unauthorized from "../shared/pages/Unauthorized";
 import AdminLayout from "../layouts/AdminLayout";
@@ -24,6 +24,7 @@ const AdminRoutes = () => {
                     <Route path="/place-order" element={<A_NewOrder />} />
                     <Route path="/orders" element={<A_Orders />} />
                     <Route path="/unconfirmed-orders" element={<A_UnconfirmedOrders />} />
+                    <Route path="/track-order/:id" element={<A_TrackOrder />} />
                     <Route path="/add-product" element={<A_AddProduct />} />
                     <Route path="/products" element={<A_Products />} />
                     <Route path="/handle-storage" element={<A_HandleStorage />} />

@@ -68,6 +68,12 @@ export const OrdersProvider = ({ children }) => {
     const cancelOrderFromJNT = async (orderID) => {
         try {
             const response = await axios.delete(`/jnt/orders/${orderID}`);
+            if (response.status === 200 || statusText === 'OK') {
+                deleteNotify();
+                const newJntOrders = jntOrders.filter(item => item._id !== orderID)
+                setJNTOrders(newJntOrders);
+            }
+            setOrderPopup({ display: false, editing: false, info: {} })
             console.log(response);
         } catch (error) {
             console.error(error);

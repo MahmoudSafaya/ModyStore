@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { Field, ErrorMessage } from "formik";
 
-const JNTAddresses = ({ values, parent, setFieldValue, handleBlur }) => {
+const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur }) => {
 
   const [firstOptions, setFirstOptions] = useState([]);
   const [secondOptions, setSecondOptions] = useState([]);
@@ -42,6 +42,12 @@ const JNTAddresses = ({ values, parent, setFieldValue, handleBlur }) => {
     } 
     
   }, []);
+
+  useEffect(() => {
+    if(isSubmitting) {
+      setFirstSelection('');
+    }
+  }, [isSubmitting])
 
   useEffect(() => {
     if (firstSelection) {

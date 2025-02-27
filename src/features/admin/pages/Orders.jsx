@@ -7,7 +7,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import OrdersTable from "../components/OrdersTable";
 
 const Orders = () => {
-  const { jntOrders, cancelOrderFromJNT, getJNTOrders } = useOrders();
+  const { cancelOrderFromJNT } = useOrders();
   const [selection, setSelection] = useState("الكل");
 
   const categories = [
@@ -18,28 +18,18 @@ const Orders = () => {
     "مرتجع",
     "تم الإلغاء",
   ];
-  
 
-  useEffect(() => {
-    getJNTOrders();
-  }, []);
 
   return (
     <div>
       <div className="custom-bg-white">
-        {/* <A_BillOfLading
-          orders={
-            orders && orders.filter((item) => item.status === "Unprinted")
-          }
-        /> */}
 
         {/* Search Features */}
-
         <SearchFeature />
       </div>
 
       <div className="custom-bg-white mt-8">
-        <div className="w-full flex justify-stretch items-center flex-wrap">
+        {/* <div className="w-full flex justify-stretch items-center flex-wrap">
           {categories.map((item) => {
             return (
               <button
@@ -51,9 +41,9 @@ const Orders = () => {
               </button>
             );
           })}
-        </div>
+        </div> */}
 
-        <OrdersTable inConfirmed={true} orders={jntOrders} handleDelete={cancelOrderFromJNT} />
+        <OrdersTable inConfirmed={true} apiUrl='/jnt/orders/' handleDelete={cancelOrderFromJNT} />
 
         {/* Success notify*/}
         <Toaster />

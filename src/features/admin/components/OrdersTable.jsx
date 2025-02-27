@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { MoreVertical, Trash, Pencil } from "lucide-react";
+import { Trash, ChevronRight, ChevronLeft } from "lucide-react";
 import { FaCheck } from "react-icons/fa";
-import { IoMdArrowDropup } from "react-icons/io";
 import { IoStorefrontOutline } from "react-icons/io5";
+import { FaRegEdit } from "react-icons/fa";
 import { A_OrderEdit, A_OrderInfo } from "./";
 import { useOrders } from "../../../context/OrdersContext";
 import { Toaster } from 'react-hot-toast';
+import axios from "../../../api/axios";
 
-const OrdersTable = ({ inConfirmed, orders, handleDelete }) => {
+const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
     const { orderPopup, setOrderPopup } = useOrders();
-    const [live, setLive] = useState(null);
+    const [checkedAll, setCheckedAll] = useState(false);
     const [checkedOrders, setCheckedOrders] = useState([]);
+
+    const [orders, setOrders] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     const handleCheckOrder = (orderID) => {
         if (checkedOrders.some(item => item._id === orderID)) {
@@ -22,6 +27,37 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete }) => {
             setCheckedOrders([...checkedOrders, ...newOrders]);
         }
     }
+    const handleSelectAll = () => {
+        setCheckedAll(!checkedAll);
+        if(!checkedAll) {
+            setCheckedOrders(orders);
+        } else {
+            setCheckedOrders([]);
+        }
+    }
+
+    const fetchOrders = async (page) => {
+        try {
+            const response = await axios.get(`${apiUrl}?page=${page}`);
+            const data = response.data;
+            setOrders(data.orders);
+            setCurrentPage(data.currentPage);
+            setTotalPages(data.totalPages);
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrders(currentPage);
+    }, [currentPage]);
+
+    // Handle page change
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     return (
         <div>
@@ -32,7 +68,24 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete }) => {
                         <table className="w-full bg-white">
                             <thead className="text-gray-700 border-b border-gray-300 font-bold text-center whitespace-nowrap">
                                 <tr>
-                                    <th></th>
+                                    <th>
+                                        <label className="flex items-center justify-center h-5">
+                                            <input
+                                                type="checkbox"
+                                                className="hidden"
+                                                checked={checkedAll}
+                                                onChange={handleSelectAll}
+                                            />
+                                            <div
+                                                className={`w-5 h-5 p-1 flex items-center justify-center rounded-sm border duration-500 cursor-pointer ${checkedAll ? "bg-indigo-500 border-indigo-500" : "border-gray-300"
+                                                    }`}
+                                            >
+                                                {checkedAll && (
+                                                    <FaCheck className='text-white' />
+                                                )}
+                                            </div>
+                                        </label>
+                                    </th>
                                     <th className="p-2">رقم الطلب</th>
                                     <th className="p-2">اسم العميل</th>
                                     <th className="p-2">رقم الهاتف</th>
@@ -78,36 +131,25 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete }) => {
                                             {order.receiver.name}
                                         </td>
                                         <td className="p-2 text-gray-600">{order.receiver.mobile}</td>
-                                        <td className="p-2 text-gray-600 min-w-35">{order.items.map(product => {
-                                            return (
-                                                <p key={product._id}>{product.englishName}</p>
-                                            )
-                                        })}</td>
+                                        <td className="p-2 text-gray-600 min-w-35">{order.items.length}</td>
                                         <td className="p-2 text-gray-600">{order.receiver.prov}</td>
                                         <td className="p-2 text-gray-600">{order.receiver.city}</td>
                                         <td className="p-2 text-gray-600">{order.receiver.area}</td>
                                         <td className="p-2 text-gray-600">{order.receiver.street.slice(0, 20)}</td>
-                                        <td className="p-2 font-semibold">{order.itemsValue}</td>
+                                        <td className="p-2 text-gray-600 font-semibold">{order.itemsValue}</td>
                                         <td className="p-2 text-gray-600">{order.sender.name}</td>
                                         <td className="p-2 text-gray-600">{order.sender.prov}</td>
                                         <td className="p-2 text-gray-600">{order.sender.city}</td>
                                         <td className="p-2 text-gray-600">{order.sender.area}</td>
                                         <td className="p-2 text-gray-600">{order.sender.street.slice(0, 20)}</td>
-                                        <td className="p-2">
-                                            <MoreVertical className={`cursor-pointer mx-auto ${live === order._id ? 'text-indigo-500' : 'text-gray-500'}`} onMouseEnter={() => setLive(order._id)} onMouseLeave={() => setLive(null)} />
-                                            <div className="relative">
-                                                <div className={`bg-gray-100 rounded-lg shadow-md absolute top-3 left-[50%] translate-x-[-50%] z-50 ${live === order._id ? '' : 'hidden'}`} onMouseEnter={() => setLive(order._id)} onMouseLeave={() => setLive(null)}>
-                                                    <IoMdArrowDropup className='text-gray-100 text-[30px] absolute top-[-18px] left-[50%] translate-x-[-50%]' />
-                                                    <div className='px-5 py-3 flex justify-between items-center gap-4 cursor-pointer duration-300 hover:text-indigo-500' onClick={() => setOrderPopup({ display: false, editing: true, info: order })}>
-                                                        <span>تعديل</span>
-                                                        <Pencil className="w-5 h-5" />
-                                                    </div>
-                                                    <hr className='text-gray-300' />
-                                                    <div className='px-5 py-3 flex justify-between items-center gap-4 cursor-pointer duration-300 hover:text-red-500 rounded-b-lg' onClick={() => handleDelete(order._id)}>
-                                                        <span>حذف</span>
-                                                        <Trash className="w-5 h-5" />
-                                                    </div>
+                                        <td className="p-2 flex items-center">
+                                            {!inConfirmed && (
+                                                <div className='px-4 py-2 cursor-pointer duration-300 hover:text-indigo-500' onClick={() => setOrderPopup({ display: false, editing: true, info: order })}>
+                                                    <FaRegEdit className="w-5 h-5" />
                                                 </div>
+                                            )}
+                                            <div className='px-4 py-2 cursor-pointer duration-300 hover:text-red-500 rounded-b-lg' onClick={() => handleDelete(order._id)}>
+                                                <Trash className="w-5 h-5" />
                                             </div>
                                         </td>
                                     </tr>
@@ -126,7 +168,29 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete }) => {
                 </div>
 
 
-                {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} />}
+                {/* Pagination Controls */}
+                <div className="flex justify-center mt-4">
+                    <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                    >
+                        <ChevronRight />
+                    </button>
+                    <span className="px-4 py-2 mx-1">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                    >
+                        <ChevronLeft />
+                    </button>
+                </div>
+
+
+                {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} handleDelete={handleDelete} />}
                 {orderPopup.editing && <A_OrderEdit />}
             </div>
             {/* Success notify*/}

@@ -3,19 +3,19 @@ import React, { useState, useEffect } from 'react';
 const slides = [
   {
     id: 1,
-    image: 'https://img.freepik.com/free-photo/computer-mouse-paper-bag-blue-background-top-view_169016-43756.jpg?t=st=1740239789~exp=1740243389~hmac=dae3f01f050c1e9e0fc60a89be699f0f9a86dde39dbc4aee6e3575d02c25a426&w=1380',
+    image: 'images/mody-store-01.jpg',
     title: 'Slide 1',
     description: 'This is the first slide.',
   },
   {
     id: 2,
-    image: 'https://img.freepik.com/free-photo/computer-mouse-green-background-isolated-flat-lay_169016-26573.jpg?t=st=1740239892~exp=1740243492~hmac=68451a2620cc4467316375daa690415b37f52c3488acfcdced4620e02f08da66&w=1380',
+    image: 'images/mody-store-05.jpg',
     title: 'Slide 2',
     description: 'This is the second slide.',
   },
   {
     id: 3,
-    image: 'https://img.freepik.com/free-photo/top-view-blue-computer-mouse-with-yellow-background_23-2148226814.jpg?t=st=1740239913~exp=1740243513~hmac=fcb1c5f97b884e24967a936c9e3a6e7dd6cfee28160e99fc61c97c7e7ce05b65&w=1380',
+    image: 'images/mody-store-02.jpg',
     title: 'Slide 3',
     description: 'This is the third slide.',
   },

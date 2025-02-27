@@ -4,16 +4,16 @@ import { useStore } from '../../../context/StoreContext';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
-    const { storeMainNav, modyStoreCategories } = useStore();
+    const { storeMainNav, categories } = useStore();
 
     const date = new Date();
     const thisYear = date.getFullYear();
 
     return (
         <footer className='w-full lg:w-[calc(100%-50px)] lg:mr-[50px] flex flex-col bg-white'>
-            <div className='py-8 px-4 md:px-12 flex items-center justify-between gap-14'>
+            <div className='py-8 px-4 md:px-12 flex flex-col md:flex-row md:flex-wrap items-center justify-between gap-14'>
                 <div>
-                    <h2 className='font-bold mb-4'>ModyStore</h2>
+                    <h2 className='text-center md:text-right font-bold mb-4'>ModyStore</h2>
                     <div className='flex items-center gap-4'>
                         <div className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-blue-500 hover:scale-110">
                             <FaFacebookF />
@@ -30,7 +30,7 @@ const Footer = () => {
 
                 <div className='text-center'>
                     <h2 className='font-bold mb-4'>خريطة الموقع</h2>
-                    <div className='flex justify-center items-center gap-3'>
+                    <div className='flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-3'>
                         {storeMainNav && storeMainNav.map((item, index) => {
                             return (
                                 <Link to={item.link} key={index}>
@@ -43,10 +43,10 @@ const Footer = () => {
 
                 <div className='text-center'>
                     <h2 className='font-bold mb-4'> الأقسام</h2>
-                    <div className='flex justify-center items-center gap-3'>
-                        {modyStoreCategories && modyStoreCategories.map((item, index) => {
+                    <div className='flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-3'>
+                        {categories && categories.map(item => {
                             return (
-                                <Link to={item.link} key={index}>
+                                <Link to='/' key={item._id}>
                                     {item.name}
                                 </Link>
                             )

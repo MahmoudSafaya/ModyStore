@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useFavorites } from "../../../context/FavoritesContext";
 import { Link } from "react-router-dom";
-import { X } from 'lucide-react'
+import { X, HeartOff } from 'lucide-react'
 import { useCart } from "../../../context/CartContext";
 
 const Favorites = () => {
@@ -27,7 +27,13 @@ const Favorites = () => {
     <div className="">
       <h2 className="text-xl font-bold mb-6">منتجاتك المفضلة</h2>
       {favorites.length === 0 ? (
-        <p className="text-gray-500">No favorites added yet.</p>
+        <div className='flex flex-col items-center justify-center gap-6 mt-8'>
+          <div>
+            <HeartOff className='w-26 h-26 text-gray-200 drop-shadow-xs' />
+          </div>
+          <p>لا توجد منتجات في قائمتك المفضلة.</p>
+          <Link to='/products' className='max-w-max py-2 px-4 bg-indigo-500 text-white rounded-full duration-500 hover:be-indigo-600'>العودة الى التسوق</Link>
+        </div>
       ) : (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {favorites.map((item) => {

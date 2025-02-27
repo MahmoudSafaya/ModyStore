@@ -1,14 +1,21 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { useContext } from "react";
-import clothesImage from '../assets/categories/clothes.svg'; // Adjust the path as needed
 import axios from "../api/axios";
 
 export const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [addresses, setAddresses] = useState();
+  const [categories, setCategories] = useState([]);
+  const [filters, setFilters] = useState({
+    category: "",
+    minPrice: 0,
+    maxPrice: 10000,
+    sort: 'ratings',
+    page: 1,
+    limit: 1,
+  });
+  
 
   const storeMainNav = [
     { label: "الرئيسية", link: '/' },
@@ -16,29 +23,43 @@ export const StoreProvider = ({ children }) => {
     { label: "من نحن", link: '/about-us' },
     { label: "الشحن والاسترجاع", link: '/shippment' },
   ];
-  const modyStoreCategories = [
-    { name: "ملابس", products: 8, image: "category-image.jpg", icon: clothesImage, link: '/product-category/clothes' },
-    { name: "ملابس اطفال", products: 24, image: "category-image.jpg", icon: clothesImage, link: '/kids-clothes' },
-    { name: "الكترونيات", products: 7, image: "category-image.jpg", icon: clothesImage, link: '/electronics' },
-    { name: "شنط", products: 5, image: "category-image.jpg", icon: clothesImage, link: '/bags' },
-    { name: "أحذية", products: 15, image: "category-image.jpg", icon: clothesImage, link: '/shoes' },
-  ];
 
-  const getAddresses = async () => {
+  const getAllProducts = async (filters) => {
     try {
-      const response = await axios.post('/addresses/seprated');
-      setAddresses(response.data)
+      const response = await axios.get("/products");
+      console.log(response)
+      return response.data.products;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return [];
+    }
+  };
+
+  const getAllCategories = async () => {
+    try {
+      const res = await axios.get('/categories');
+      console.log(res);
+      setCategories(res.data)
     } catch (error) {
       console.error(error);
     }
   }
 
-  const toggleCart = () => {
-    setIsCartOpen(!isCartOpen)
-  }
+  useEffect(() => {
+    getAllCategories();
+  }, []);
+
+  useEffect(() => {
+    const getProducts = async () => {
+      const data = await getAllProducts(filters);
+      setProducts(data);
+    };
+    getProducts();
+  }, [filters]);
+
 
   return (
-    <StoreContext.Provider value={{ storeMainNav, modyStoreCategories, products, setProducts, isCartOpen, setIsCartOpen, toggleCart, getAddresses }}>
+    <StoreContext.Provider value={{ storeMainNav, categories, products, setProducts }}>
       {children}
     </StoreContext.Provider>
   );

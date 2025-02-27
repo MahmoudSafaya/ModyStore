@@ -6,16 +6,16 @@ import { useStore } from "../../../context/StoreContext";
 import { useCart } from "../../../context/CartContext";
 
 const EcommerceHeader = ({ toggleSidebar }) => {
-  const { toggleCart, storeMainNav } = useStore();
-  const { totalPrice } = useCart();
+  const { storeMainNav } = useStore();
+  const { toggleCart, totalPrice } = useCart();
   const location = useLocation();
 
   return (
     <header className="w-full lg:w-[calc(100%-50px)] lg:mr-[50px] flex flex-col">
-      <div className="w-full py-4 px-4 md:px-12 flex justify-between items-center lg:gap-10">
+      <div className="w-full py-4 px-4 md:px-12 flex justify-between items-center gap-2 lg:gap-10">
         <div className="logo">
           <Link to="/" className="logo-link">
-            <span>ModyStore</span> {/* My Store */}
+          <img src="images/mody-store-logo.png" className="w-12 h-12" />
           </Link>
         </div>
 
@@ -27,9 +27,9 @@ const EcommerceHeader = ({ toggleSidebar }) => {
         </div>
 
         <div className="user-controls">
-          <button className="max-w-content py-2 px-4 bg-green-400 text-gray-100 rounded-full duration-500 hover:bg-green-500 hover:text-white">
+          <button className="max-w-content py-2 px-2 md:px-4 bg-green-400 text-gray-100 rounded-full duration-500 hover:bg-green-500 hover:text-white">
             <a href="https://wa.me/1551448276" target="_blanck" className="flex items-center justify-center gap-2">
-              <span> ابعتلنا واتساب</span>
+              <span className="hidden md:block"> ابعتلنا واتساب</span>
               <FaWhatsapp className="w-6 h-6" />
             </a>
           </button>
@@ -42,7 +42,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
           <Menu className="w-10 h-10 bg-indigo-600 text-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer opacity-85 group-hover:opacity-100" />
           <span>عرض الأقسام</span>
         </div>
-        <nav className="flex justify-center items-center gap-8">
+        <nav className="hidden md:flex justify-center items-center gap-8">
           {storeMainNav.map((item, index) => (
             <Link key={index} to={item.link} className={`py-1 px-4 rounded-full duration-500 cursor-pointer hover:text-indigo-600 hover:bg-indigo-200 ${location.pathname === item.link ? 'text-indigo-600 bg-indigo-200' : ''}`}>
               {item.label}
