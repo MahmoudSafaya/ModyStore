@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from 'react-router-dom';
 import { GrStatusGoodSmall } from "react-icons/gr";
 import ProductVariations from "./components/ProductVariations";
 import { Tag, House } from "lucide-react";
@@ -14,8 +14,40 @@ import toast, { Toaster } from "react-hot-toast";
 
 const AddProduct = () => {
     const [thumbnail, setThumbnail] = useState(null);
+    const [productImages, setProductImages] = useState([]);
+    const [variations, setVariations] = useState([{ size: "", color: "", stock: "" }]);
 
-    const mainImageRef = useRef(null);
+    const [loading, setLoading] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState();
+
+    const location = useLocation();
+    const baseUrl = import.meta.env.VITE_SERVER_URL;
+
+    // Extract the category ID from the query string
+    const queryParams = new URLSearchParams(location.search);
+    const paramID = queryParams.get('product');
+
+    const getProductById = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`/products/${paramID}`);
+            console.log(res);
+            setSelectedProduct(res.data);
+            setThumbnail(`${baseUrl}/${res.data.mainImage.url.replace(/\\/g, '/')}`);
+            setProductImages(res.data.images)
+            setVariations(res.data.variants);
+        } catch (error) {
+            console.error(error);
+        }
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        if (paramID && paramID.length > 10) {
+            console.log(paramID)
+            getProductById()
+        }
+    }, [paramID]);
 
     const handleThumbnailUpload = (e) => {
         const file = e.currentTarget.files[0];
@@ -24,11 +56,11 @@ const AddProduct = () => {
         }
     };
 
-    const initialValues = {
+    const initialValues = selectedProduct || {
         name: "",
         description: "",
-        price: 0,
-        discount: 0,
+        price: null,
+        discount: null,
         category: "",
         badge: "",
         isFeatured: true,
@@ -41,6 +73,8 @@ const AddProduct = () => {
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         const formData = new FormData();
+        // Check for products status
+        values.isActive = values.isActive === 'true' ? true : false
 
         // Append form values
         Object.keys(values).forEach((key) => {
@@ -64,24 +98,43 @@ const AddProduct = () => {
             }
         });
 
-        values.isActive = values.isActive === 'true' ? true : false
-
-        try {
-            const response = await axios.post("/products", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
-            console.log("Product uploaded:", response);
-            toast.success('تهانينا!, تم إضافة المنتج بنجاح');
-            console.log(values)
-        } catch (error) {
-            console.error("Error uploading product:", error.response?.data || error.message);
+        if (selectedProduct) {
+            console.log('in edit mooooooooooood');
+            console.log(values);
+            try {
+                const response = await axios.put(`/products/${paramID}`, formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                console.log("Product edited:", response);
+                toast.success('تهانينا!, تم تعديل المنتج بنجاح');
+                // resetForm();
+                // setThumbnail('');
+                // setProductImages([])
+            } catch (error) {
+                console.error("Error editing product:", error.response?.data || error.message);
+            }
+        } else {
+            try {
+                const response = await axios.post("/products", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                });
+                console.log("Product uploaded:", response);
+                toast.success('تهانينا!, تم إضافة المنتج بنجاح');
+                console.log(values)
+                resetForm();
+                setThumbnail('');
+                setProductImages([])
+            } catch (error) {
+                console.error("Error uploading product:", error.response?.data || error.message);
+            }
         }
 
         setSubmitting(false);
-        resetForm();
-        setThumbnail('');
     };
 
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <div>
@@ -106,13 +159,13 @@ const AddProduct = () => {
                                 <ProductDetails values={values} setFieldValue={setFieldValue} />
 
                                 {/* product images */}
-                                <ProductImages setFieldValue={setFieldValue} isSubmitting={isSubmitting} />
+                                <ProductImages setFieldValue={setFieldValue} isSubmitting={isSubmitting} productImages={productImages} setProductImages={setProductImages} />
 
                                 {/* Pricing the product */}
                                 <ProductPrice values={values} setFieldValue={setFieldValue} />
 
                                 {/* Variations */}
-                                <ProductVariations setFieldValue={setFieldValue} isSubmitting={isSubmitting} />
+                                <ProductVariations setFieldValue={setFieldValue} isSubmitting={isSubmitting} variations={variations} setVariations={setVariations} />
                             </div>
 
                             <div className="w-full md:w-1/3">
@@ -123,7 +176,6 @@ const AddProduct = () => {
                                         className="relative flex items-center justify-center w-full h-32 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer bg-purple-100"
                                     >
                                         <input
-                                            ref={mainImageRef}
                                             type="file"
                                             accept="image/*"
                                             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
@@ -179,7 +231,9 @@ const AddProduct = () => {
                             disabled={isSubmitting}
                             className="block min-w-40 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-full hover:be-indigo-600"
                         >
-                            {isSubmitting ? "يتم إضافة المنتج..." : "إضافة المنتج"}
+                            {selectedProduct ? 
+                            (isSubmitting ? "يتم تعديل المنتج..." : "تعديل المنتج") : 
+                            (isSubmitting ? "يتم إضافة المنتج..." : "إضافة المنتج")}
                         </button>
                     </Form>
                 )}

@@ -11,7 +11,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <div className="flex fixed top-0 right-0 z-40">
-      <div className={`bg-white text-gray-800 h-screen transition-all duration-1000 overflow-hidden flex flex-col justify-between items-center ${isOpen ? "w-[200px] shadow-md lg:shadow-none" : "w-[50px]"
+      <div className={`bg-white text-gray-800 h-screen transition-all duration-1000 overflow-hidden flex flex-col justify-between items-center ${isOpen ? "w-full lg:w-[200px] shadow-md lg:shadow-none" : "w-0 lg:w-[50px]"
         }`}
       >
         <div className="w-full">

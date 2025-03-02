@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AdminContext";
+import { useAuth } from "../../../context/AuthContext";
 import { useLocation } from "react-router-dom";
 import { GiClothes } from "react-icons/gi";
 import { MdOutlineAddBusiness } from "react-icons/md";
 import { IoStorefront } from "react-icons/io5";
 import { Menu, House, ChevronsRight, ChevronsLeft, Settings, PackagePlus, PackageOpen, LogOut, ScanBarcode } from "lucide-react";
+import modyStoreLogo from '../../../assets/mody-store-logo.png'
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
@@ -40,7 +41,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <button onClick={toggleSidebar} className="w-full">
             <div className={`flex items-center text-indigo-600 justify-between gap-4 px-6 py-6 hover:bg-gray-100 ${isOpen ? '' : 'justify-center'}`}>
               {isOpen && (<div>
-                <img src="images/mody-store-logo.png" className="w-12 h-12" />
+                <img src={modyStoreLogo} className="w-12 h-12" />
               </div>)}
               <div className="hidden lg:block text-xl">{isOpen ? <ChevronsRight /> : <ChevronsLeft />}</div>
               <div className="lg:hidden text-xl"><Menu /></div>

@@ -3,7 +3,6 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { A_SenderForm, A_ReceiverFrom, A_ProductForm } from "../components";
 import { newOrderSchema } from "../../../schemas";
 import axios from '../../../api/axios';
-import "../styles/new-order.scss";
 import { useOrders } from "../../../context/OrdersContext";
 import JNTAddresses from "../../../shared/components/JNTAddresses";
 import toast, { Toaster } from "react-hot-toast";

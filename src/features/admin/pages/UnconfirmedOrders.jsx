@@ -4,18 +4,23 @@ import { House } from "lucide-react";
 import { Toaster } from 'react-hot-toast';
 import { useOrders } from "../../../context/OrdersContext";
 import OrdersTable from "../components/OrdersTable";
+import {Search} from 'lucide-react'
 
 const UnconfirmedOrders = () => {
     const { handleDeleteOrder } = useOrders();
+    const [searchInput, setSearchInput] = useState('');
 
     return (
         <div>
-            {/* Component Header */}
-            <div className='custom-bg-white flex items-center justify-between'>
-                <h2 className='text-lg'>طلبات الموقع - <span className="text-sm text-gray-500">تحتاج إلى تأكيد</span></h2>
-                <Link to='/admin/products' className='text-2xl bg-white rounded-xl transition-all duration-300 hover:bg-indigo-600 hover:text-white p-2'>
-                    <House />
-                </Link>
+            {/* Search Feature */}
+            <div className="custom-bg-white flex flex-col md:flex-row items-center gap-4">
+                <div className='flex items-center gap-2 grow'>
+                    <label htmlFor="product-search" className=''>بحث</label>
+                    <div className="relative w-full">
+                        <input type="text" name="product-search" id="product-search" className="custom-input-field w-full" placeholder="بحث عن منتج..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
+                        <Search className="w-20 h-[calc(100%-2px)] my-[1px] ml-[1px] text-2xl p-2 rounded-l-lg bg-gray-100 text-gray-400 absolute top-0 left-0 border border-gray-200" />
+                    </div>
+                </div>
             </div>
 
             <OrdersTable apiUrl='/visitors/orders/' handleDelete={handleDeleteOrder} />

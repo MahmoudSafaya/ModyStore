@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { AiFillDelete } from "react-icons/ai";
 import { ErrorMessage } from 'formik';
 
-const ProductImages = ({ setFieldValue, isSubmitting }) => {
-    const [productImages, setProductImages] = useState([]);
+const ProductImages = ({ setFieldValue, productImages, setProductImages }) => {
+
+    const baseUrl = import.meta.env.VITE_SERVER_URL;
 
     // Code for uploading multiple images for the product
     const handleProductImages = (event) => {
@@ -37,11 +38,11 @@ const ProductImages = ({ setFieldValue, isSubmitting }) => {
     };
 
 
-    useEffect(() => {
-        if(isSubmitting) {
-            setProductImages([])
-        }
-    }, [isSubmitting]);
+    // useEffect(() => {
+    //     if(isSubmitting) {
+    //         setProductImages([])
+    //     }
+    // }, [isSubmitting]);
 
     return (
         <div className="custom-bg-white mt-8">
@@ -61,12 +62,12 @@ const ProductImages = ({ setFieldValue, isSubmitting }) => {
             </label>
             <ErrorMessage name="images" component="div" className="text-red-500" />
 
-            {productImages.length > 0 && (
+            {productImages?.length > 0 && (
                 <div className="mt-4 p-4 bg-purple-100 rounded-lg flex gap-4 overflow-x-auto">
                     {productImages.map((file, index) => (
                         <div key={index} className="group relative w-20 h-20 rounded-lg overflow-hidden">
                             <img
-                                src={file.preview}
+                                src={file.url ? `${baseUrl}/${file.url.replace(/\\/g, '/')}` : file.preview}
                                 alt="Preview"
                                 className="w-full h-full object-cover"
                             />

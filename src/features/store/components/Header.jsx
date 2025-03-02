@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Menu, Heart, ShoppingCart } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
@@ -6,23 +6,71 @@ import { useStore } from "../../../context/StoreContext";
 import { useCart } from "../../../context/CartContext";
 
 const EcommerceHeader = ({ toggleSidebar }) => {
-  const { storeMainNav } = useStore();
+  const { storeMainNav, products, getCategoryById } = useStore();
   const { toggleCart, totalPrice } = useCart();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const location = useLocation();
+  const baseUrl = import.meta.env.VITE_SERVER_URL;
+
+  const handleSearch = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+
+    if (term.length > 0) {
+      const results = products.filter(product =>
+        product.name.toLowerCase().includes(term.toLowerCase())
+      );
+      setSearchResults(results);
+      setIsDropdownOpen(true);
+    } else {
+      setSearchResults([]);
+      setIsDropdownOpen(false);
+    }
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setIsDropdownOpen(false);
+    }, 200);
+  };
 
   return (
     <header className="w-full lg:w-[calc(100%-50px)] lg:mr-[50px] flex flex-col">
       <div className="w-full py-4 px-4 md:px-12 flex justify-between items-center gap-2 lg:gap-10">
         <div className="logo">
           <Link to="/" className="logo-link">
-          <img src="images/mody-store-logo.png" className="w-12 h-12" />
+            <img src="images/mody-store-logo.png" className="w-12 h-12" />
           </Link>
         </div>
 
         <div className="flex-grow">
           <div className="relative">
-            <input type="text" name="discount-price" id="discount-price" className="w-full p-2 border border-gray-300 rounded-full focus:border-indigo-300 outline-none" placeholder="ابحث عن منتج..." />
+            <input type="text" name="discount-price" id="discount-price" className="w-full p-2 border border-gray-300 rounded-full focus:border-indigo-300 outline-none" placeholder="ابحث عن منتج..." value={searchTerm} onChange={handleSearch} onBlur={handleBlur} />
             <Search className="w-8 h-8 p-2 rounded-full bg-indigo-500 text-white absolute top-[50%] -translate-y-[50%] left-1 border border-indigo-200" />
+
+            {isDropdownOpen && searchResults.length > 0 && (
+              <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+                {searchResults.map(product => (
+                  <Link
+                    key={product._id}
+                    to={`/products/${product._id}`}
+                    className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    <div className="w-16">
+                      <img src={`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`} alt={product.mainImage.alt} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="font-medium">{product.name}</div>
+                      <div className="text-sm text-gray-500">{getCategoryById(product.category)}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
           </div>
         </div>
 

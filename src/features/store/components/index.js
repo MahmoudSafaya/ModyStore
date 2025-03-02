@@ -5,3 +5,4 @@ export { default as S_HeroSlider } from './HeroSlider';
 export { default as S_Cart } from './Cart';
 export { default as S_CartItems } from './CartItems';
 export { default as S_Categories } from './Categories';
+export { default as S_ProductFilter } from './ProductFilter';

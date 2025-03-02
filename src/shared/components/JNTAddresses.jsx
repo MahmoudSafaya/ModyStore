@@ -39,12 +39,12 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
       setTimeout(() => {
         setThirdSelection(values.receiver.area);
       }, 400);
-    } 
-    
+    }
+
   }, []);
 
   useEffect(() => {
-    if(isSubmitting) {
+    if (isSubmitting) {
       setFirstSelection('');
     }
   }, [isSubmitting])
@@ -58,6 +58,8 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
       setSecondOptions([]);
       setSecondSelection("");
     }
+    setSecondSelection('');
+    setThirdSelection('');
   }, [firstSelection]);
 
   useEffect(() => {
@@ -69,16 +71,16 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
       setThirdOptions([]);
       setThirdSelection("");
     }
-  }, [secondSelection]);
-
-  useEffect(() => {
-    setSecondSelection('');
-    setThirdSelection('');
-  }, [firstSelection]);
-
-  useEffect(() => {
     setThirdSelection('');
   }, [secondSelection]);
+
+  const handleInputBlue = (val, setVal, options) => {
+    if (options.some(item => item === val)) {
+        return false
+    } else {
+        setVal('');
+    }
+}
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -136,6 +138,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           onFocus={() => setShowFirstOptions(true)}
           onBlur={(e) => {
             handleBlur(e);
+            handleInputBlue(firstSelection, setFirstSelection, firstOptions);
             setTimeout(() => setShowFirstOptions(false), 200);
           }}
         />
@@ -181,7 +184,8 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           onFocus={() => setShowSecondOptions(true)}
           onBlur={(e) => {
             handleBlur(e);
-            setTimeout(() => setShowSecondOptions(false), 200)
+            handleInputBlue(secondSelection, setSecondSelection, secondOptions);
+            setTimeout(() => setShowSecondOptions(false), 200);
           }}
           disabled={!firstSelection}
         />

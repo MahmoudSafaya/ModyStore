@@ -5,10 +5,11 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useEffect } from 'react';
 import { Users } from 'lucide-react'
+import { useAuth } from '../../../context/AuthContext';
 
 const Register = () => {
+    const {isDelete, setIsDelete} = useAuth();
     const [users, setUsers] = useState([]);
-    const [isDelete, setIsDelete] = useState({ display: false, userID: '', username: '' });
     const [selectedUser, setSelectedUser] = useState(null);
     const formRef = useRef(null); // Ref for scrolling
 
@@ -63,7 +64,7 @@ const Register = () => {
         try {
             const res = await axios.delete(`/users/${userID}`);
             console.log(res);
-            setIsDelete({ display: false, userID: '', username: '' });
+            setIsDelete({ display: false, itemID: '', itemName: '' });
             const remainUsers = users.filter(user => user._id !== userID);
             setUsers(remainUsers);
             toast.success('تم حذف المستخدم بنجاح.');
@@ -97,7 +98,7 @@ const Register = () => {
                                     )}</div>
                                     <div className='flex flex-col md:flex-row gap-6'>
                                         <button className="w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-full duration-500 hover:bg-gray-700" onClick={() => handleEditClick(user)}>تعديل</button>
-                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-full duration-500 hover:bg-red-600" onClick={() => setIsDelete({ display: true, userID: user._id, username: user.userName })}>حذف</button>
+                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-full duration-500 hover:bg-red-600" onClick={() => setIsDelete({ display: true, itemID: user._id, itemName: user.userName })}>حذف</button>
                                     </div>
                                 </div>
                             )
@@ -113,8 +114,8 @@ const Register = () => {
                 <div className='custom-bg-white fixed top-[50%] left-[50%] translate-[-50%] z-80 flex flex-col gap-8 shadow-md'>
                     <p className='text-center w-full text-gray-900'>هل انت متأكد من حذف المستخدم: <span className='font-semibold'>{isDelete.username}</span> ؟</p>
                     <div className='flex justify-center gap-4'>
-                        <button type='button' className='w-20 bg-red-500 text-white rounded-full py-2 px-4 duration-500 hover:bg-red-600' onClick={() => handleDeleteUser(isDelete.userID)}>yes</button>
-                        <button type='button' className='w-20 bg-gray-300 text-gray-900 rounded-full py-2 px-4 duration-500 hover:bg-gray-400' onClick={() => setIsDelete({ display: false, userID: '', username: '' })}>No</button>
+                        <button type='button' className='w-20 bg-red-500 text-white rounded-full py-2 px-4 duration-500 hover:bg-red-600' onClick={() => handleDeleteUser(isDelete.itemID)}>yes</button>
+                        <button type='button' className='w-20 bg-gray-300 text-gray-900 rounded-full py-2 px-4 duration-500 hover:bg-gray-400' onClick={() => setIsDelete({ display: false, itemID: '', itemName: '' })}>No</button>
                     </div>
                 </div>
             )}

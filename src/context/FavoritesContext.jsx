@@ -42,7 +42,7 @@ export const FavoritesProvider = ({ children }) => {
 
   // Add item to favorites
   const addToFavorites = (item) => {
-    if (favorites.find(favItem => favItem.id === item.id)) {
+    if (favorites.find(favItem => favItem._id === item._id)) {
         return false;
     }
     const newFAVs = [...favorites, item];
@@ -51,7 +51,7 @@ export const FavoritesProvider = ({ children }) => {
 };
 
   const removeFromFavorites = (itemId) => {
-    const newFAVs = favorites.filter(item => item.id !== itemId);
+    const newFAVs = favorites.filter(item => item._id !== itemId);
     setFavorites(newFAVs);
     saveFavoritesItems(newFAVs);
   };

@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js';
 import React, { createContext, useState, useEffect } from "react";
 import { useContext } from "react";
+import toast from 'react-hot-toast';
 
 // Secret key for hashing (keep this secure)
 const SECRET_KEY = import.meta.env.VITE_CART_SECRET_KEY;
@@ -24,7 +25,7 @@ export const CartProvider = ({ children }) => {
     const [isCartOpen, setIsCartOpen] = useState(false);
 
     const toggleCart = () => {
-      setIsCartOpen(!isCartOpen)
+        setIsCartOpen(!isCartOpen)
     }
 
     // Calculate total price
@@ -58,13 +59,25 @@ export const CartProvider = ({ children }) => {
     const addToCart = (item, quantity) => {
         if (cart.find(cartItem => cartItem._id === item._id)) {
             return false;
+        } else if (item.variants.length <= 1 || item.selectedVariant) {
+            item.quantity = quantity;
+            const newCart = [...cart, item];
+            setCart(newCart);
+            setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
+            saveCartItems(newCart);
+            setIsCartOpen(true);
+        } else if (item.variants.length > 1) {
+            toast(
+                "من فضلك اضغط علي المنتج المراد إضافته, واختر مقاس او لون مناسب لك أولاً.\n\n شكرا لتفهمك 🙏",
+                {
+                    duration: 7000,
+                    style: {
+                        textAlign: 'center',
+                    },
+                }
+            );
+            return false;
         }
-        item.quantity = quantity;
-        const newCart = [...cart, item];
-        setCart(newCart);
-        setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
-        saveCartItems(newCart);
-        setIsCartOpen(true);
     };
 
     // Increase item quantity

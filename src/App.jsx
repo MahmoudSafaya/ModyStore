@@ -3,7 +3,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import { AdminProvider } from "./context/AdminContext";
+import { AuthProvider } from "./context/AuthContext";
 import { StoreProvider } from "./context/StoreContext";
 import './app.scss'
 import StoreRoutes from "./routes/StoreRoutes";
@@ -14,7 +14,7 @@ const App = () => {
   return (
     <Router>
       <StoreProvider>
-        <AdminProvider>
+        <AuthProvider>
           <Routes>
             {/* E-commerce Section */}
             <Route path="/*" element={<StoreRoutes />} />
@@ -22,7 +22,7 @@ const App = () => {
             {/* Admin Section */}
             <Route path="/admin/*" element={<AdminRoutes />} />
           </Routes>
-        </AdminProvider>
+        </AuthProvider>
       </StoreProvider>
     </Router>
   );

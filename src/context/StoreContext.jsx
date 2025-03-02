@@ -5,17 +5,9 @@ import axios from "../api/axios";
 export const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
+  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [filters, setFilters] = useState({
-    category: "",
-    minPrice: 0,
-    maxPrice: 10000,
-    sort: 'ratings',
-    page: 1,
-    limit: 1,
-  });
-  
 
   const storeMainNav = [
     { label: "الرئيسية", link: '/' },
@@ -45,21 +37,18 @@ export const StoreProvider = ({ children }) => {
     }
   }
 
+  const getCategoryById = (cateID) => {
+    return (
+      categories.map(item => item._id === cateID ? item.name : '')
+    )
+  }
+
   useEffect(() => {
     getAllCategories();
   }, []);
 
-  useEffect(() => {
-    const getProducts = async () => {
-      const data = await getAllProducts(filters);
-      setProducts(data);
-    };
-    getProducts();
-  }, [filters]);
-
-
   return (
-    <StoreContext.Provider value={{ storeMainNav, categories, products, setProducts }}>
+    <StoreContext.Provider value={{ loading, setLoading, storeMainNav, categories, products, setProducts, getCategoryById }}>
       {children}
     </StoreContext.Provider>
   );

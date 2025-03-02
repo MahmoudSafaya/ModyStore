@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { A_Header, A_Sidebar } from '../features/admin/components';
-import { useAuth } from '../context/AdminContext';
+import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
     const { auth } = useAuth();

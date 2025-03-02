@@ -1,4 +1,4 @@
-import { useAuth } from '../../../context/AdminContext';
+import { useAuth } from '../../../context/AuthContext';
 import ReactEchart from '../../../shared/components/ReactEchart';
 import { FaDollarSign, FaUndo, FaCalendar, FaBan, FaTree } from "react-icons/fa";
 
