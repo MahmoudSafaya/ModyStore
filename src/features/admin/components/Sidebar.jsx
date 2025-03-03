@@ -9,6 +9,9 @@ import { Menu, House, ChevronsRight, ChevronsLeft, Settings, PackagePlus, Packag
 import modyStoreLogo from '../../../assets/mody-store-logo.png'
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+
+  const { auth } = useAuth();
+
   const location = useLocation();
 
   const { logout } = useAuth();
@@ -24,17 +27,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { icon: <PackagePlus />, label: "تسجيل اوردر", link: '/admin/place-order' },
     { icon: <PackageOpen />, label: "قائمة الطلبات", link: '/admin/orders' },
     { icon: <IoStorefront />, label: "طلبات الموقع", link: '/admin/unconfirmed-orders' },
-    { icon: <Settings />, label: "الإعدادات", link: '/admin/settings' },
   ];
   const storeNav = [
     { icon: <GiClothes />, label: "المنتجات", link: '/admin/products' },
     { icon: <MdOutlineAddBusiness />, label: "اضافة منتج", link: '/admin/add-product' },
     { icon: <ScanBarcode />, label: "سحب / إدخال", link: '/admin/handle-storage' },
+    { icon: <Settings />, label: "الإعدادات", link: '/admin/settings' },
   ];
 
   return (
     <div className="flex fixed top-0 right-0 z-40">
-      <div className={`bg-white text-gray-800 h-screen transition-all duration-500 overflow-hidden flex flex-col justify-between items-center ${isOpen ? "w-[200px] shadow-md lg:shadow-none" : "w-[50px]"
+      <div className={`bg-white text-gray-800 h-screen transition-all duration-500 overflow-hidden flex flex-col justify-between items-center overflow-y-auto ${isOpen ? "w-[200px] shadow-md lg:shadow-none" : "w-[50px]"
         }`}
       >
         <div className="w-full">
@@ -48,7 +51,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </div>
           </button>
 
-          <div className="mt-4 md:mt-8">
+          <div className="">
             {adminNav.map((item, index) => (
               <nav key={index}>
                 <Link to={item.link} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 duration-500 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === item.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
@@ -59,16 +62,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             ))}
           </div>
           <hr className="my-4 w-5/6 mx-auto" />
-          <div>
-            {storeNav.map((item, index) => (
-              <nav key={index}>
-                <Link to={item.link} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === item.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
-                  <div className={`w-[36px] h-[36px] text-xl flex justify-center items-center rounded-lg group-hover:bg-indigo-300 group-hover:shadow-md ${location.pathname === item.link ? 'bg-indigo-600 text-white shadow-md group-hover:bg-indigo-600' : ''}`}>{item.icon}</div>
-                  {isOpen && <span className="text-base">{item.label}</span>}
-                </Link>
-              </nav>
-            ))}
-          </div>
+          {auth?.role === 'admin' && (
+            <div>
+              {storeNav.map((item, index) => (
+                <nav key={index}>
+                  <Link to={item.link} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === item.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
+                    <div className={`w-[36px] h-[36px] text-xl flex justify-center items-center rounded-lg group-hover:bg-indigo-300 group-hover:shadow-md ${location.pathname === item.link ? 'bg-indigo-600 text-white shadow-md group-hover:bg-indigo-600' : ''}`}>{item.icon}</div>
+                    {isOpen && <span className="text-base">{item.label}</span>}
+                  </Link>
+                </nav>
+              ))}
+            </div>
+          )}
 
         </div>
 

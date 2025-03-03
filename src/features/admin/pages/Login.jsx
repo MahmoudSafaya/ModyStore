@@ -15,8 +15,8 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.get('/auth/login', { email: email, password: password });
-      login(response.data);
+      const response = await axios.post('/auth/login', { email: email, password: password });
+      login(response.data.accessToken);
     } catch (err) {
       setError('Invalid email or password');
     } finally {

@@ -11,11 +11,11 @@ const cards = [
 ];
 
 const Home = () => {
-  const { auth } = useAuth();
+  // const { auth } = useAuth();
 
   return (
     <div>
-      <h1>أهلا, {auth?.user.name}</h1>
+      {/* <h1>أهلا, {auth?.role}</h1> */}
       <div>
         <div className="grid lg:grid-cols-5 gap-8 mt-8">
           {cards.map((card, index) => (
