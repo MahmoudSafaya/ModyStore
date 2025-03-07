@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
 
   const addVariation = () => {
-    setVariations([...variations, { size: "", color: "", stock: "" }]);
+    setVariations([...variations, { barCode: "", size: "", color: "", stock: "" }]);
   };
 
   const updateVariation = (index, field, value) => {
@@ -28,7 +28,7 @@ const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
 
   return (
     <div className="custom-bg-white mt-8">
-      <h2 className="custom-header">Add Product Variations</h2>
+      <h2 className="custom-header">متغيرات المنتج</h2>
       {variations && variations.map((variation, variationIndex) => (
         <div key={variationIndex} className="mb-6">
           <div className="flex items-center gap-2 mb-4">
@@ -36,7 +36,7 @@ const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
               <Field name={`variants[${variationIndex}].size`} type="text" value={variation.size} onChange={(e) => {
                 updateVariation(variationIndex, "size", e.target.value);
                 setFieldValue(`variants[${variationIndex}].size`, e.target.value)
-              }} className="custom-input-field" placeholder="Size" />
+              }} className="custom-input-field" placeholder="الحجم" />
               <ErrorMessage name={`variants[${variationIndex}].size`} component="div" className="text-red-500" />
             </div>
 
@@ -44,7 +44,7 @@ const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
               <Field name={`variants[${variationIndex}].color`} type="text" value={variation.color} onChange={(e) => {
                 updateVariation(variationIndex, "color", e.target.value);
                 setFieldValue(`variants[${variationIndex}].color`, e.target.value)
-              }} className="custom-input-field" placeholder="Color" />
+              }} className="custom-input-field" placeholder="اللون" />
               <ErrorMessage name={`variants[${variationIndex}].color`} component="div" className="text-red-500" />
             </div>
 
@@ -52,7 +52,7 @@ const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
               <Field name={`variants[${variationIndex}].stock`} type="number" value={variation.stock} onChange={(e) => {
                 updateVariation(variationIndex, "stock", e.target.value);
                 setFieldValue(`variants[${variationIndex}].stock`, e.target.value)
-              }} className="custom-input-field" placeholder="Stock" />
+              }} className="custom-input-field" placeholder="الكمية" />
               <ErrorMessage name={`variants[${variationIndex}].stock`} component="div" className="text-red-500" />
             </div>
 
@@ -71,7 +71,7 @@ const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
         onClick={addVariation}
         className="block mt-8 w-full py-3 px-5 text-center bg-indigo-200 text-indigo-600 duration-500 rounded-xl hover:bg-indigo-500 hover:text-white"
       >
-        Add Variation
+        إضافة متغير جديد
       </button>
     </div>
   );

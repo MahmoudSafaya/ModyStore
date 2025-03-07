@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { AiFillDelete } from "react-icons/ai";
 import { ErrorMessage } from 'formik';
 
-const ProductImages = ({ setFieldValue, productImages, setProductImages }) => {
+const ProductImages = ({ setFieldValue, productImages, setProductImages, removedImages, setRemovedImages, updatedImages, setUpdatedImages }) => {
 
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -10,17 +10,12 @@ const ProductImages = ({ setFieldValue, productImages, setProductImages }) => {
     const handleProductImages = (event) => {
         const files = Array.from(event.currentTarget.files);
 
-        // Validate files (size, type) before adding them
-        // const validFiles = files.filter((file) =>
-        //   ["image/jpeg", "image/png", "image/webp"].includes(file.type) && file.size <= 2 * 1024 * 1024
-        // );
-
         // Convert files to objects with previews
         const previewFiles = files.map((file) => ({
             file,
             preview: URL.createObjectURL(file),
         }));
-
+        setUpdatedImages(files);
         // Update Formik field and state
         setProductImages((prevImages) => [...prevImages, ...previewFiles]);
         setFieldValue("images", [...productImages.map((img) => img.file), ...files]); // Update Formik
@@ -35,14 +30,14 @@ const ProductImages = ({ setFieldValue, productImages, setProductImages }) => {
             setFieldValue("images", updatedFiles.map((img) => img.file)); // Update Formik
             return updatedFiles;
         });
+
+        // Get removed image URL (assuming productImages[index] contains URL)
+        const removedItem = productImages[index];
+      
+        if (removedItem?.url) {
+          setRemovedImages((prev) => [...prev, removedItem.url]); // Store only the URL
+        }
     };
-
-
-    // useEffect(() => {
-    //     if(isSubmitting) {
-    //         setProductImages([])
-    //     }
-    // }, [isSubmitting]);
 
     return (
         <div className="custom-bg-white mt-8">
@@ -55,7 +50,6 @@ const ProductImages = ({ setFieldValue, productImages, setProductImages }) => {
                     className="hidden"
                     onChange={(e) => {
                         handleProductImages(e);
-                        // setFieldValue("images", e.currentTarget.files);
                     }}
                 />
                 <span className="text-gray-600">اضغط لتحميل صور للمنتج</span>

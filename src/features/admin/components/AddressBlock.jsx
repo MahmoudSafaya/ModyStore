@@ -21,11 +21,11 @@ const AddressBlock = () => {
     useEffect(() => {
         if (!unBlocking) {
             axios.post("/addresses/seprated")
-                .then(response => setFirstOptions(response.data.data))
+                .then(response => setFirstOptions(response.data.data.result))
                 .catch(error => console.error("Error fetching first options:", error));
         } else {
             axios.post("/addresses/seprated", { "enabled": "0" })
-                .then(response => setFirstOptions(response.data.data))
+                .then(response => setFirstOptions(response.data.data.result))
                 .catch(error => console.error("Error fetching first options:", error));
         }
     }, [unBlocking]);
@@ -40,11 +40,11 @@ const AddressBlock = () => {
         if (firstSelection) {
             if (!unBlocking) {
                 axios.post("/addresses/seprated", { Province: firstSelection })
-                    .then(response => setSecondOptions(response.data.data))
+                    .then(response => setSecondOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching second options:", error));
             } else {
                 axios.post("/addresses/seprated", { Province: firstSelection, "enabled": "0" })
-                    .then(response => setSecondOptions(response.data.data))
+                    .then(response => setSecondOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching second options:", error));
             }
         } else {
@@ -59,11 +59,11 @@ const AddressBlock = () => {
         if (secondSelection) {
             if (!unBlocking) {
                 axios.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
-                    .then(response => setThirdOptions(response.data.data))
+                    .then(response => setThirdOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching third options:", error));
             } else {
                 axios.post("/addresses/seprated", { Province: firstSelection, City: secondSelection, "enabled": "0" })
-                    .then(response => setThirdOptions(response.data.data))
+                    .then(response => setThirdOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching third options:", error));
             }
         } else {
@@ -149,7 +149,7 @@ const AddressBlock = () => {
                                 <Field
                                     type="text"
                                     name="Province"
-                                    placeholder="Enter prov"
+                                    placeholder="اسم المحافطة"
                                     className="custom-input-field"
                                     value={firstSelection}
                                     onChange={(e) => {
@@ -195,7 +195,7 @@ const AddressBlock = () => {
                                 <Field
                                     type="text"
                                     name="City"
-                                    placeholder="Enter city"
+                                    placeholder="اسم المدينة"
                                     className="custom-input-field"
                                     value={secondSelection}
                                     onChange={(e) => {
@@ -232,7 +232,7 @@ const AddressBlock = () => {
                                 <Field
                                     type="text"
                                     name="Area"
-                                    placeholder="Enter area"
+                                    placeholder="اسم المنطقة"
                                     className="custom-input-field"
                                     value={thirdSelection}
                                     onChange={(e) => {

@@ -8,6 +8,8 @@ export const visitorOrderSchema = Yup.object({
         mobile: Yup.string()
             .matches(/^\d{10,15}$/, "رقم هاتف غير صالح")
             .required("هذا الحقل مطلوب"),
+        alternateReceiverPhoneNo: Yup.string()
+            .matches(/^\d{10,15}$/, "رقم هاتف غير صالح"),
         prov: Yup.string().required("هذا الحقل مطلوب"),
         city: Yup.string().required("هذا الحقل مطلوب"),
         area: Yup.string().required("هذا الحقل مطلوب"),

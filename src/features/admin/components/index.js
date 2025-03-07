@@ -13,3 +13,4 @@ export { default as A_SenderForm } from './SenderForm';
 export { default as A_OrderEdit } from './OrderEdit';
 export { default as A_AddressBlock } from './AddressBlock';
 export { default as A_AddCategory } from './AddCategory';
+export { default as A_SearchFeature } from './SearchFeature';

@@ -4,15 +4,16 @@ import { A_Home, A_Settings, A_Login, A_NewOrder, A_Orders, A_AddProduct, A_Prod
 import { A_RequireAuth } from "../features/admin/components";
 import Unauthorized from "../shared/pages/Unauthorized";
 import AdminLayout from "../layouts/AdminLayout";
-import { useAuth } from "../context/AuthContext";
 import Loading from "../shared/components/Loading";
 import NotFound from "../shared/pages/NotFound";
 import { OrdersProvider } from "../context/OrdersContext";
+import { useAuth } from "../context/AuthContext";
 
 const AdminRoutes = () => {
     const { auth, loading } = useAuth();
+    
     if (loading) {
-        return <Loading />;
+        return <Loading loading={loading} />;
     }
     return (
         <OrdersProvider>
@@ -24,7 +25,7 @@ const AdminRoutes = () => {
                         <Route path="/place-order" element={<A_NewOrder />} />
                         <Route path="/orders" element={<A_Orders />} />
                         <Route path="/unconfirmed-orders" element={<A_UnconfirmedOrders />} />
-                        <Route path="/track-order/:id" element={<A_TrackOrder />} />
+                        <Route path="/track-order" element={<A_TrackOrder />} />
                         <Route path="/unauthorized" element={<Unauthorized />} />
                     </Route>
                     <Route element={<A_RequireAuth allowedRoles={["admin"]} />}>

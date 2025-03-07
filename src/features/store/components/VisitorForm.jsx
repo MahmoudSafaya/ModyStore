@@ -5,9 +5,11 @@ import axios from "../../../api/axios";
 import { useCart } from "../../../context/CartContext";
 import toast, { Toaster } from 'react-hot-toast';
 import JNTAddresses from "../../../shared/components/JNTAddresses";
+import { useApp } from "../../../context/AppContext";
 
 const OrderForm = () => {
     const { cart, setCart, totalPrice, setTotalPrice } = useCart();
+    const { shippingPrice } = useApp();
 
     const emptyCart = () => {
         localStorage.removeItem('mody_store_cart');
@@ -20,6 +22,7 @@ const OrderForm = () => {
         receiver: {
             name: "",
             mobile: "",
+            alternateReceiverPhoneNo: "",
             prov: "",
             city: "",
             area: "",
@@ -30,12 +33,13 @@ const OrderForm = () => {
 
     // Handle Form Submission
     const submitViritorOrder = async (values, { setSubmitting, resetForm }) => {
+
         // Create the orderData object with updated receiver values
         const visitorOrderData = {
             length: 30,
             weight: 5.02,
-            itemsValue: totalPrice,
-            remark: values.receiver.additionalInfo,
+            itemsValue: totalPrice + shippingPrice,
+            remark: `${cart.map(item => item.selectedVariant)} -/- ${values.receiver.additionalInfo}`,
             billCode: "", ////////////////////
             goodsType: "ITN1",
             totalQuantity: "1",
@@ -54,7 +58,7 @@ const OrderForm = () => {
                 phone: "034351203",
                 countryCode: "EGY",
                 name: values.receiver.name,
-                alternateReceiverPhoneNo: "12-31321322",
+                alternateReceiverPhoneNo: values.receiver.alternateReceiverPhoneNo,
                 company: "JT",
                 postCode: "54830",
                 prov: values.receiver.prov,
@@ -70,7 +74,7 @@ const OrderForm = () => {
                     itemType: "ITN16",
                     itemName: "file type",
                     priceCurrency: "DHS",
-                    itemValue: item.price,
+                    itemValue: item.actualPrice + shippingPrice,
                     chineseName: "test_order",
                     itemUrl: "http://www.baidu.com",
                     desc: item.description

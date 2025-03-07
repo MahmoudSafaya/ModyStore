@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Trash, ChevronRight, ChevronLeft } from "lucide-react";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaRegEdit } from "react-icons/fa";
 import { IoStorefrontOutline } from "react-icons/io5";
-import { FaRegEdit } from "react-icons/fa";
 import { A_OrderEdit, A_OrderInfo } from "./";
 import { useOrders } from "../../../context/OrdersContext";
 import { Toaster } from 'react-hot-toast';
-import axios from "../../../api/axios";
+import { A_SearchFeature } from "./";
 
-const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
+const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders }) => {
     const { orderPopup, setOrderPopup } = useOrders();
     const [checkedAll, setCheckedAll] = useState(false);
     const [checkedOrders, setCheckedOrders] = useState([]);
-
-    const [orders, setOrders] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
 
     const handleCheckOrder = (orderID) => {
         if (checkedOrders.some(item => item._id === orderID)) {
@@ -29,28 +24,12 @@ const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
     }
     const handleSelectAll = () => {
         setCheckedAll(!checkedAll);
-        if(!checkedAll) {
+        if (!checkedAll) {
             setCheckedOrders(orders);
         } else {
             setCheckedOrders([]);
         }
     }
-
-    const fetchOrders = async (page) => {
-        try {
-            const response = await axios.get(`${apiUrl}?page=${page}`);
-            const data = response.data;
-            setOrders(data.orders);
-            setCurrentPage(data.currentPage);
-            setTotalPages(data.totalPages);
-        } catch (error) {
-            console.error("Error fetching orders:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchOrders(currentPage);
-    }, [currentPage]);
 
     // Handle page change
     const handlePageChange = (page) => {
@@ -61,10 +40,15 @@ const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
 
     return (
         <div>
+            <div className="custom-bg-white">
+                {/* Search Features */}
+                <A_SearchFeature inConfirmed={inConfirmed} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} checkedOrders={checkedOrders} />
+            </div>
+
             {/* Table */}
             <div className="custom-bg-white mt-8">
                 <div className="overflow-x-auto">
-                    {orders.length > 0 ? (
+                    {orders?.length > 0 ? (
                         <table className="w-full bg-white">
                             <thead className="text-gray-700 border-b border-gray-300 font-bold text-center whitespace-nowrap">
                                 <tr>
@@ -125,7 +109,7 @@ const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
                                             </label>
                                         </td>
                                         <td className="p-2 text-indigo-400 cursor-pointer duration-500 hover:text-indigo-600" onClick={() => setOrderPopup({ display: true, editing: false, info: order })}>
-                                            {order.txlogisticId}
+                                            {inConfirmed ? order.billCode : order.txlogisticId}
                                         </td>
                                         <td className="p-2 text-gray-600">
                                             {order.receiver.name}
@@ -161,8 +145,10 @@ const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
                             <div>
                                 <IoStorefrontOutline className="w-20 h-20 opacity-25" />
                             </div>
-                            <p className="text-2xl font-medium">لا يوجد منتجات في الوقت الحالي</p>
-                            <Link to='/admin/orders' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">الطلبات المسجلة</Link>
+                            <p className="text-2xl font-medium">لا يوجد طلبات في الوقت الحالي</p>
+                            {!inConfirmed && (
+                                <Link to='/admin/orders' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">الطلبات المسجلة</Link>
+                            )}
                         </div>
                     )}
                 </div>
@@ -178,7 +164,7 @@ const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
                         <ChevronRight />
                     </button>
                     <span className="px-4 py-2 mx-1">
-                        Page {currentPage} of {totalPages}
+                        صفحة {currentPage} من {totalPages}
                     </span>
                     <button
                         onClick={() => handlePageChange(currentPage + 1)}
@@ -188,6 +174,7 @@ const OrdersTable = ({ inConfirmed, apiUrl, handleDelete }) => {
                         <ChevronLeft />
                     </button>
                 </div>
+
 
 
                 {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} handleDelete={handleDelete} />}

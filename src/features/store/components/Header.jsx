@@ -4,10 +4,12 @@ import { Search, Menu, Heart, ShoppingCart } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { useStore } from "../../../context/StoreContext";
 import { useCart } from "../../../context/CartContext";
+import { useApp } from "../../../context/AppContext";
 
 const EcommerceHeader = ({ toggleSidebar }) => {
-  const { storeMainNav, products, getCategoryById } = useStore();
+  const { storeMainNav, products } = useStore();
   const { toggleCart, totalPrice } = useCart();
+  const { getCategoryById } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -53,21 +55,24 @@ const EcommerceHeader = ({ toggleSidebar }) => {
 
             {isDropdownOpen && searchResults.length > 0 && (
               <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
-                {searchResults.map(product => (
-                  <Link
-                    key={product._id}
-                    to={`/products/${product._id}`}
-                    className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  >
-                    <div className="w-16">
-                      <img src={`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`} alt={product.mainImage.alt} />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <div className="font-medium">{product.name}</div>
-                      <div className="text-sm text-gray-500">{getCategoryById(product.category)}</div>
-                    </div>
-                  </Link>
-                ))}
+                {searchResults.map((product, index) => {
+                  if(index > 9) return;
+                  return (
+                    <Link
+                      key={product._id}
+                      to={`/products/${product._id}`}
+                      className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      <div className="w-16">
+                        <img src={`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`} alt={product.mainImage.alt} />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="font-medium">{product.name}</div>
+                        <div className="text-sm text-gray-500">{getCategoryById(product.category)}</div>
+                      </div>
+                    </Link>
+                  )
+                })}
               </div>
             )}
 

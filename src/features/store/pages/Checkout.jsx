@@ -1,20 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useCart } from '../../../context/CartContext'
 import { S_CartItems } from '../components';
 import VisitorForm from '../components/VisitorForm';
-import { useStore } from '../../../context/StoreContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { MdOutlineRemoveShoppingCart } from "react-icons/md";
+import { useApp } from '../../../context/AppContext';
 
 const Checkout = () => {
     const { cart, totalPrice } = useCart();
-
-    const navigate = useNavigate();
-
-
-    // if(cart.length === 0) {
-    //     navigate('/products')
-    // }
+    const { shippingPrice } = useApp();
 
     return (
         <div>
@@ -36,11 +30,13 @@ const Checkout = () => {
                                     </div>
                                     <div className='flex items-center justify-between border-b border-gray-300 py-3'>
                                         <h4>مصاريف الشحن</h4>
-                                        <p className='text-indigo-400'>50 <span className='text-sm'>EGP</span></p>
+                                        <p className='text-indigo-400'>{shippingPrice} <span className='text-sm'>EGP</span></p>
                                     </div>
                                     <div className='flex items-center justify-between py-3'>
                                         <h4 className='font-bold'>الإجمالي</h4>
-                                        <p className='text-indigo-500 font-bold'>{totalPrice + 50} <span className='text-sm'>EGP</span></p>
+                                        <p className='text-indigo-500 font-bold'>
+                                            {totalPrice + shippingPrice} <span className='text-sm'>EGP</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>

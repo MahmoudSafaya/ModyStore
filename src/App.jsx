@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { StoreProvider } from "./context/StoreContext";
-import './app.scss'
+import { AppProvider } from "./context/AppContext";
 import StoreRoutes from "./routes/StoreRoutes";
 import AdminRoutes from "./routes/AdminRoutes";
 
@@ -13,18 +13,24 @@ const App = () => {
 
   return (
     <Router>
-      <StoreProvider>
-        <AuthProvider>
-          <Routes>
-            {/* E-commerce Section */}
-            <Route path="/*" element={<StoreRoutes />} />
+      <AppProvider>
+        <Routes>
+          {/* E-commerce Section */}
+          <Route path="/*" element={
+            <StoreProvider>
+              <StoreRoutes />
+            </StoreProvider>
+          } />
 
-            {/* Admin Section */}
-            <Route path="/admin/*" element={<AdminRoutes />} />
-          </Routes>
-        </AuthProvider>
-      </StoreProvider>
-    </Router>
+          {/* Admin Section */}
+          <Route path="/admin/*" element={
+            <AuthProvider>
+              <AdminRoutes />
+            </AuthProvider>
+          } />
+        </Routes>
+      </AppProvider>
+    </Router >
   );
 };
 

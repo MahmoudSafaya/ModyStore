@@ -1,10 +1,6 @@
 import BeatLoader from "react-spinners/BeatLoader";
-import { useAuth } from "../../context/AuthContext";
 
-
-const Loading = () => {
-    const { loading } = useAuth();
-
+const Loading = ({ loading }) => {
     return (
         <div className="w-screen h-screen fixed top-0 left-0 z-200 bg-white flex items-center justify-center">
             <BeatLoader

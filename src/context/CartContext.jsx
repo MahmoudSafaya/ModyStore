@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
-import React, { createContext, useState, useEffect } from "react";
-import { useContext } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 // Secret key for hashing (keep this secure)
@@ -24,13 +24,17 @@ export const CartProvider = ({ children }) => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [isCartOpen, setIsCartOpen] = useState(false);
 
+    const navigate = useNavigate();
+
     const toggleCart = () => {
         setIsCartOpen(!isCartOpen)
     }
 
     // Calculate total price
     const calculateTotalPrice = (cartItems) => {
-        return cartItems.reduce((total, item) => total + (item.discount > 0 ? (item.price - (item.price * (item.discount / 100))) * item.quantity : item.price), 0);
+        return cartItems.reduce((total, item) => total + (item.discount > 0
+            ? (item.actualPrice * item.quantity)
+            : (item.price * item.quantity)), 0);
     };
 
     // Function to save cart to local storage
@@ -56,19 +60,17 @@ export const CartProvider = ({ children }) => {
     };
 
     // Add item to cart
-    const addToCart = (item, quantity) => {
+    const addToCart = (item, quantity, selectedVariant) => {
         if (cart.find(cartItem => cartItem._id === item._id)) {
-            return false;
-        } else if (item.variants.length <= 1 || item.selectedVariant) {
-            item.quantity = quantity;
-            const newCart = [...cart, item];
-            setCart(newCart);
-            setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
-            saveCartItems(newCart);
             setIsCartOpen(true);
-        } else if (item.variants.length > 1) {
+            return false;
+
+        } else if (item.variants.length > 1 && !selectedVariant) {
             toast(
-                "من فضلك اضغط علي المنتج المراد إضافته, واختر مقاس او لون مناسب لك أولاً.\n\n شكرا لتفهمك 🙏",
+                `من فضلك, اختر مقاس أو لون مناسب لك أولاً. 
+                \n
+                شكرا لتفهمك 🙏
+                `,
                 {
                     duration: 7000,
                     style: {
@@ -76,8 +78,29 @@ export const CartProvider = ({ children }) => {
                     },
                 }
             );
+            navigate(`/products/${item._id}`);
             return false;
         }
+
+        item.quantity = quantity;
+
+        // Add selected variant only if it exists
+        if (selectedVariant) {
+            if (selectedVariant.size && selectedVariant.color) {
+                item.selectedVariant = `المقاس: ${selectedVariant.size} - اللون: ${selectedVariant.color}`;
+            } else if (selectedVariant.size) {
+                item.selectedVariant = `المقاس: ${selectedVariant.size}`;
+            } else if (selectedVariant.color) {
+                item.selectedVariant = `اللون: ${selectedVariant.color}`;
+            }
+        }
+
+        const newCart = [...cart, item];
+        setCart(newCart);
+        setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
+        saveCartItems(newCart);
+        setIsCartOpen(true);
+        console.log(item.selectedVariant);
     };
 
     // Increase item quantity

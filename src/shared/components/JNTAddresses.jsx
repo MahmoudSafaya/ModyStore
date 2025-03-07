@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { Field, ErrorMessage } from "formik";
+import { useApp } from "../../context/AppContext";
 
 const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur }) => {
 
@@ -16,9 +17,11 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
   const [showSecondOptions, setShowSecondOptions] = useState(false);
   const [showThirdOptions, setShowThirdOptions] = useState(false);
 
+  const { setShippingPrice } = useApp();
+
   useEffect(() => {
     axios.post("/addresses/seprated")
-      .then(response => setFirstOptions(response.data.data))
+      .then(response => setFirstOptions(response.data.data.result))
       .catch(error => console.error("Error fetching first options:", error));
 
     if (parent === 'sender') {
@@ -52,7 +55,10 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
   useEffect(() => {
     if (firstSelection) {
       axios.post("/addresses/seprated", { Province: firstSelection })
-        .then(response => setSecondOptions(response.data.data))
+        .then(response => {
+          setSecondOptions(response.data.data.result);
+          setShippingPrice(Number(response.data.data.price));
+        })
         .catch(error => console.error("Error fetching second options:", error));
     } else {
       setSecondOptions([]);
@@ -65,7 +71,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
   useEffect(() => {
     if (secondSelection) {
       axios.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
-        .then(response => setThirdOptions(response.data.data))
+        .then(response => setThirdOptions(response.data.data.result))
         .catch(error => console.error("Error fetching third options:", error));
     } else {
       setThirdOptions([]);
@@ -76,11 +82,11 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
   const handleInputBlue = (val, setVal, options) => {
     if (options.some(item => item === val)) {
-        return false
+      return false
     } else {
-        setVal('');
+      setVal('');
     }
-}
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

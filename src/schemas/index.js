@@ -2,45 +2,45 @@ import * as Yup from 'yup';
 
 export const newOrderSchema = Yup.object({
   sender: Yup.object({
-    name: Yup.string().required("Enter Sender Name"),
+    name: Yup.string().required("ادخل اسم الراسل"),
     // email: Yup.string().email('Invalid email address').required('Sender Email is required'),
     mobile: Yup.string()
       .matches(/^\d{10,15}$/, "رقم هاتف غير صالح")
       .required("هذا الحقل مطلوب"),
     alternateReceiverPhoneNo: Yup.string()
       .matches(/^\d{10,15}$/, "رقم هاتف غير صالح"),
-    prov: Yup.string().required("Enter Sender prov"),
-    city: Yup.string().required("Enter Sender City"),
-    area: Yup.string().required("Enter Sender Area"),
-    street: Yup.string().required("Enter Sender Street"),
+    prov: Yup.string().required("ادخل اسم المحاقظة"),
+    city: Yup.string().required("ادخل اسم المدينة"),
+    area: Yup.string().required("ادخل اسم المنطقة"),
+    street: Yup.string().required("ادخل عنوان الراسل"),
   }),
   receiver: Yup.object({
-    name: Yup.string().required("Enter Receiver Name"),
+    name: Yup.string().required("ادخل اسم العميل"),
     // email: Yup.string().email('Invalid email address').required('Receiver Email is required'),
     mobile: Yup.string()
       .matches(/^\d{10,15}$/, "رقم هاتف غير صالح")
       .required("هذا الحقل مطلوب"),
     alternateReceiverPhoneNo: Yup.string()
       .matches(/^\d{10,15}$/, "رقم هاتف غير صالح"),
-    prov: Yup.string().required("Enter Receiver prov"),
-    city: Yup.string().required("Enter Receiver City"),
-    area: Yup.string().required("Enter Receiver Area"),
-    street: Yup.string().required("Enter Receiver Street"),
+    prov: Yup.string().required("ادخل اسم المحاقظة"),
+    city: Yup.string().required("ادخل اسم المدينة"),
+    area: Yup.string().required("ادخل اسم المنطقة"),
+    street: Yup.string().required("ادخل عنوان العميل"),
   }),
   items: Yup.array().of(
     Yup.object({
-      englishName: Yup.string().required("Enter Sender Name"),
+      englishName: Yup.string().required("ادخل اسم المنتج"),
       itemType: Yup.string(),
       itemValue: Yup.number()
-        .typeError("Price must be a number")
-        .positive("Price must be positive")
-        .required("Price is required"),
+        .typeError("السعر يجب ان يكون رقم")
+        .positive("ادخل رقم صحيح")
+        .required("هذا الحقل مطلوب"),
     }),
   ),
   itemsValue: Yup.string().required('سعر الأوردر الإجمالى مطلوب'),
   goodsType: Yup.string(),
   remark: Yup.string()
-    .max(500, 'Description must be less than 500 characters')
+    .max(500, 'الوصف يجب ألا يزيد علي 500 حرف')
 });
 
 export const visitorOrder = Yup.object({
@@ -49,7 +49,7 @@ export const visitorOrder = Yup.object({
     mobile: Yup.string()
       .matches(/^\d{11}$/, "ادخل رقم هاتف صحيح")
       .required("املأ هذا الحقل"),
-    phone2: Yup.string().matches(/^\d{11}$/, "Phone number must be 10 digits"),
+    phone2: Yup.string().matches(/^\d{11}$/, "ادخل رقم هاتف صحيح"),
     prov: Yup.string().required("املأ هذا الحقل"),
     city: Yup.string().required("املأ هذا الحقل"),
     area: Yup.string().required("املأ هذا الحقل"),

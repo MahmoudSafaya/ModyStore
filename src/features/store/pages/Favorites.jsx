@@ -3,12 +3,12 @@ import { useFavorites } from "../../../context/FavoritesContext";
 import { Link } from "react-router-dom";
 import { X, HeartOff } from 'lucide-react'
 import { useCart } from "../../../context/CartContext";
-import { useStore } from "../../../context/StoreContext";
+import { useApp } from "../../../context/AppContext";
 
 const Favorites = () => {
   const { favorites, setFavorites, saveFavoritesItems, getFavoritesItems, removeFromFavorites } = useFavorites();
   const { addToCart } = useCart();
-  const { categories } = useStore();
+  const { categories } = useApp();
 
   const baseUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -41,7 +41,7 @@ const Favorites = () => {
       ) : (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {favorites.map((item) => {
-            const { _id, name, category, price, discount, mainImage, badge, rating } = item;
+            const { _id, name, category, price, discount, actualPrice, mainImage, badge, rating } = item;
             const proCategory = categories.map(cate => cate._id === category ? cate.name : '');
             return (
               <div key={_id}>
@@ -84,7 +84,7 @@ const Favorites = () => {
                   </p> */}
                   <div className="flex items-center gap-2">
                     <p className="text-indigo-500 text-lg font-semibold">
-                      {discount > 0 ? price - (price * (discount / 100)) : price}
+                      {discount > 0 ? actualPrice : price}
                     </p>
                     {discount > 0 && (
                       <p className="text-gray-500 line-through text-lg">{price}</p>

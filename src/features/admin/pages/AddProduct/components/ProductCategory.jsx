@@ -1,67 +1,22 @@
 import React, { useState } from 'react'
-import { IoClose } from "react-icons/io5";
 import { Field, ErrorMessage } from "formik";
-import axios from '../../../../../api/axios';
 import { useEffect } from 'react';
+import { useApp } from '../../../../../context/AppContext';
 
 const categoriesList = ["Computer", "Watches", "Headphones", "Beauty", "Fashion", "Accessories"];
 
 const ProductCategory = () => {
     // Code for Category Section
-    const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState(["Watches"]);
-    const [inputValue, setInputValue] = useState("");
-    const [filteredCategories, setFilteredCategories] = useState(categories);
-    const [isFocused, setIsFocused] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [newCategory, setNewCategory] = useState('');
 
-    // Code for Category Section
-    const removeCategory = (category) => {
-        setSelectedCategories(selectedCategories.filter((cat) => cat !== category));
-    };
-
-    const handleInputChange = (e) => {
-        setInputValue(e.target.value);
-        setFilteredCategories(
-            categoriesList.filter((cat) =>
-                cat.toLowerCase().includes(e.target.value.toLowerCase())
-            )
-        );
-    };
-
-    const handleInputFocus = () => {
-        setIsFocused(true);
-    };
-
-    const handleInputBlur = () => {
-        setTimeout(() => setIsFocused(false), 200);
-        setInputValue("")
-        setFilteredCategories(categoriesList);
-    };
-
-    const addCategory = (category) => {
-        if (!selectedCategories.includes(category)) {
-            setSelectedCategories([...selectedCategories, category]);
-        }
-        setInputValue("");
-        setIsFocused(false);
-    };
+    const { getAllCategories, categories } = useApp();
 
     const handleNewCategory = () => {
         categoriesList.push(newCategory);
         setSelectedCategories([...selectedCategories, newCategory]);
         setNewCategory('');
-    }
-
-    const getAllCategories = async () => {
-        try {
-            const res = await axios.get('/categories');
-            console.log(res);
-            setCategories(res.data)
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     useEffect(() => {
@@ -70,14 +25,10 @@ const ProductCategory = () => {
 
     return (
         <div className="mt-8 custom-bg-white">
-            <h2 className="custom-header">Product Details</h2>
+            <h2 className="custom-header">قسم المنتج</h2>
             <div className="flex flex-col gap-2">
-                <label className="text-gray-500 cursor-pointer">نوع المنتج:</label>
                 <Field as="select" name='category' className='custom-input-field max-h-40 text-gray-800' >
-                    <option value="">اختر نوع المنتج</option>
-                    {/* <option value="clothes">Clothes</option>
-                    <option value="ITN2">Document</option>
-                    <option value="ITN3">Food</option> */}
+                    <option value="">اختر قسم المنتج</option>
                     {categories && categories.map(item => {
                         return (
                             <option key={item._id} value={item._id}>{item.name}</option>
@@ -129,7 +80,7 @@ const ProductCategory = () => {
                     </div>
                 )}
             </div> */}
-            <button type='button' className="block mt-8 min-w-content py-3 px-5 text-center bg-indigo-200 text-indigo-600 duration-500 rounded-xl cursor-pointer hover:bg-indigo-500 hover:text-white"
+            {/* <button type='button' className="block mt-8 min-w-content py-3 px-5 text-center bg-indigo-200 text-indigo-600 duration-500 rounded-xl cursor-pointer hover:bg-indigo-500 hover:text-white"
                 onClick={() => setIsAdding(!isAdding)}
             >
                 {isAdding ? '-' : '+'} إضافة قسم جديد
@@ -140,7 +91,7 @@ const ProductCategory = () => {
                     <input type="text" placeholder="new-category" className="border border-gray-300 outline-none rounded-r-lg p-2 w-full" value={newCategory} onChange={e => setNewCategory(e.target.value)} />
                     <button className="w-content py-3 px-5 bg-indigo-500 text-white rounded-l-lg cursor-pointer" onClick={handleNewCategory}>إضافة</button>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }

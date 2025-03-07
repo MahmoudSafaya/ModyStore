@@ -4,12 +4,15 @@ import * as Yup from 'yup';
 import axios from '../../../api/axios';
 import toast from 'react-hot-toast';
 import { ChartColumnStacked } from 'lucide-react'
+import { useApp } from '../../../context/AppContext';
 
 const AddCategory = () => {
-    const [categories, setCategories] = useState([]);
+    // const [categories, setCategories] = useState([]);
     const [isDelete, setIsDelete] = useState({ display: false, cateId: '', username: '' });
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [parentCategory, setParentCategory] = useState('');
+
+    const {getAllCategories, categories, setCategories} = useApp();
 
     const [iconFile, setIconFile] = useState(null);
     const [imageFile, setImageFile] = useState(null);
@@ -20,36 +23,11 @@ const AddCategory = () => {
 
     const formRef = useRef(null); // Ref for scrolling
 
-
     const validationSchema = Yup.object({
-        name: Yup.string().required('Name is required'),
-        icon: Yup.mixed().required('Icon image is required'),
-        image: Yup.mixed().required('Category image is required'),
+        name: Yup.string().required('هذا الحقل مطلوب'),
+        icon: Yup.mixed().required('هذا الحقل مطلوب'),
+        image: Yup.mixed().required('هذا الحقل مطلوب'),
     });
-
-    const getMimeTypeFromExtension = (filename) => {
-        const extension = filename.split(".").pop().toLowerCase();
-        const mimeTypes = {
-            jpg: "image/jpeg",
-            jpeg: "image/jpeg",
-            png: "image/png",
-            gif: "image/gif",
-            webp: "image/webp",
-            svg: "image/svg+xml",
-        };
-        return mimeTypes[extension] || "application/octet-stream"; // Default if unknown
-    };
-
-    const urlToFile = async (url) => {
-        const response = await fetch(`/${url}`);
-        const blob = await response.blob();
-
-        const filename = url.split("_").pop(); // Extract filename
-        const mimeType = blob.type && blob.type !== "text/html" ? blob.type : getMimeTypeFromExtension(filename);
-
-        return new File([blob], filename, { type: mimeType });
-    };
-
 
     // Handle file input change
     const handleFileChange = (event, setPreview, setFile) => {
@@ -112,15 +90,15 @@ const AddCategory = () => {
         setCateImage('');
     };
 
-    const getAllCategories = async () => {
-        try {
-            const res = await axios.get('/categories');
-            console.log(res);
-            setCategories(res.data)
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    // const getAllCategories = async () => {
+    //     try {
+    //         const res = await axios.get('/categories');
+    //         console.log(res);
+    //         setCategories(res.data)
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
 
     const handleEditCategory = (category) => {
         setSelectedCategory(category);
@@ -166,8 +144,8 @@ const AddCategory = () => {
                                 <div key={item._id} className='w-full flex items-center justify-between border-b border-gray-300 pb-4'>
                                     <p className='min-w-40 text-center'>{item.name}</p>
                                     <div className='flex flex-col md:flex-row gap-6'>
-                                        <button className="w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-full duration-500 hover:bg-gray-700" onClick={() => handleEditCategory(item)}>تعديل</button>
-                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-full duration-500 hover:bg-red-600" onClick={() => setIsDelete({ display: true, cateId: item._id, name: item.name })}>حذف</button>
+                                        <button className="w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditCategory(item)}>تعديل</button>
+                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ display: true, cateId: item._id, name: item.name })}>حذف</button>
                                     </div>
                                 </div>
                             )
@@ -212,9 +190,10 @@ const AddCategory = () => {
                                         type="text"
                                         id="name"
                                         name="name"
+                                        placeholder="اسم القسم"
                                         className="custom-input-field"
                                     />
-                                    <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
+                                    <ErrorMessage name="name" component="div" className="text-red-400 text-sm" />
                                 </div>
 
                                 {/* category Field */}
@@ -237,7 +216,7 @@ const AddCategory = () => {
                                             )
                                         })}
                                     </Field>
-                                    {/* <ErrorMessage name="category" component="div" className="text-red-500 text-sm" /> */}
+                                    {/* <ErrorMessage name="category" component="div" className="text-red-400 text-sm" /> */}
                                 </div>
 
                                 {/* Icon Image Field */}
@@ -265,7 +244,7 @@ const AddCategory = () => {
                                             <span className="text-purple-600">اضغط لتحميل صوره الأيقونة  </span>
                                         )}
                                     </div>
-                                    <ErrorMessage name="icon" component="div" className="text-red-500 text-sm" />
+                                    <ErrorMessage name="icon" component="div" className="text-red-400 text-sm" />
                                 </div>
 
                                 {/* Category Image Field */}
@@ -293,7 +272,7 @@ const AddCategory = () => {
                                             <span className="text-purple-600">اضغط لتحميل صوره القسم الرئيسية </span>
                                         )}
                                     </div>
-                                    <ErrorMessage name="image" component="div" className="text-red-500 text-sm" />
+                                    <ErrorMessage name="image" component="div" className="text-red-400 text-sm" />
                                 </div>
                             </div>
 

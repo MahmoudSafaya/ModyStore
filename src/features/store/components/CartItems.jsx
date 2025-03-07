@@ -35,7 +35,9 @@ const CartItems = () => {
                     </button>
                   </div>
                   <div className="flex items-center gap-4 mt-3">
-                    <span className="text-sm text-indigo-500">EGP {item.discount > 0 ? (item.price - (item.price * (item.discount / 100))) * item.quantity : item.price}</span>
+                    <span className="text-sm text-indigo-500">EGP {item.discount > 0 
+                    ? (item.actualPrice * item.quantity) 
+                    : (item.price * item.quantity)}</span>
                   </div>
                 </div>
               </div>

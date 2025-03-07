@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GrStatusGoodSmall } from "react-icons/gr";
 import ProductVariations from "./components/ProductVariations";
 import { Tag, House } from "lucide-react";
@@ -14,13 +14,18 @@ import toast, { Toaster } from "react-hot-toast";
 
 const AddProduct = () => {
     const [thumbnail, setThumbnail] = useState(null);
+    const [proImage, setProImage] = useState(null);
     const [productImages, setProductImages] = useState([]);
+    const [removedImages, setRemovedImages] = useState([]);
+    const [updatedImages, setUpdatedImages] = useState([]);
     const [variations, setVariations] = useState([{ size: "", color: "", stock: "" }]);
+    const [discount, setDiscount] = useState('none');
 
     const [loading, setLoading] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState();
 
     const location = useLocation();
+    const navigate = useNavigate();
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
     // Extract the category ID from the query string
@@ -44,7 +49,6 @@ const AddProduct = () => {
 
     useEffect(() => {
         if (paramID && paramID.length > 10) {
-            console.log(paramID)
             getProductById()
         }
     }, [paramID]);
@@ -54,76 +58,118 @@ const AddProduct = () => {
         if (file) {
             setThumbnail(URL.createObjectURL(file));
         }
+        setProImage(file);
     };
 
     const initialValues = selectedProduct || {
         name: "",
         description: "",
-        price: null,
-        discount: null,
+        price: '',
+        discount: 0,
         category: "",
         badge: "",
         isFeatured: true,
         mainImage: null,
         images: null,
         variants: [{ color: "", size: "", stock: "" }],
-        reviews: [{ rating: 2, comment: "" }],
+        reviews: [],
         isActive: true,
     };
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         const formData = new FormData();
         // Check for products status
-        values.isActive = values.isActive === 'true' ? true : false
-
-        // Append form values
-        Object.keys(values).forEach((key) => {
-            if (key === "images") {
-                Array.from(values.images).forEach((file) => {
-                    formData.append("images", file);
-                });
-            } else if (key === "variants") {
-                values.variants.forEach((variant, index) => {
-                    formData.append(`variants[${index}][color]`, variant.color);
-                    formData.append(`variants[${index}][size]`, variant.size);
-                    formData.append(`variants[${index}][stock]`, variant.stock);
-                });
-            } else if (key === "reviews") {
-                values.reviews.forEach((review, index) => {
-                    formData.append(`reviews[${index}][rating]`, review.rating);
-                    formData.append(`reviews[${index}][comment]`, review.comment);
-                });
-            } else {
-                formData.append(key, values[key]);
-            }
-        });
-
+        const shit = values.isActive === 'true';
+        console.log(shit);
         if (selectedProduct) {
-            console.log('in edit mooooooooooood');
-            console.log(values);
+            formData.append('name', values.name)
+            formData.append('description', values.description)
+            formData.append('badge', values.badge)
+            formData.append('price', values.price)
+            formData.append('discount', values.discount)
+            formData.append('category', values.category)
+            formData.append('isActive', values.isActive)
+
+            proImage ? formData.append('mainImage', proImage) : '';
+            console.log(proImage)
+            // const updatedImages = productImages.filter(item => item.file ? item.preview : '');
+            updatedImages.length>0 && updatedImages.forEach((file) => {
+                formData.append("images", file);
+            });
+            
+            console.log("Removed Images:", removedImages);
+            // updatedImages.length>0 ? formData.append("images", updatedImages) : '';
+            // removedImages.length>0 ? formData.append("removedImagesPaths[0]", removedImages) : '';
+
+            removedImages && removedImages.forEach((item, index) => {
+                formData.append(`removedImagesPaths[${index}]`, item);
+            });
+
+            values.variants.forEach((variant, index) => {
+                formData.append(`variants[${index}][barCode]`, variant.barCode);
+                formData.append(`variants[${index}][color]`, variant.color);
+                formData.append(`variants[${index}][size]`, variant.size);
+                formData.append(`variants[${index}][stock]`, variant.stock);
+            });
+            values.reviews.forEach((review, index) => {
+                formData.append(`reviews[${index}][rating]`, review.rating);
+                formData.append(`reviews[${index}][comment]`, review.comment);
+            });
+            formData.append(`ratings[average]`, values.ratings.average);
+            formData.append(`ratings[count]`, values.ratings.count);
+
+
+
             try {
+                for (let pair of formData.entries()) {
+                    console.log(pair[0], pair[1]);
+                }
                 const response = await axios.put(`/products/${paramID}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
                 console.log("Product edited:", response);
                 toast.success('تهانينا!, تم تعديل المنتج بنجاح');
-                // resetForm();
+                resetForm();
                 // setThumbnail('');
                 // setProductImages([])
+                navigate('/admin/products');
             } catch (error) {
                 console.error("Error editing product:", error.response?.data || error.message);
             }
         } else {
+            // Append form values
+            Object.keys(values).forEach((key) => {
+                if (key === "images") {
+                    Array.from(values.images).forEach((file) => {
+                        formData.append("images", file);
+                    });
+                } else if (key === "variants") {
+                    values.variants.forEach((variant, index) => {
+                        formData.append(`variants[${index}][color]`, variant.color);
+                        formData.append(`variants[${index}][size]`, variant.size);
+                        formData.append(`variants[${index}][stock]`, variant.stock);
+                    });
+                } else if (key === "reviews") {
+                    values.reviews.forEach((review, index) => {
+                        formData.append(`reviews[${index}][rating]`, review.rating);
+                        formData.append(`reviews[${index}][comment]`, review.comment);
+                    });
+                } else {
+                    formData.append(key, values[key]);
+                }
+            });
             try {
                 const response = await axios.post("/products", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
                 console.log("Product uploaded:", response);
                 toast.success('تهانينا!, تم إضافة المنتج بنجاح');
-                console.log(values)
                 resetForm();
-                setThumbnail('');
-                setProductImages([])
+                // setThumbnail('');
+                // setProductImages([]);
+                // setVariations([{ barCode: "", size: "", color: "", stock: "" }]);
+                // setDiscount('none');
+                navigate('/admin/products');
             } catch (error) {
                 console.error("Error uploading product:", error.response?.data || error.message);
             }
@@ -138,13 +184,6 @@ const AddProduct = () => {
 
     return (
         <div>
-            {/* Component Header */}
-            <div className='custom-bg-white flex items-center justify-between'>
-                <h2 className='text-lg'>اضافة منتج جديد</h2>
-                <Link to='/admin/products' className='text-2xl bg-white rounded-xl transition-all duration-300 hover:bg-indigo-600 hover:text-white p-2'>
-                    <House />
-                </Link>
-            </div>
             {/* Component Content */}
             <Formik
                 initialValues={initialValues}
@@ -153,16 +192,16 @@ const AddProduct = () => {
             >
                 {({ values, setFieldValue, isSubmitting }) => (
                     <Form>
-                        <div className="flex items-between flex-col md:flex-row gap-4 md:gap-8 my-8">
+                        <div className="flex items-between flex-col md:flex-row gap-4 md:gap-8 mb-8">
                             <div className="w-full md:w-2/3">
                                 {/* Product name and description */}
                                 <ProductDetails values={values} setFieldValue={setFieldValue} />
 
                                 {/* product images */}
-                                <ProductImages setFieldValue={setFieldValue} isSubmitting={isSubmitting} productImages={productImages} setProductImages={setProductImages} />
+                                <ProductImages setFieldValue={setFieldValue} isSubmitting={isSubmitting} productImages={productImages} setProductImages={setProductImages} removedImages={removedImages} setRemovedImages={setRemovedImages} updatedImages={updatedImages} setUpdatedImages={setUpdatedImages} />
 
                                 {/* Pricing the product */}
-                                <ProductPrice values={values} setFieldValue={setFieldValue} />
+                                <ProductPrice values={values} setFieldValue={setFieldValue} discount={discount} setDiscount={setDiscount} />
 
                                 {/* Variations */}
                                 <ProductVariations setFieldValue={setFieldValue} isSubmitting={isSubmitting} variations={variations} setVariations={setVariations} />
@@ -187,13 +226,10 @@ const AddProduct = () => {
                                         {thumbnail ? (
                                             <img src={thumbnail} alt="Thumbnail" className="h-full object-cover rounded-md" />
                                         ) : (
-                                            <span className="text-purple-600">اضغط لتحميل صوره المنتج الرئيسية </span>
+                                            <span className="text-purple-600 text-center">اضغط لتحميل صوره المنتج الرئيسية </span>
                                         )}
                                     </div>
                                     <ErrorMessage name="mainImage" component="div" className="text-red-400" />
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        Set the product thumbnail image. Only *.png, *.jpg, and *.jpeg files are accepted.
-                                    </p>
                                 </div>
 
                                 {/* Status Dropdown */}
@@ -216,9 +252,9 @@ const AddProduct = () => {
 
                                 {/* Tag Badge*/}
                                 <div className="custom-bg-white mt-8">
-                                    <label htmlFor="badge" className="custom-label-field">Badge</label>
+                                    <h2 className="custom-header">العلامة</h2>
                                     <div className="relative">
-                                        <Field type="text" name="badge" id="badge" className="custom-input-field w-full" placeholder="اكتب السعر المراد خصمه..." />
+                                        <Field type="text" name="badge" id="badge" className="custom-input-field w-full" placeholder="اكتب علامة مميزة للمنتج ..." />
                                         <Tag className="w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
                                         <ErrorMessage name="badge" component="div" className="text-red-500" />
                                     </div>
@@ -231,9 +267,9 @@ const AddProduct = () => {
                             disabled={isSubmitting}
                             className="block min-w-40 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-full hover:be-indigo-600"
                         >
-                            {selectedProduct ? 
-                            (isSubmitting ? "يتم تعديل المنتج..." : "تعديل المنتج") : 
-                            (isSubmitting ? "يتم إضافة المنتج..." : "إضافة المنتج")}
+                            {selectedProduct ?
+                                (isSubmitting ? "يتم تعديل المنتج..." : "تعديل المنتج") :
+                                (isSubmitting ? "يتم إضافة المنتج..." : "إضافة المنتج")}
                         </button>
                     </Form>
                 )}

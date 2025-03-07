@@ -1,32 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { House } from "lucide-react";
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useOrders } from "../../../context/OrdersContext";
 import OrdersTable from "../components/OrdersTable";
-import {Search} from 'lucide-react'
+import { useAuth } from "../../../context/AuthContext";
+import Loading from "../../../shared/components/Loading";
+import axios from "../../../api/axios";
 
 const UnconfirmedOrders = () => {
-    const { handleDeleteOrder } = useOrders();
-    const [searchInput, setSearchInput] = useState('');
+    const { loading } = useAuth();
+    const [orders, setOrders] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const {setOrderPopup} = useOrders();
+
+    const fetchOrders = async (page) => {
+        try {
+            const response = await axios.get(`/visitors/orders/?page=${page}`);
+            const data = response.data;
+            setOrders(data.orders);
+            setCurrentPage(data.currentPage);
+            setTotalPages(data.totalPages);
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchOrders(currentPage);
+    }, [currentPage]);
+
+    const handleDeleteOrder = async (orderID) => {
+        try {
+            await axios.delete(`/visitors/orders/${orderID}`);
+            toast.success('تم حذف الطلب بنجاح!');
+            const newOrders = orders.filter(item => item._id !== orderID)
+            setOrders(newOrders);
+            setOrderPopup({ display: false, editing: false, info: {} })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    if (loading) return <Loading loading={loading} />;
 
     return (
         <div>
-            {/* Search Feature */}
-            <div className="custom-bg-white flex flex-col md:flex-row items-center gap-4">
-                <div className='flex items-center gap-2 grow'>
-                    <label htmlFor="product-search" className=''>بحث</label>
-                    <div className="relative w-full">
-                        <input type="text" name="product-search" id="product-search" className="custom-input-field w-full" placeholder="بحث عن منتج..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
-                        <Search className="w-20 h-[calc(100%-2px)] my-[1px] ml-[1px] text-2xl p-2 rounded-l-lg bg-gray-100 text-gray-400 absolute top-0 left-0 border border-gray-200" />
-                    </div>
-                </div>
-            </div>
+            {/* Table With Search */}
+            <OrdersTable orders={orders} setOrders={setOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} />
 
-            <OrdersTable apiUrl='/visitors/orders/' handleDelete={handleDeleteOrder} />
-
-
-            {/* Success notify*/}
+            {/* Toaster notify*/}
             <Toaster />
         </div>
 

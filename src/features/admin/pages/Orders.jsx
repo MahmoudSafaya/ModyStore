@@ -7,47 +7,45 @@ import toast, { Toaster } from 'react-hot-toast';
 import OrdersTable from "../components/OrdersTable";
 
 const Orders = () => {
-  const { cancelOrderFromJNT } = useOrders();
-  const [selection, setSelection] = useState("الكل");
+  const [orders, setOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const categories = [
-    "الكل",
-    "غير مطبوع",
-    "تم الطباعه",
-    "تم التسليم",
-    "مرتجع",
-    "تم الإلغاء",
-  ];
+  const fetchOrders = async (page) => {
+    try {
+      const response = await axios.get(`/jnt/orders/?page=${page}`);
+      const data = response.data;
+      setOrders(data.orders);
+      setCurrentPage(data.currentPage);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
 
+  useEffect(() => {
+    fetchOrders(currentPage);
+  }, [currentPage]);
+
+  const cancelOrderFromJNT = async (orderID) => {
+    try {
+      await axios.delete(`/jnt/orders/${orderID}`);
+      toast.success('تم حذف الطلب بنجاح!');
+      const newJntOrders = orders.filter(item => item._id !== orderID)
+      setOrders(newJntOrders);
+      setOrderPopup({ display: false, editing: false, info: {} })
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div>
-      <div className="custom-bg-white">
+      {/* Table With Search */}
+      <OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} />
 
-        {/* Search Features */}
-        <SearchFeature />
-      </div>
-
-      <div className="custom-bg-white mt-8">
-        {/* <div className="w-full flex justify-stretch items-center flex-wrap">
-          {categories.map((item) => {
-            return (
-              <button
-                key={item}
-                className={`grow font-bold p-2 px-4 shabdow-md border border-gray-200 duration-500 ${item === selection ? "bg-indigo-500 text-white" : "bg-white text-gray-800 hover:bg-indigo-400 hover:text-white"}`}
-                onClick={() => setSelection(item)}
-              >
-                {item}
-              </button>
-            );
-          })}
-        </div> */}
-
-        <OrdersTable inConfirmed={true} apiUrl='/jnt/orders/' handleDelete={cancelOrderFromJNT} />
-
-        {/* Success notify*/}
-        <Toaster />
-      </div>
+      {/* Toaster notify*/}
+      <Toaster />
     </div>
   );
 };

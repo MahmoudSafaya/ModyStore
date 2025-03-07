@@ -1,6 +1,25 @@
 @import "tailwindcss";
 
 
+@font-face {
+    font-family: 'cairo-regular';
+    src: url('../fonts/Rubik-Regular.ttf');
+}
+
+body {
+    min-height: 100vh;
+    background-color: white;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: 'cairo-regular';
+}
+
+a {
+    text-decoration: none;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 10px;
@@ -47,29 +66,36 @@ button {
     max-width: 400px;
 }
 
+.requird-tag {
+    color: #F53741;
+    margin-right: 5px;
+}
 
 .ql-editor.ql-blank {
     min-height: 300px;
     text-align: right !important;
-  }
-  .ql-toolbar.ql-snow {
+}
+
+.ql-toolbar.ql-snow {
     border-top-left-radius: 0.75rem;
     border-top-right-radius: 0.75rem;
-  }
-  .ql-toolbar.ql-snow + .ql-container.ql-snow {
+}
+
+.ql-toolbar.ql-snow+.ql-container.ql-snow {
     border-bottom-left-radius: 0.75rem;
     border-bottom-right-radius: 0.75rem;
-  }
-  .ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg {
+}
+
+.ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg {
     right: auto !important;
     left: 0px;
-  }
-  
-  .ql-editor {
+}
+
+.ql-editor {
     direction: rtl;
     text-align: right;
-  }
-  
+}
+
 .ql-editor {
     height: 300px;
     direction: rtl;

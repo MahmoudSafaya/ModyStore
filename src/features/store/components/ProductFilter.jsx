@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "../../../api/axios";
 import { useStore } from "../../../context/StoreContext";
+import { useApp } from "../../../context/AppContext";
 
 const ProductFilter = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
-    const { setProducts, categories } = useStore();
+    const { setProducts } = useStore();
+    const { categories } = useApp();
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -39,7 +40,7 @@ const ProductFilter = () => {
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4">
-            <div>
+            {/* <div>
                 <label>حدد قسم:</label>
                 <select name="category" value={searchParams.get("category") || ""} onChange={handleFilterChange} className="custom-input-field">
                     <option value="">الكل</option>
@@ -49,7 +50,7 @@ const ProductFilter = () => {
                         )
                     })}
                 </select>
-            </div>
+            </div> */}
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                     <label>من:</label>
@@ -61,19 +62,19 @@ const ProductFilter = () => {
                 </div>
             </div>
             <div>
-                <label>ترتيب حسب:</label>
+                <label value={searchParams.get("sort") || ""} onChange={handleFilterChange}>ترتيب حسب:</label>
                 <select name="sort" value={searchParams.get("sort") || ""} onChange={handleFilterChange} className="custom-input-field">
                     <option value="ratings">التقييمات</option>
                     <option value="price">السعر</option>
                 </select>
             </div>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
                 <label>صفحة رقم:</label>
-                <input type="number" name="page" value={searchParams.get("page") || "0"} onChange={handleFilterChange} className="custom-input-field" />
-            </div>
+                <input type="number" name="page" value={searchParams.get("page") || ""} onChange={handleFilterChange} className="custom-input-field" />
+            </div> */}
             <div className="flex items-center gap-2">
                 <label>عدد المنتجات:</label>
-                <input type="number" name="limit" value={searchParams.get("limit") || "1"} onChange={handleFilterChange} className="custom-input-field" />
+                <input type="number" name="limit" value={searchParams.get("limit") || 10} onChange={handleFilterChange} className="custom-input-field" />
             </div>
         </div>
     );

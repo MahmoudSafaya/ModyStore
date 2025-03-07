@@ -10,9 +10,10 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
 
   const { _id, itemsValue, remark, sender, receiver, items } = info;
 
-  const handleIdClick = () => {
-    navigator.clipboard.writeText(_id);
-    naviagte(`/admin/track-order/${_id}`)
+  const handleIdClick = (txlogisticId) => {
+    navigator.clipboard.writeText(txlogisticId);
+    // 67b9feba60f8678956eaa268
+    naviagte(`/admin/track-order?orderId=${txlogisticId}`)
   }
 
   return (
@@ -21,8 +22,8 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="mb-4">
             <span className="ml-2 font-bold">بيانات أوردر:-</span>
-            <span onClick={() => handleIdClick()} className="text-indigo-400 cursor-pointer duration-500 hover:text-indigo-500">
-              {_id}
+            <span onClick={() => handleIdClick(info.txlogisticId)} className="text-indigo-400 cursor-pointer duration-500 hover:text-indigo-500">
+              {info.txlogisticId}
             </span>
           </h2>
 
@@ -120,6 +121,10 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
               )
             })}
           </div>
+        </div>
+
+        <div>
+          {remark}
         </div>
         {/* Order Operations */}
         <div className="w-full flex flex-col md:flex-row items-center justify-between">

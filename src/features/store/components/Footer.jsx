@@ -2,10 +2,11 @@ import React from 'react'
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { useStore } from '../../../context/StoreContext';
 import { Link } from 'react-router-dom';
+import { useApp } from '../../../context/AppContext';
 
 const Footer = () => {
-    const { storeMainNav, categories } = useStore();
-
+    const { storeMainNav } = useStore();
+    const { categories } = useApp();
     const date = new Date();
     const thisYear = date.getFullYear();
 

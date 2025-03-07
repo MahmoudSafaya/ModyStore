@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axios from "../../../api/axios";
+import { Search } from "lucide-react";
 
 const CustomDatePicker = ({ startDate, endDate, onChange }) => {
   return (
@@ -22,34 +23,29 @@ const CustomDatePicker = ({ startDate, endDate, onChange }) => {
 };
 
 
-const SearchFeature = () => {
+const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders }) => {
   const [orderNumber, setOrderNumber] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
+
   // Date Range Picker
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [startDate, endDate] = dateRange;
 
-  const [searchResults, setSearchResults] = useState([]);
-
-
-  const handleQuery = () => {
-    // Mock search results based on the input fields
-    const mockResults = [
-      { id: 1, orderNumber: '12345', trackingNumber: 'TRK123', receiverPhone: '123-456-7890', date: '2025-02-06', details: 'Order Shipped' },
-      { id: 2, orderNumber: '67890', trackingNumber: 'TRK456', receiverPhone: '987-654-3210', date: '2025-02-07', details: 'Order Delivered' },
-    ];
-
-    const results = mockResults.filter(
-      (result) =>
-        (orderNumber ? result.orderNumber.includes(orderNumber) : true) &&
-        (trackingNumber ? result.trackingNumber.includes(trackingNumber) : true) &&
-        (receiverPhone ? result.receiverPhone.includes(receiverPhone) : true) &&
-        result.date >= startDate &&
-        result.date <= endDate
-    );
-
-    setSearchResults(results);
+  const handleQuery = async () => {
+    try {
+      const res = await axios.post('/orders/search', {
+        receiverphone: receiverPhone,
+        billCode: trackingNumber,
+        txlogisticId: orderNumber,
+        startDate: dateRange[0],
+        endDate: dateRange[1]
+      });
+      setOrders(res.data);
+      console.log(res)
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleClear = () => {
@@ -57,18 +53,62 @@ const SearchFeature = () => {
     setTrackingNumber('');
     setReceiverPhone('');
     setDateRange([new Date(), new Date()]);
-    setSearchResults([]);
+    fetchOrders();
   };
 
-  useEffect(() => {
-    console.log(dateRange)
-  }, [startDate]);
+  const deleteAllSelected = async () => {
+    if (inConfirmed) {
+      try {
+        // Iterate over each product in the array
+        for (const item of checkedOrders) {
+          // Send a DELETE request for each product using its _id
+          await axios.delete(`/jnt/orders/${item._id}`);
+          console.log(`Product with _id ${item._id} deleted successfully.`);
+        }
+        console.log('All products deleted successfully.');
+        fetchOrders();
+      } catch (error) {
+        console.error('Error deleting products:', error);
+      }
+    } else {
+      try {
+        // Iterate over each product in the array
+        for (const item of checkedOrders) {
+          // Send a DELETE request for each product using its _id
+          await axios.delete(`/visitors/orders/${item._id}`);
+          console.log(`Product with _id ${item._id} deleted successfully.`);
+        }
+        console.log('All products deleted successfully.');
+        fetchOrders();
+      } catch (error) {
+        console.error('Error deleting products:', error);
+      }
+    }
+  };
+  const signAllSelected = async () => {
+    try {
+      // Iterate over each product in the array
+      for (const item of checkedOrders) {
+        // Send a DELETE request for each product using its _id
+        await axios.post(`/jnt/orders/${item._id}`);
+        console.log(`Product with _id ${item._id} signed successfully.`);
+      }
+      console.log('All products signed successfully.');
+      fetchOrders();
+    } catch (error) {
+      console.error('Error deleting products:', error);
+    }
+  };
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">ابحث عن أوردر</h1>
+      <div className="flex items-center justify-center gap-2 mb-8">
+        <h1 className="text-2xl font-bold text-center">ابحث عن أوردر</h1>
+        <Search />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div>
+        <div className="z-100">
           <CustomDatePicker
             startDate={startDate}
             endDate={endDate}
@@ -86,15 +126,17 @@ const SearchFeature = () => {
           />
         </div>
 
-        <div>
-          <input
-            type="text"
-            value={trackingNumber}
-            onChange={(e) => setTrackingNumber(e.target.value)}
-            className="custom-input-field w-full"
-            placeholder="ادخل رقم البوليصة"
-          />
-        </div>
+        {inConfirmed && (
+          <div>
+            <input
+              type="text"
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value)}
+              className="custom-input-field w-full"
+              placeholder="ادخل رقم البوليصة"
+            />
+          </div>
+        )}
 
         <div>
           <input
@@ -107,35 +149,38 @@ const SearchFeature = () => {
         </div>
 
         <button
+          type="button"
           onClick={handleQuery}
-          className="w-full bg-indigo-500 text-slate-100 py-2 px-4 rounded-md duration-500 hover:bg-indigo-600"
+          className="w-full bg-indigo-500 text-slate-100 py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600"
         >
-          Query
+          بحث
         </button>
         <button
+          type="button"
           onClick={handleClear}
-          className="w-full bg-gray-600 text-slate-100 py-2 px-4 rounded-md duration-500 hover:bg-gray-700"
+          className="w-full bg-gray-600 text-slate-100 py-2 px-4 rounded-lg duration-500 hover:bg-gray-700"
         >
-          Clear
+          مسح
+        </button>
+        {!inConfirmed && (
+          <button
+            type="button"
+            onClick={signAllSelected}
+            className={`py-2 px-4 rounded-lg duration-500 shadow-md bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+            disabled={!checkedOrders.length > 0}
+          >
+            تسجيل الكل
+          </button>
+        )}
+        <button
+          type="button"
+          className={`py-2 px-4 rounded-lg duration-500 shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+          onClick={deleteAllSelected} disabled={!checkedOrders.length > 0}
+        >
+          حذف الكل
         </button>
       </div>
 
-      {searchResults.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-2">Search Results</h2>
-          <ul className="space-y-2">
-            {searchResults.map((result) => (
-              <li key={result.id} className="p-4 border border-gray-200 rounded-md">
-                <p className="text-sm text-gray-600">{result.details}</p>
-                <p className="text-sm text-gray-500">Order Number: {result.orderNumber}</p>
-                <p className="text-sm text-gray-500">Tracking Number: {result.trackingNumber}</p>
-                <p className="text-sm text-gray-500">Receiver Phone: {result.receiverPhone}</p>
-                <p className="text-sm text-gray-500">Date: {result.date}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };

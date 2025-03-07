@@ -50,63 +50,53 @@ const styles = StyleSheet.create({
 })
 
 // Component to create PDF with the barcode
-const BarcodePDF = ({ unprintedOrders }) => {
+const BarcodePDF = ({ variant, stock }) => {
+  const [count, setCount] = useState(0);
+
   return (
     <Document>
-      {unprintedOrders && unprintedOrders.map((item) => {
-        // Generate the barcode and set the data URL for PDF generation
-        const canvas = document.createElement("canvas");
-        JsBarcode(canvas, item.barcodeID, { 
-          format: "CODE128", 
-          height: 50,
-          displayValue: false 
-        });
-        // const barcodeDataURL = canvas.toDataURL("image/png");
+            {Array.from({ length: stock }, (_, index) => {
+                const canvas = document.createElement("canvas");
+                JsBarcode(canvas, variant, {
+                    format: "CODE128",
+                    height: 50,
+                    displayValue: true,
+                });
 
-        const {sender, receiver, product} = item;
-        
-        return (
-          <Page key={item._id} style={styles.page} size={[215, 369]}>
-            <View>
-              <Image src={canvas.toDataURL("image/png")} />
-            </View>
-            <View style={{textAlign: 'center'}}>
-              <Text>{item.barcodeID}</Text>
-            </View>
-            <View style={styles.containerRow}>
-              <Text>Store: {sender.name}</Text>
-              <Text>Price: {product.price}</Text>
-            </View>
-            <View style={styles.containerColumn} wrap={true}>
-              <Text>To: {receiver.name}</Text>
-              <Text>{receiver.phone1}</Text>
-              <Text>{receiver.street}</Text>
-              <Text>{receiver.state}, {receiver.city}, {receiver.area} </Text>
-            </View>
-            <View wrap={true}>
-              <Text>{sender.name}</Text>
-              <Text>{sender.phone1}</Text>
-              <Text>{sender.street}</Text>
-              <Text>{sender.state}, {sender.city}, {sender.area} </Text>
-            </View>
-          </Page>
-        );
-      })}
-    </Document>
+                // Get the barcode's width and height
+                const barcodeWidth = canvas.width;
+                const barcodeHeight = canvas.height;
+
+                // Convert canvas to data URL
+                const barcodeDataURL = canvas.toDataURL("image/png");
+
+                return (
+                    <Page
+                        key={index}
+                        style={styles.page}
+                        size={[barcodeWidth + 20, barcodeHeight + 10]} // Set page size to barcode size
+                    >
+                        <View>
+                            <Image src={barcodeDataURL} />
+                        </View>
+                    </Page>
+                );
+            })}
+        </Document>
   );
 };
 
-const BillOfLading = ({ orders }) => {
+const BillOfLading = ({ variant, stock }) => {
 
   return (
     <div>
       <PDFDownloadLink
-        document={<BarcodePDF unprintedOrders={orders && orders} />}
+        document={<BarcodePDF variant={variant} stock={stock} />}
         fileName="barcode.pdf"
-        className="inline-block bg-indigo-500 text-slate-100 font-bold p-2 px-4 rounded-lg shabdow-md duration-500 hover:bg-indigo-600 cursor-pointer mb-8"
+        className="inline-block bg-green-500 text-slate-100 font-bold p-2 px-4 rounded-lg shabdow-md duration-500 hover:bg-green-600 cursor-pointer"
       >
         {({ blob, url, loading, error }) =>
-          loading ? "جار إنشاء الملف..." : "تحميل بوالص الشحن"
+          loading ? "جار إنشاء الملف..." : "طباعة كود شحن"
         }
       </PDFDownloadLink>
     </div>
