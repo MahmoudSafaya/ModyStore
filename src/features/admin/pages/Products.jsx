@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Trash, Search, X, ChevronRight, ChevronLeft } from "lucide-react";
+import { Trash, Search, X, ChevronRight, ChevronLeft, ChevronDown, Eye, EyeClosed } from "lucide-react";
 import { FaCheck, FaRegEdit, FaStar } from "react-icons/fa";
 import axios from '../../../api/axios';
 import Loading from '../../../shared/components/Loading';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
 import { useApp } from '../../../context/AppContext';
-import { A_BillOfLading } from '../components';
+import { A_BillOfLading, A_DeleteConfirmModal } from '../components';
 import { IoStorefrontOutline } from "react-icons/io5";
 
 const Products = () => {
-  const { loading, setLoading, isDelete, setIsDelete } = useAuth();
-  const { categories } = useApp();
+  const { loading, setLoading } = useAuth();
+  const { categories, isDelete, setIsDelete } = useApp();
   const [products, setProducts] = useState([]);
   const [checkedAll, setCheckedAll] = useState(false);
   const [checkedOrders, setCheckedOrders] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [selectedProduct, setSelectedProduct] = useState();
+  const [popupPurpose, setPopupPurpose] = useState('');
   const [barcodeNums, setBarcodeNums] = useState({});
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,6 +45,21 @@ const Products = () => {
     }
   }
 
+  const getAllProducts = async (page) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`/products?page=${page}`);
+      const data = res.data;
+      setProducts(data.products);
+      setCurrentPage(data.currentPage);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const calculateTotalStock = (variants) => {
     return variants.reduce((total, item) => total + (item.stock), 0);
   };
@@ -55,30 +71,40 @@ const Products = () => {
   const handleDeleteProduct = async (itemID) => {
     try {
       await axios.delete(`/products/${itemID}`);
-      setIsDelete({ display: false, itemID: '', itemName: '' });
-      toast.success('تم حذف المنتج بنجاح.');
-      const remainProducts = products.filter(item => item._id !== itemID);
-      setProducts(remainProducts);
+      toast.success('تم حذف المنتج بنجاح.', {
+        style: {
+          padding: '16px',
+          color: '#485363',
+        },
+        iconTheme: {
+          primary: '#485363',
+          secondary: '#FFFFFF',
+        },
+      });
+      getAllProducts();
     } catch (error) {
       console.error(error);
     }
-
-    // Close modal after deletion
-    setDeleteItem(null);
-    setIsModalOpen(false);
   }
 
-  const deleteAllProducts = async () => {
+  const deleteAllSelected = async () => {
     try {
       // Iterate over each product in the array
       for (const product of checkedOrders) {
         // Send a DELETE request for each product using its _id
         await axios.delete(`/products/${product._id}`);
-        const remainProducts = products.filter(item => item._id !== product._id)
-        setProducts(remainProducts);
-        console.log(`Product with _id ${product._id} deleted successfully.`);
+        toast.success("تم حذف المنتجات المحددة بنجاح.", {
+          style: {
+            padding: '16px',
+            color: '#485363',
+          },
+          iconTheme: {
+            primary: '#485363',
+            secondary: '#FFFFFF',
+          },
+        })
+        getAllProducts();
       }
-      console.log('All products deleted successfully.');
     } catch (error) {
       console.error('Error deleting products:', error);
     }
@@ -89,19 +115,6 @@ const Products = () => {
   };
 
   useEffect(() => {
-    const getAllProducts = async (page) => {
-      setLoading(true);
-      try {
-        const res = await axios.get(`/products?page=${page}`);
-        const data = res.data;
-        setProducts(data.products);
-        setCurrentPage(data.currentPage);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
     getAllProducts(currentPage);
     setLoading(false);
   }, [currentPage]);
@@ -136,7 +149,7 @@ const Products = () => {
             <Search className="w-20 h-[calc(100%-2px)] my-[1px] ml-[1px] text-2xl p-2 rounded-l-lg bg-gray-100 text-gray-400 absolute top-0 left-0 border border-gray-200" />
           </div>
         </div>
-        <button className={`py-3 px-5 rounded-lg shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`} onClick={deleteAllProducts} disabled={!checkedOrders.length > 0}>
+        <button className={`py-3 px-5 rounded-lg shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`} onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}>
           حذف الكل
         </button>
       </div>
@@ -172,6 +185,7 @@ const Products = () => {
                 <th className="p-3">المخزون</th>
                 <th className="p-3">سعر البيع</th>
                 <th className="p-3">الخصم</th>
+                <th className="p-3">المراجعات</th>
                 <th className="p-3">الإجراءات</th>
               </tr>
             </thead>
@@ -182,6 +196,7 @@ const Products = () => {
                     <label className="flex items-center justify-center h-5">
                       <input
                         type="checkbox"
+                        name={product.name}
                         className="hidden"
                         checked={checkedOrders.some(item => item._id === product._id)}
                         onChange={() => handleCheckOrder(product._id)}
@@ -197,11 +212,11 @@ const Products = () => {
                     </label>
                   </td>
                   <td className='p-3'>
-                    <div className="w-15 h-15 p-2 mx-auto cursor-pointer duration-500 hover:scale-110" onClick={() => setSelectedProduct(product)}>
+                    <div className="w-15 h-15 p-2 mx-auto">
                       <img src={`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`} alt={product.mainImage.alt} className='w-full h-full rounded-lg' />
                     </div>
                   </td>
-                  <td className="p-3 space-x-3 cursor-pointer duration-500 hover:text-indigo-400 hover:underline" onClick={() => setSelectedProduct(product)}>
+                  <td className="p-3 space-x-3">
                     {product.name}
                   </td>
                   <td className="p-3 text-gray-500">
@@ -222,16 +237,35 @@ const Products = () => {
                     </span>
                   </td>
                   {/* <td className="p-3 text-gray-500">{item.inStock}</td> */}
-                  <td className="p-3 text-gray-500">
-                    {calculateTotalStock(product.variants) > 0 ? calculateTotalStock(product.variants) : 'تم النفاذ'}
+                  <td className="p-3 text-gray-500 group cursor-pointer" onClick={() => {
+                    setSelectedProduct(product);
+                    setPopupPurpose('variants');
+                  }}>
+                    <p className='inline-block ml-2'>
+                      {calculateTotalStock(product.variants) > 0 ? calculateTotalStock(product.variants) : 'تم النفاذ'}
+                    </p>
+                    <ChevronDown className='mx-auto duration-500 inline-block group-hover:rotate-45 group-hover:text-indigo-500' />
                   </td>
                   <td className="p-3 font-semibold">{product.actualPrice}</td>
                   <td className="p-3">%{product.discount.toFixed(0)}</td>
+                  {product.reviews.length > 0 ? (
+                    <td className='p-3 text-gray-500 group cursor-pointer' onClick={() => {
+                      setSelectedProduct(product);
+                      setPopupPurpose('reviews');
+                    }}>
+                      <p className='inline-block ml-2'>{product.reviews.length}</p>
+                      <ChevronDown className='inline-block duration-500 group-hover:rotate-45 group-hover:text-indigo-500' />
+                    </td>
+                  ) : (
+                    <td className='p-3 text-gray-500'>
+                      -
+                    </td>
+                  )}
                   <td className="p-3">
                     <div className='inline-block px-4 cursor-pointer duration-500 hover:text-indigo-500 hover:rotate-45' onClick={() => handleEditClick(product._id)}>
                       <FaRegEdit className="w-5 h-5" />
                     </div>
-                    <div className='inline-block px-4 cursor-pointer duration-500 hover:text-red-500 hover:rotate-45' onClick={() => setIsDelete({ display: true, itemID: product._id, itemName: product.name })}>
+                    <div className='inline-block px-4 cursor-pointer duration-500 hover:text-red-500 hover:rotate-45' onClick={() => setIsDelete({ purpose: 'one-product', itemId: product._id, itemName: product.name })}>
                       <Trash className="w-5 h-5" />
                     </div>
                   </td>
@@ -254,106 +288,103 @@ const Products = () => {
 
 
       {/* Pagination Controls */}
-      <div className="flex justify-center mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-        >
-          <ChevronRight />
-        </button>
-
-        {/* Page Numbers */}
-        {Array.from({ length: totalPages }, (_, index) => (
+      {products.length > 0 && (
+        <div className="flex justify-center mt-4">
           <button
-            key={index + 1}
-            onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
-              }`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
           >
-            {index + 1}
+            <ChevronRight />
           </button>
-        ))}
 
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-        >
-          <ChevronLeft />
-        </button>
-      </div>
+          {/* Page Numbers */}
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
+                }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+          >
+            <ChevronLeft />
+          </button>
+        </div>
+      )}
 
       <Toaster toastOptions={{ duration: 7000 }} />
 
       {/* Product Info Popup */}
       {selectedProduct && (
-        <div className='fixed top-0 right-0 z-100 w-screen h-screen bg-[#00000035] flex justify-center items-start overflow-y-auto'>
+        <div className='fixed inset-0 flex items-center justify-center z-100 bg-[#00000035] overflow-y-auto'>
           <div className='w-[70%] custom-bg-white my-12'>
             <div className="relative flex items-center justify-between mb-8">
               <p className='flex-grow text-center font-semibold'>{selectedProduct.name}</p>
               <div className='w-7 h-7 p-1 absolute top-0 left-0 bg-gray-100 rounded-full flex items-center justify-center'>
-                <X className='w-full cursor-pointer duration-500 hover:rotate-90' onClick={() => setSelectedProduct('')} />
+                <X className='w-full cursor-pointer duration-500 hover:rotate-90' onClick={() => {
+                  setSelectedProduct('');
+                  setPopupPurpose('');
+                }} />
               </div>
             </div>
-            <div className='mb-8 flex flex-col gap-4'>
-              {selectedProduct.variants.map(variant => (
-                <div key={variant.barCode} className='flex items-center justify-between'>
-                  {variant.size && (<p>المقاس: {variant.size}</p>)}
-                  {variant.color && (<p>اللون: {variant.color}</p>)}
-                  {variant.stock && (<p>الكمية: {variant.stock}</p>)}
-                  <div className='flex items-center gap-4'>
-                    <label htmlFor="barcode-num">
-                      <input type="text" name='barcode-num' id='barcode-num' className='custom-input-field max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => setBarcodeNums(prev => ({
-                        ...prev,
-                        [variant.barCode]: Number(e.target.value)
-                      }))} />
-                    </label>
-                    <A_BillOfLading variant={variant.barCode} stock={barcodeNums > 0 ? barcodeNums : variant.stock} />
+            {popupPurpose === 'variants' && (
+              <div className='mb-8 flex flex-col gap-4'>
+                {selectedProduct.variants.map(variant => (
+                  <div key={variant.barCode} className='flex items-center justify-between'>
+                    {variant.size && (<p>المقاس: {variant.size}</p>)}
+                    {variant.color && (<p>اللون: {variant.color}</p>)}
+                    {variant.stock && (<p>الكمية: {variant.stock}</p>)}
+                    <div className='flex items-center gap-4'>
+                      <label htmlFor="barcode-num">
+                        <input type="text" name='barcode-num' id='barcode-num' className='custom-input-field max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => setBarcodeNums(prev => ({
+                          ...prev,
+                          [variant.barCode]: Number(e.target.value)
+                        }))} />
+                      </label>
+                      <A_BillOfLading variant={variant.barCode} stock={barcodeNums > 0 ? barcodeNums : variant.stock} />
+                    </div>
                   </div>
-                </div>
-              )
-              )}
-            </div>
-            <div>
-              <h2 className='text-center text-gray-800 font-semibold'>اراء العملاء لهذا المنتج</h2>
-              {selectedProduct.reviews.map((review, index) => (
-                <div key={index} className="py-4 border-b border-gray-300 flex justify-between items-center">
-                  <div>
-                    {/* <p className="font-semibold">{review.name}</p> */}
-                    <p>{new Date(review.createdAt).toISOString().split('T')[0]}</p>
-                    <p className="flex items-center gap-1">{
-                      [1, 2, 3, 4, 5].map(num => <FaStar key={num} className={`${num <= review.rating ? 'text-yellow-500' : 'text-gray-300'}`} />)}
-                    </p>
-                    <p className="text-gray-700">{review.comment}</p>
+                )
+                )}
+              </div>
+            )}
+            {popupPurpose === 'reviews' && (
+              <div>
+                <h2 className='text-center text-gray-800 font-semibold'>اراء العملاء لهذا المنتج</h2>
+                {selectedProduct.reviews.map((review, index) => (
+                  <div key={index} className="py-4 border-b border-gray-300 flex justify-between items-center">
+                    <div>
+                      {/* <p className="font-semibold">{review.name}</p> */}
+                      <p>{new Date(review.createdAt).toISOString().split('T')[0]}</p>
+                      <p className="flex items-center gap-1">{
+                        [1, 2, 3, 4, 5].map(num => <FaStar key={num} className={`${num <= review.rating ? 'text-yellow-500' : 'text-gray-300'}`} />)}
+                      </p>
+                      <p className="text-gray-700">{review.comment}</p>
+                    </div>
+                    <div className='w-7 h-7 p-1 bg-gray-100 rounded-full flex items-center justify-center'>
+                      <Trash className='w-full cursor-pointer duration-500 hover:rotate-45' onClick={() => deleteProductReview(selectedProduct._d, review._id)} />
+                    </div>
                   </div>
-                  <div className='w-7 h-7 p-1 bg-gray-100 rounded-full flex items-center justify-center'>
-                    <Trash className='w-full cursor-pointer duration-500 hover:rotate-45' onClick={() => deleteProductReview(selectedProduct._d, review._id)} />
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
 
-
-      {/* Product Delete Popup */}
-      {isDelete.display && (
-        <div className='fixed top-0 right-0 z-100 w-screen h-screen bg-[#00000035] flex justify-center items-start overflow-y-auto'>
-          <div className='custom-bg-white fixed top-[50%] left-[50%] translate-[-50%] z-80 flex flex-col gap-8 shadow-md'>
-            <p className='text-center w-full text-gray-900'>هل انت متأكد من حذف المنتج: <span className='font-semibold'>
-              {isDelete.itemName}</span> ؟</p>
-            <div className='flex justify-center gap-4'>
-              <button type='button' className='w-20 bg-red-500 text-white rounded-lg py-2 px-4 duration-500 hover:bg-red-600'
-                onClick={() => handleDeleteProduct(isDelete.itemID)}>نعم</button>
-
-              <button
-                type='button'
-                className='w-20 bg-gray-200 text-gray-900 rounded-lg py-2 px-4 duration-500 hover:bg-gray-300' onClick={() => setIsDelete({ display: false, itemID: '', itemName: '' })}>لا</button>
-            </div>
-          </div>
-        </div>
+      {isDelete.purpose === 'delete-selected' && (
+        <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={deleteAllSelected} setIsDelete={setIsDelete} />
+      )}
+      {isDelete.purpose === 'one-product' && (
+        <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDeleteProduct(isDelete.itemId)} setIsDelete={setIsDelete} />
       )}
 
     </div>

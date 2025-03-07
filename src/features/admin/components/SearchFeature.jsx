@@ -3,6 +3,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "../../../api/axios";
 import { Search } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+import { useApp } from "../../../context/AppContext";
+import { A_DeleteConfirmModal } from ".";
 
 const CustomDatePicker = ({ startDate, endDate, onChange }) => {
   return (
@@ -23,10 +26,12 @@ const CustomDatePicker = ({ startDate, endDate, onChange }) => {
 };
 
 
-const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders }) => {
+const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders, setCheckedOrders }) => {
   const [orderNumber, setOrderNumber] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
+
+  const {isDelete, setIsDelete} = useApp();
 
   // Date Range Picker
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
@@ -63,9 +68,17 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders }) =
         for (const item of checkedOrders) {
           // Send a DELETE request for each product using its _id
           await axios.delete(`/jnt/orders/${item._id}`);
-          console.log(`Product with _id ${item._id} deleted successfully.`);
         }
-        console.log('All products deleted successfully.');
+        toast.success("تم حذف الطلبات المحددة بنجاح.", {
+          style: {
+            padding: '16px',
+            color: '#485363',
+          },
+          iconTheme: {
+            primary: '#485363',
+            secondary: '#FFFFFF',
+          },
+        })
         fetchOrders();
       } catch (error) {
         console.error('Error deleting products:', error);
@@ -76,14 +89,23 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders }) =
         for (const item of checkedOrders) {
           // Send a DELETE request for each product using its _id
           await axios.delete(`/visitors/orders/${item._id}`);
-          console.log(`Product with _id ${item._id} deleted successfully.`);
         }
-        console.log('All products deleted successfully.');
+        toast.success("تم حذف الطلبات المحددة بنجاح.", {
+          style: {
+            padding: '16px',
+            color: '#485363',
+          },
+          iconTheme: {
+            primary: '#485363',
+            secondary: '#FFFFFF',
+          },
+        })
         fetchOrders();
       } catch (error) {
         console.error('Error deleting products:', error);
       }
     }
+    setCheckedOrders([]);
   };
   const signAllSelected = async () => {
     try {
@@ -175,12 +197,18 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders }) =
         <button
           type="button"
           className={`py-2 px-4 rounded-lg duration-500 shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
-          onClick={deleteAllSelected} disabled={!checkedOrders.length > 0}
+          onClick={() => setIsDelete({purpose: 'delete-selected', itemName: 'جميع الاختيارات'})} disabled={!checkedOrders.length > 0}
         >
           حذف الكل
         </button>
       </div>
 
+      <Toaster />
+
+      
+      {isDelete.purpose === 'delete-selected' && (
+        <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={deleteAllSelected} setIsDelete={setIsDelete} />
+      )}
     </div>
   );
 };

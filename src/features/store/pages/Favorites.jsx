@@ -28,7 +28,7 @@ const Favorites = () => {
   }, [favorites]);
 
   return (
-    <div className="">
+    <div className="p-12">
       <h2 className="text-xl font-bold mb-6">منتجاتك المفضلة</h2>
       {favorites.length === 0 ? (
         <div className='flex flex-col items-center justify-center gap-6 mt-8'>

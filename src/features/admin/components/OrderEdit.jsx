@@ -7,8 +7,8 @@ const OrderEdit = () => {
     const { orderPopup, setOrderPopup, handleOrderPopup } = useOrders();
 
     return (
-        <div className="w-full min-h-screen absolute top-0 left-0 z-60 bg-[#00000070] flex items-center justify-center py-16">
-            <div className="w-5/6 custom-bg-white">
+        <div className="w-full h-full fixed top-0 left-0 z-100 bg-[#00000070] py-16 overflow-y-auto">
+            <div className="w-5/6 mx-auto custom-bg-white">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className='flex items-center gap-2'>
                         <span>تعديل أوردر رقم:</span>

@@ -96,8 +96,9 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         <Field
           type="text"
           name={`${parent}.name`}
+          autoComplete="off"
           className="custom-input-field"
-          placeholder="Enter receiver's name"
+          placeholder="اكتب الاسم"
         />
         <ErrorMessage name={`${parent}.name`} component="div" className="text-red-400 mt-1 text-sm" />
       </div>
@@ -108,8 +109,9 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         <Field
           type="text"
           name={`${parent}.mobile`}
+          autoComplete="off"
           className="custom-input-field"
-          placeholder="Enter mobile number"
+          placeholder="ادخل رقم موبيل"
         />
         <ErrorMessage name={`${parent}.mobile`} component="div" className="text-red-400 mt-1 text-sm" />
       </div>
@@ -120,8 +122,9 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         <Field
           type="text"
           name={`${parent}.alternateReceiverPhoneNo`}
+          autoComplete="off"
           className="custom-input-field"
-          placeholder="Enter mobile number"
+          placeholder="ادخل رقم موبيل اخر"
         />
         <ErrorMessage name={`${parent}.alternateReceiverPhoneNo`} component="div" className="text-red-400 mt-1 text-sm" />
       </div>
@@ -134,8 +137,9 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         <Field
           type="text"
           name={`${parent}.prov`}
-          placeholder="Enter prov"
+          placeholder="اسم المحافظة"
           className="custom-input-field"
+          autoComplete="off"
           value={firstSelection}
           onChange={(e) => {
             setFirstSelection(e.target.value);
@@ -180,7 +184,8 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         <Field
           type="text"
           name={`${parent}.city`}
-          placeholder="Enter city"
+          placeholder="اسم المدينة"
+          autoComplete="off"
           className="custom-input-field"
           value={secondSelection}
           onChange={(e) => {
@@ -217,7 +222,8 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         <Field
           type="text"
           name={`${parent}.area`}
-          placeholder="Enter area"
+          placeholder="اسم المنظقة"
+          autoComplete="off"
           className="custom-input-field"
           value={thirdSelection}
           onChange={(e) => {
@@ -249,12 +255,13 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
       {/* Street */}
       <div>
-        <label className="custom-label-field">الشارع: <span className="text-red-500">*</span></label>
+        <label className="custom-label-field">العنوان: <span className="text-red-500">*</span></label>
         <Field
           type="text"
           name={`${parent}.street`}
+          autoComplete="off"
           className="custom-input-field"
-          placeholder="Enter street"
+          placeholder="العنوان بالكامل"
         />
         <ErrorMessage name={`${parent}.street`} component="div" className="text-red-400 mt-1 text-sm" />
       </div>

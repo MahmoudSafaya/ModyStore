@@ -1,25 +1,27 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { A_SenderForm, A_ReceiverFrom, A_ProductForm } from "../components";
+import { A_ProductForm } from "../components";
 import { newOrderSchema } from "../../../schemas";
 import axios from '../../../api/axios';
 import { useOrders } from "../../../context/OrdersContext";
 import JNTAddresses from "../../../shared/components/JNTAddresses";
 import toast, { Toaster } from "react-hot-toast";
+import { useApp } from "../../../context/AppContext";
 
 const NewOrder = ({ editMode, info, handleOrderPopup }) => {
-  const { jntOrders, setJNTOrders, unconfirmedOrders, setUnconfirmedOrders } = useOrders();
+  const { jntOrders, setJNTOrders, unconfirmedOrders, setUnconfirmedOrders, getUnconfirmedOrders, currentPage } = useOrders();
+  const { shippingPrice } = useApp();
 
   const initialValues = info || {
-    length: 30,
-    weight: 1.00,
+    length: '',
+    weight: 1,
     itemsValue: "",
     remark: "",
     billCode: "", ////////////////////
     goodsType: "ITN16",
     totalQuantity: "1",
-    width: 10,
-    height: 60,
+    width: '',
+    height: '',
     offerFee: 1,
     receiver: {
       area: "",
@@ -38,9 +40,9 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       postCode: "54830",
       prov: "",
       areaCode: "A0003324",
-      building: "13",
-      floor: "25",
-      flats: "47"
+      building: "",
+      floor: "",
+      flats: ""
     },
     sender: {
       area: "كفر الزيات",
@@ -59,16 +61,16 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       postCode: "54830",
       prov: "الغربية",
       areaCode: "A0003324",
-      building: "13",
-      floor: "25",
-      flats: "47"
+      building: "",
+      floor: "",
+      flats: ""
     },
     items: [
       {
         englishName: "",
         number: 1,
         itemType: "ITN16",
-        itemName: "file type",
+        itemName: "",
         priceCurrency: "DHS",
         itemValue: "",
         chineseName: "",
@@ -83,14 +85,22 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       try {
         await axios.put(`/visitors/orders/${values._id}`, values);
         // update unconfirmedOrder state
-        const newOrders = unconfirmedOrders.map(item => item._id === values._id ? item = values : item)
-        setUnconfirmedOrders(newOrders)
+        // const newOrders = unconfirmedOrders.map(item => item._id === values._id ? item = values : item)
+        // setUnconfirmedOrders(newOrders)
+        getUnconfirmedOrders(currentPage);
         // Hide popup
         handleOrderPopup({ display: false, editing: false, info: {} });
+        toast.success("تم تعديل الطلب بنجاح.", {
+          style: {
+            padding: '16px',
+            color: '#61D345',
+          },
+        })
       } catch (error) {
         console.error(error)
       }
     } else {
+      values.items.map(item => item.itemName = item.englishName);
       try {
         const response = await axios.post('/jnt/orders/', values);
         console.log(response);
@@ -148,6 +158,30 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
                   <ErrorMessage name="itemsValue" component="div" className="text-red-400 mt-1 text-sm" />
                 </div>
 
+                {/* Order Weight */}
+                <div>
+                  <label className="custom-label-field">الوزن:</label>
+                  <Field
+                    type="text"
+                    name="weight"
+                    className="custom-input-field text-center"
+                    placeholder="Enter weight"
+                  />
+                </div>
+
+                {/* Shipping Price */}
+                <div>
+                  <label className="custom-label-field">مصاريف الشحن:</label>
+                  <input
+                    type="text"
+                    name="shippingPrice"
+                    className="custom-input-field text-center opacity-50 bg-gray-100"
+                    placeholder="Enter shippingPrice"
+                    value={shippingPrice}
+                    disabled
+                  />
+                </div>
+
                 {/* Order Type */}
                 <div className="flex flex-col gap-2">
                   <label className="text-gray-500 cursor-pointer">نوع الأوردر:</label>
@@ -180,7 +214,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
                     id="description"
                     name="remark"
                     placeholder="Enter your description"
-                    className='custom-input-field'
+                    className='custom-input-field resize-none'
                   />
                   <ErrorMessage name="remark" component="div" className="error-message" />
                 </div>

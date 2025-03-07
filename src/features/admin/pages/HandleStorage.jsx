@@ -9,7 +9,7 @@ const HandleStorage = () => {
 
   const depositScan = async () => {
     try {
-      const res = await axios.patch(`/products/variants/BARm7xxzq9a6HZ3/add-stock`);
+      const res = await axios.patch(`/products/variants/BARm7yv9wj1RDA2/add-stock`);
       console.log(res);
       setResult(res.data.variant);
       toast.success(res.data.message, {
@@ -25,16 +25,16 @@ const HandleStorage = () => {
 
   const withdrawScan = async () => {
     try {
-      const res = await axios.patch(`/products/variants/BARm7xxzq9a6HZ3/decrease-stock`);
+      const res = await axios.patch(`/products/variants/BARm7yv9wj1RDA2/decrease-stock`);
       console.log(res);
       setResult(res.data.variant);
       toast.success(res.data.message, {
         style: {
           padding: '16px',
-          color: '#da2323',
+          color: '#485363',
         },
         iconTheme: {
-          primary: '#da2323',
+          primary: '#485363',
           secondary: '#FFFFFF',
         },
       })

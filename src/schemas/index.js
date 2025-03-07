@@ -29,12 +29,11 @@ export const newOrderSchema = Yup.object({
   }),
   items: Yup.array().of(
     Yup.object({
-      englishName: Yup.string().required("ادخل اسم المنتج"),
+      englishName: Yup.string(),
       itemType: Yup.string(),
       itemValue: Yup.number()
         .typeError("السعر يجب ان يكون رقم")
         .positive("ادخل رقم صحيح")
-        .required("هذا الحقل مطلوب"),
     }),
   ),
   itemsValue: Yup.string().required('سعر الأوردر الإجمالى مطلوب'),

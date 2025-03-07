@@ -6,10 +6,12 @@ import { IoStorefrontOutline } from "react-icons/io5";
 import { A_OrderEdit, A_OrderInfo } from "./";
 import { useOrders } from "../../../context/OrdersContext";
 import { Toaster } from 'react-hot-toast';
-import { A_SearchFeature } from "./";
+import { A_SearchFeature, A_DeleteConfirmModal } from "./";
+import { useApp } from "../../../context/AppContext";
 
 const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders }) => {
     const { orderPopup, setOrderPopup } = useOrders();
+    const { isDelete, setIsDelete } = useApp();
     const [checkedAll, setCheckedAll] = useState(false);
     const [checkedOrders, setCheckedOrders] = useState([]);
 
@@ -42,7 +44,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
         <div>
             <div className="custom-bg-white">
                 {/* Search Features */}
-                <A_SearchFeature inConfirmed={inConfirmed} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} checkedOrders={checkedOrders} />
+                <A_SearchFeature inConfirmed={inConfirmed} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} checkedOrders={checkedOrders} setCheckedOrders={setCheckedOrders} />
             </div>
 
             {/* Table */}
@@ -128,11 +130,11 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                                         <td className="p-2 text-gray-600">{order.sender.street.slice(0, 20)}</td>
                                         <td className="p-2 flex items-center">
                                             {!inConfirmed && (
-                                                <div className='px-4 py-2 cursor-pointer duration-300 hover:text-indigo-500' onClick={() => setOrderPopup({ display: false, editing: true, info: order })}>
+                                                <div className='px-4 py-2 cursor-pointer duration-500 hover:text-indigo-500 hover:rotate-45' onClick={() => setOrderPopup({ display: false, editing: true, info: order })}>
                                                     <FaRegEdit className="w-5 h-5" />
                                                 </div>
                                             )}
-                                            <div className='px-4 py-2 cursor-pointer duration-300 hover:text-red-500 rounded-b-lg' onClick={() => handleDelete(order._id)}>
+                                            <div className='px-4 py-2 cursor-pointer duration-500 hover:text-red-500 hover:rotate-45 rounded-b-lg' onClick={() => setIsDelete({ purpose: 'one-order', itemId: order._id, itemName: inConfirmed ? order.billCode : order.txlogisticId })}>
                                                 <Trash className="w-5 h-5" />
                                             </div>
                                         </td>
@@ -155,26 +157,32 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
 
 
                 {/* Pagination Controls */}
-                <div className="flex justify-center mt-4">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-                    >
-                        <ChevronRight />
-                    </button>
-                    <span className="px-4 py-2 mx-1">
-                        صفحة {currentPage} من {totalPages}
-                    </span>
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-                    >
-                        <ChevronLeft />
-                    </button>
-                </div>
+                {orders.length > 0 && (
+                    <div className="flex justify-center mt-4">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                        >
+                            <ChevronRight />
+                        </button>
+                        <span className="px-4 py-2 mx-1">
+                            صفحة {currentPage} من {totalPages}
+                        </span>
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                        >
+                            <ChevronLeft />
+                        </button>
+                    </div>
+                )}
 
+
+                {isDelete.purpose === 'one-order' && (
+                    <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDelete(isDelete.itemId)} setIsDelete={setIsDelete} />
+                )}
 
 
                 {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} handleDelete={handleDelete} />}

@@ -8,6 +8,7 @@ export const AppProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [shippingPrice, setShippingPrice] = useState(0);
+  const [isDelete, setIsDelete] = useState({ purpose: '', itemId: '', itemName: '' });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState(null);
 
@@ -42,7 +43,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider
-      value={{ categories, setCategories, getAllCategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById }}
+      value={{ categories, setCategories, getAllCategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById, isDelete, setIsDelete }}
     >
       {children}
     </AppContext.Provider>
