@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from '../../../api/axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { blockedAddress } from '../../../schemas/addressesSchema';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
+import { useApp } from '../../../context/AppContext';
 
 const AddressBlock = () => {
     const [unBlocking, setUnBlocking] = useState(false);
@@ -18,6 +19,8 @@ const AddressBlock = () => {
     const [showSecondOptions, setShowSecondOptions] = useState(false);
     const [showThirdOptions, setShowThirdOptions] = useState(false);
 
+    const { successNotify, deleteNotify, errorNotify } = useApp();
+
     useEffect(() => {
         if (!unBlocking) {
             axios.post("/addresses/seprated")
@@ -29,12 +32,6 @@ const AddressBlock = () => {
                 .catch(error => console.error("Error fetching first options:", error));
         }
     }, [unBlocking]);
-
-    // useEffect(() => {
-    //     if (isSubmitting) {
-    //         setFirstSelection('');
-    //     }
-    // }, [isSubmitting])
 
     useEffect(() => {
         if (firstSelection) {
@@ -89,27 +86,28 @@ const AddressBlock = () => {
                 console.log(res);
 
                 if (res.status === 200 || res.statusText === 'OK') {
-                    toast.success('تم حظر المنطقة بنجاح!');
+                    deleteNotify('تم حظر المنطقة بنجاح!');
                 }
             } catch (error) {
                 console.error(error);
                 if (error.status === 404) {
-                    toast.error('هذه المنطقة محظورة بالفعل!');
+                    errorNotify('هذه المنطقة محظورة بالفعل!');
                 }
             }
         } else {
             try {
-                const res = await axios.post('/addresses/changestatus', {...values, enabled: '1'});
+                const res = await axios.post('/addresses/changestatus', { ...values, enabled: '1' });
                 console.log(res);
-    
+
                 if (res.status === 200 || res.statusText === 'OK') {
-                    toast.success('تم فك الحظر عن المنظقة بنجاح.!');
+                    successNotify('تم فك الحظر عن المنظقة بنجاح.!');
                 }
             } catch (error) {
                 console.error(error);
             }
         }
         actions.resetForm();
+        setFirstSelection('');
     };
 
 
@@ -125,7 +123,6 @@ const AddressBlock = () => {
                     City: '',
                     Area: '',
                     enabled: '0'
-
                 }}
                 validationSchema={blockedAddress}
                 onSubmit={handleBlockAddress}
@@ -133,13 +130,6 @@ const AddressBlock = () => {
                 {({ values, isSubmitting, setFieldValue, handleBlur }) => (
                     <Form>
                         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-                            {/* <div>
-                                <label className='custom-label-field'>
-                                    المحافظة: <span className='text-red-400'>*</span>
-                                </label>
-                                <Field name='Province' placeholder='اسم المحافظة' className='custom-input-field' />
-                                <ErrorMessage name='Province' component='div' className='text-red-400' />
-                            </div> */}
 
                             {/* Province */}
                             <div className="relative">
@@ -261,22 +251,7 @@ const AddressBlock = () => {
                                     </ul>
                                 )}
                             </div>
-
-                            {/* <div>
-                                <label className='custom-label-field'>
-                                    المدينة: <span className='text-red-400'>*</span>
-                                </label>
-                                <Field name='City' placeholder='اسم المدينة' className='custom-input-field' />
-                                <ErrorMessage name='City' component='div' className='text-red-400' />
-                            </div>
-
-                            <div>
-                                <label className='custom-label-field'>
-                                    المنطقة: <span className='text-red-400'>*</span>
-                                </label>
-                                <Field name='Area' placeholder='اسم المنطقة' className='custom-input-field' />
-                                <ErrorMessage name='Area' component='div' className='text-red-400' />
-                            </div> */}
+                            
                         </div>
 
                         <button type='submit' className={`block mt-8 min-w-60 p-3 text-white text-center font-bold hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto ${unBlocking ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-gray-600 hover:bg-gray-700'}`}>

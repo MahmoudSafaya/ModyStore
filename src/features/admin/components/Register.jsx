@@ -1,14 +1,15 @@
 import React, { useState, useRef } from 'react'
 import axios from '../../../api/axios';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useEffect } from 'react';
 import { Users } from 'lucide-react'
-import { useAuth } from '../../../context/AuthContext';
+import { useApp } from '../../../context/AppContext';
+import { A_DeleteConfirmModal } from '.';
 
 const Register = () => {
-    const {isDelete, setIsDelete} = useAuth();
+    const { isDelete, setIsDelete, successNotify, deleteNotify } = useApp();
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const formRef = useRef(null); // Ref for scrolling
@@ -19,10 +20,9 @@ const Register = () => {
             console.log(values)
             // Update a new user
             try {
-                const res = await axios.put(`/users/${selectedUser._id}`, values);
-                console.log(res);
+                await axios.put(`/users/${selectedUser._id}`, values);
 
-                toast.success(`${values.userName} تم تعديل بيانات المستخدم:`);
+                successNotify(`${values.userName} تم تعديل بيانات المستخدم:`)
                 getAllUsers();
             } catch (error) {
                 console.log(error);
@@ -33,7 +33,7 @@ const Register = () => {
             try {
                 const res = await axios.post('/users', values);
                 console.log(res);
-                toast.success(`${values.userName} تم تسجيله كمستخدم جديد.`);
+                successNotify(`${values.userName} تم تسجيله كمستخدم جديد.`);
                 getAllUsers();
             } catch (error) {
                 console.log(error);
@@ -64,10 +64,10 @@ const Register = () => {
         try {
             const res = await axios.delete(`/users/${userID}`);
             console.log(res);
-            setIsDelete({ display: false, itemID: '', itemName: '' });
+            setIsDelete({ purpose: '', itemId: '', itemName: '' });
             const remainUsers = users.filter(user => user._id !== userID);
             setUsers(remainUsers);
-            toast.success('تم حذف المستخدم بنجاح.');
+            deleteNotify('تم حذف المستخدم بنجاح.');
         } catch (error) {
             console.error(error);
         }
@@ -98,7 +98,7 @@ const Register = () => {
                                     )}</div>
                                     <div className='flex flex-col md:flex-row gap-6'>
                                         <button className="w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditClick(user)}>تعديل</button>
-                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ display: true, itemID: user._id, itemName: user.userName })}>حذف</button>
+                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ purpose: 'one-user', itemId: user._id, itemName: user.userName })}>حذف</button>
                                     </div>
                                 </div>
                             )
@@ -109,15 +109,8 @@ const Register = () => {
                 )}
             </div>
 
-            {/* User Popup */}
-            {isDelete.display && (
-                <div className='custom-bg-white fixed top-[50%] left-[50%] translate-[-50%] z-80 flex flex-col gap-8 shadow-md'>
-                    <p className='text-center w-full text-gray-900'>هل انت متأكد من حذف المستخدم: <span className='font-semibold'>{isDelete.username}</span> ؟</p>
-                    <div className='flex justify-center gap-4'>
-                        <button type='button' className='w-20 bg-red-500 text-white rounded-full py-2 px-4 duration-500 hover:bg-red-600' onClick={() => handleDeleteUser(isDelete.itemID)}>yes</button>
-                        <button type='button' className='w-20 bg-gray-300 text-gray-900 rounded-full py-2 px-4 duration-500 hover:bg-gray-400' onClick={() => setIsDelete({ display: false, itemID: '', itemName: '' })}>No</button>
-                    </div>
-                </div>
+            {isDelete.purpose === 'one-user' && (
+                <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDeleteUser(isDelete.itemId)} setIsDelete={setIsDelete} />
             )}
 
             <div className='custom-bg-white mt-8' ref={formRef}>

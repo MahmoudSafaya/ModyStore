@@ -4,9 +4,11 @@ import { useOrders } from "../../../context/OrdersContext";
 import OrdersTable from "../components/OrdersTable";
 import Loading from "../../../shared/components/Loading";
 import axios from "../../../api/axios";
+import { useApp } from "../../../context/AppContext";
 
 const UnconfirmedOrders = () => {
     const { setOrderPopup, getUnconfirmedOrders, unconfirmedOrders, setUnconfirmedOrders, currentPage, setCurrentPage, totalPages } = useOrders();
+    const { deleteNotify } = useApp();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -16,16 +18,7 @@ const UnconfirmedOrders = () => {
     const handleDeleteOrder = async (orderID) => {
         try {
             await axios.delete(`/visitors/orders/${orderID}`);
-            toast.success('تم حذف الطلب بنجاح!', {
-                style: {
-                    padding: '16px',
-                    color: '#485363',
-                },
-                iconTheme: {
-                    primary: '#485363',
-                    secondary: '#FFFFFF',
-                },
-            });
+            deleteNotify('تم حذف الطلب بنجاح!');
             const newOrders = unconfirmedOrders.filter(item => item._id !== orderID)
             setUnconfirmedOrders(newOrders);
             setOrderPopup({ display: false, editing: false, info: {} })

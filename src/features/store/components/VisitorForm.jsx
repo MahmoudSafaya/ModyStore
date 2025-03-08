@@ -136,7 +136,7 @@ const OrderForm = () => {
             </Formik>
 
             {/* Success notify*/}
-            <Toaster toastOptions={{ duration: 5000, removeDelay: 1000 }} />
+            <Toaster toastOptions={{ duration: 5000 }} />
         </div>
     );
 };

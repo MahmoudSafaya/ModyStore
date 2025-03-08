@@ -5,12 +5,12 @@ import { newOrderSchema } from "../../../schemas";
 import axios from '../../../api/axios';
 import { useOrders } from "../../../context/OrdersContext";
 import JNTAddresses from "../../../shared/components/JNTAddresses";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
 
 const NewOrder = ({ editMode, info, handleOrderPopup }) => {
   const { jntOrders, setJNTOrders, unconfirmedOrders, setUnconfirmedOrders, getUnconfirmedOrders, currentPage } = useOrders();
-  const { shippingPrice } = useApp();
+  const { shippingPrice, successNotify, deleteNotify } = useApp();
 
   const initialValues = info || {
     length: '',
@@ -90,12 +90,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
         getUnconfirmedOrders(currentPage);
         // Hide popup
         handleOrderPopup({ display: false, editing: false, info: {} });
-        toast.success("تم تعديل الطلب بنجاح.", {
-          style: {
-            padding: '16px',
-            color: '#61D345',
-          },
-        })
+        successNotify("تم تعديل الطلب بنجاح.");
       } catch (error) {
         console.error(error)
       }
@@ -104,9 +99,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       try {
         const response = await axios.post('/jnt/orders/', values);
         console.log(response);
-        if (response.data.message === "success") {
-          toast.success('تم تسجل الأوردر بنجاح')
-        }
+        successNotify('تم تسجل الأوردر بنجاح');
         actions.resetForm();
         values.receiver.prov = '';
 
@@ -230,10 +223,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       </Formik>
 
       {/* Notify popup */}
-      <Toaster toastOptions={{
-        duration: 5000,
-        removeDelay: 1000,
-      }} />
+      <Toaster toastOptions={{ duration: 7000 }} />
     </div>
   );
 };

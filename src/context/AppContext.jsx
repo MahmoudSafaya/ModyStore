@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import axios from "../api/axios";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const AppContext = createContext();
 
@@ -40,10 +41,44 @@ export const AppProvider = ({ children }) => {
     setIsModalOpen(true);
   };
 
+  const successNotify = (message) => {
+    toast.success(message, {
+      style: {
+        padding: '16px',
+        color: '#61D345',
+      },
+    })
+  };
+
+  const deleteNotify = (message) => {
+    toast.success(message, {
+      style: {
+        padding: '16px',
+        color: '#485363',
+      },
+      iconTheme: {
+        primary: '#485363',
+        secondary: '#FFFFFF',
+      },
+    });
+  };
+
+  const errorNotify = (message) => {
+    toast.success(message, {
+      style: {
+        padding: '16px',
+        color: '#fb2c36',
+      },
+      iconTheme: {
+        primary: '#fb2c36',
+        secondary: '#FFFFFF',
+      },
+    });
+  };
 
   return (
     <AppContext.Provider
-      value={{ categories, setCategories, getAllCategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById, isDelete, setIsDelete }}
+      value={{ categories, setCategories, getAllCategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById, isDelete, setIsDelete, successNotify, deleteNotify, errorNotify }}
     >
       {children}
     </AppContext.Provider>

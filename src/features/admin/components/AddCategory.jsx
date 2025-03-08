@@ -2,17 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from '../../../api/axios';
-import toast from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { ChartColumnStacked } from 'lucide-react'
 import { useApp } from '../../../context/AppContext';
+import { A_DeleteConfirmModal } from '.';
 
 const AddCategory = () => {
-    // const [categories, setCategories] = useState([]);
-    const [isDelete, setIsDelete] = useState({ display: false, cateId: '', username: '' });
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [parentCategory, setParentCategory] = useState('');
 
-    const {getAllCategories, categories, setCategories} = useApp();
+    const { getAllCategories, categories, setCategories, isDelete, setIsDelete, successNotify, deleteNotify, errorNotify } = useApp();
 
     const [iconFile, setIconFile] = useState(null);
     const [imageFile, setImageFile] = useState(null);
@@ -46,20 +45,15 @@ const AddCategory = () => {
         }
 
         if (selectedCategory) {
-            console.log('in update')
             formData.append("name", values.name);
 
             iconFile ? formData.append("icon", iconFile) : ''
             imageFile ? formData.append("image", imageFile) : ''
 
-            console.log(iconFile)
-            console.log(imageFile)
-            console.log(formData)
-
-            const response = await axios.put(`/categories/${selectedCategory._id}`, formData, {
+            await axios.put(`/categories/${selectedCategory._id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            console.log("did update: " + response);
+            successNotify('تم تعديل القسم بنجاح.')
 
         } else {
             // Create a new Category
@@ -72,14 +66,12 @@ const AddCategory = () => {
             });
 
             try {
-                console.log(values)
-                const res = await axios.post('/categories', formData, {
+                await axios.post('/categories', formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                toast.success('تم إضافة قسم جديد بنجاح.')
-                console.log(res);
+                successNotify('تم إضافة قسم جديد بنجاح.');
             } catch (error) {
-                toast.error('حدث خطأ, الرجاء المحاولة مرة أخري.')
+                errorNotify('حدث خطأ, الرجاء المحاولة مرة أخري.')
                 console.error(error);
             }
         }
@@ -90,19 +82,8 @@ const AddCategory = () => {
         setCateImage('');
     };
 
-    // const getAllCategories = async () => {
-    //     try {
-    //         const res = await axios.get('/categories');
-    //         console.log(res);
-    //         setCategories(res.data)
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
-
     const handleEditCategory = (category) => {
         setSelectedCategory(category);
-        console.log(category);
         setTimeout(() => {
             formRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to form
         }, 100);
@@ -113,15 +94,14 @@ const AddCategory = () => {
 
     const handleDeleteCategory = async (cateId) => {
         try {
-            const res = await axios.delete(`/categories/${cateId}`);
-            console.log(res);
-            setIsDelete({ display: false, cateId: '', name: '' });
+            await axios.delete(`/categories/${cateId}`);
+            setIsDelete({ purpose: '', itemId: '', itemName: '' });
             const remainUsers = categories.filter(item => item._id !== cateId);
             setCategories(remainUsers);
-            toast.success('تم حذف القسم بنجاح.');
+            deleteNotify('تم حذف القسم بنجاح.');
         } catch (error) {
             console.error(error);
-            toast.error('هذا القسم ما يزال به منتجات, لذا لا يمكن حذف.');
+            errorNotify('هذا القسم ما يزال به منتجات, لذا لا يمكن حذف.');
         }
     }
 
@@ -145,7 +125,7 @@ const AddCategory = () => {
                                     <p className='min-w-40 text-center'>{item.name}</p>
                                     <div className='flex flex-col md:flex-row gap-6'>
                                         <button className="w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditCategory(item)}>تعديل</button>
-                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ display: true, cateId: item._id, name: item.name })}>حذف</button>
+                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ purpose: 'one-category', itemId: item._id, itemName: item.name })}>حذف</button>
                                     </div>
                                 </div>
                             )
@@ -156,15 +136,9 @@ const AddCategory = () => {
                 )}
             </div>
 
-            {/* User Popup */}
-            {isDelete.display && (
-                <div className='custom-bg-white fixed top-[50%] left-[50%] translate-[-50%] z-80 flex flex-col gap-8 shadow-md'>
-                    <p className='text-center w-full text-gray-900'>هل انت متأكد من حذف قسم: <span className='font-semibold'>{isDelete.name}</span> ؟</p>
-                    <div className='flex justify-center gap-4'>
-                        <button type='button' className='w-20 bg-red-500 text-white rounded-full py-2 px-4 duration-500 hover:bg-red-600' onClick={() => handleDeleteCategory(isDelete.cateId)}>yes</button>
-                        <button type='button' className='w-20 bg-gray-300 text-gray-900 rounded-full py-2 px-4 duration-500 hover:bg-gray-400' onClick={() => setIsDelete({ display: false, cateId: '', name: '' })}>No</button>
-                    </div>
-                </div>
+
+            {isDelete.purpose === 'one-category' && (
+                <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDeleteCategory(isDelete.itemId)} setIsDelete={setIsDelete} />
             )}
 
             <div className="custom-bg-white mt-8" ref={formRef}>
@@ -282,13 +256,15 @@ const AddCategory = () => {
                                     type="submit"
                                     className="min-w-60 px-4 py-2 bg-indigo-500 text-white rounded-lg duration-500 hover:bg-indigo-600"
                                 >
-                                    {isSubmitting ? 'جار الإضافة...' : 'إضافة'}
+                                    {selectedCategory ? (isSubmitting ? 'جار التعديل...' : '  تعديل') : (isSubmitting ? 'جار الإضافة...' : 'إضافة')}
                                 </button>
                             </div>
                         </Form>
                     )}
                 </Formik>
             </div>
+
+            <Toaster />
         </div>
     );
 };

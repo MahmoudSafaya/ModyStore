@@ -10,7 +10,8 @@ import ProductCategory from "./components/ProductCategory";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { ProductSchema } from "../../../../schemas/productSchema";
 import axios from "../../../../api/axios";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { useApp } from "../../../../context/AppContext";
 
 const AddProduct = () => {
     const [thumbnail, setThumbnail] = useState(null);
@@ -23,6 +24,8 @@ const AddProduct = () => {
 
     const [loading, setLoading] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState();
+
+    const { successNotify } = useApp();
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -93,10 +96,10 @@ const AddProduct = () => {
             proImage ? formData.append('mainImage', proImage) : '';
             console.log(proImage)
             // const updatedImages = productImages.filter(item => item.file ? item.preview : '');
-            updatedImages.length>0 && updatedImages.forEach((file) => {
+            updatedImages.length > 0 && updatedImages.forEach((file) => {
                 formData.append("images", file);
             });
-            
+
             console.log("Removed Images:", removedImages);
             // updatedImages.length>0 ? formData.append("images", updatedImages) : '';
             // removedImages.length>0 ? formData.append("removedImagesPaths[0]", removedImages) : '';
@@ -128,7 +131,8 @@ const AddProduct = () => {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
                 console.log("Product edited:", response);
-                toast.success('تهانينا!, تم تعديل المنتج بنجاح');
+                successNotify('تهانينا!, تم تعديل المنتج بنجاح');
+
                 resetForm();
                 // setThumbnail('');
                 // setProductImages([])
@@ -163,7 +167,8 @@ const AddProduct = () => {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
                 console.log("Product uploaded:", response);
-                toast.success('تهانينا!, تم إضافة المنتج بنجاح');
+                successNotify('تهانينا!, تم إضافة المنتج بنجاح');
+
                 resetForm();
                 // setThumbnail('');
                 // setProductImages([]);

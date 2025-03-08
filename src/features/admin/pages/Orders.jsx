@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { A_BillOfLading } from "../components";
-import SearchFeature from "../components/SearchFeature";
-import { useOrders } from "../../../context/OrdersContext";
 import axios from "../../../api/axios";
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import OrdersTable from "../components/OrdersTable";
+import { useApp } from "../../../context/AppContext";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const { deleteNotify } = useApp();
 
   const fetchOrders = async (page) => {
     try {
@@ -30,7 +29,7 @@ const Orders = () => {
   const cancelOrderFromJNT = async (orderID) => {
     try {
       await axios.delete(`/jnt/orders/${orderID}`);
-      toast.success('تم حذف الطلب بنجاح!');
+      deleteNotify('تم حذف الطلب بنجاح!');
       const newJntOrders = orders.filter(item => item._id !== orderID)
       setOrders(newJntOrders);
       setOrderPopup({ display: false, editing: false, info: {} })

@@ -1,7 +1,6 @@
 export { default as A_Header } from './Header';
 export { default as A_Sidebar } from './Sidebar';
 export { default as A_Register } from './Register';
-export { default as A_BarcodeReader } from './BarcodeReader';
 export { default as A_BarcodeScanner } from './BarcodeScanner';
 export { default as A_BillOfLading } from './BillOfLading';
 export { default as A_OrderInfo } from './OrderInfo';

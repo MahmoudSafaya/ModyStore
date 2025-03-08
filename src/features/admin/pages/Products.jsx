@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Trash, Search, X, ChevronRight, ChevronLeft, ChevronDown, Eye, EyeClosed } from "lucide-react";
+import { Trash, Search, X, ChevronRight, ChevronLeft, ChevronDown } from "lucide-react";
 import { FaCheck, FaRegEdit, FaStar } from "react-icons/fa";
 import axios from '../../../api/axios';
 import Loading from '../../../shared/components/Loading';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
 import { useApp } from '../../../context/AppContext';
 import { A_BillOfLading, A_DeleteConfirmModal } from '../components';
@@ -12,7 +12,7 @@ import { IoStorefrontOutline } from "react-icons/io5";
 
 const Products = () => {
   const { loading, setLoading } = useAuth();
-  const { categories, isDelete, setIsDelete } = useApp();
+  const { categories, isDelete, setIsDelete, deleteNotify } = useApp();
   const [products, setProducts] = useState([]);
   const [checkedAll, setCheckedAll] = useState(false);
   const [checkedOrders, setCheckedOrders] = useState([]);
@@ -71,16 +71,7 @@ const Products = () => {
   const handleDeleteProduct = async (itemID) => {
     try {
       await axios.delete(`/products/${itemID}`);
-      toast.success('تم حذف المنتج بنجاح.', {
-        style: {
-          padding: '16px',
-          color: '#485363',
-        },
-        iconTheme: {
-          primary: '#485363',
-          secondary: '#FFFFFF',
-        },
-      });
+      deleteNotify('تم حذف المنتج بنجاح.');
       getAllProducts();
     } catch (error) {
       console.error(error);
@@ -93,16 +84,7 @@ const Products = () => {
       for (const product of checkedOrders) {
         // Send a DELETE request for each product using its _id
         await axios.delete(`/products/${product._id}`);
-        toast.success("تم حذف المنتجات المحددة بنجاح.", {
-          style: {
-            padding: '16px',
-            color: '#485363',
-          },
-          iconTheme: {
-            primary: '#485363',
-            secondary: '#FFFFFF',
-          },
-        })
+        deleteNotify("تم حذف المنتجات المحددة بنجاح.");
         getAllProducts();
       }
     } catch (error) {

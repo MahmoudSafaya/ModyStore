@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../api/axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useApp } from "../../../context/AppContext";
 
 const HandleStorage = () => {
   const [scanType, setScanType] = useState('');
   const [result, setResult] = useState(null);
   const [barcode, setBarcode] = useState("");
+  const { successNotify, deleteNotify } = useApp();
 
   const depositScan = async () => {
     try {
       const res = await axios.patch(`/products/variants/BARm7yv9wj1RDA2/add-stock`);
       console.log(res);
       setResult(res.data.variant);
-      toast.success(res.data.message, {
-        style: {
-          padding: '16px',
-          color: '#61D345',
-        },
-      })
+      successNotify(res.data.message);
     } catch (error) {
       console.error(error);
     }
@@ -28,16 +25,7 @@ const HandleStorage = () => {
       const res = await axios.patch(`/products/variants/BARm7yv9wj1RDA2/decrease-stock`);
       console.log(res);
       setResult(res.data.variant);
-      toast.success(res.data.message, {
-        style: {
-          padding: '16px',
-          color: '#485363',
-        },
-        iconTheme: {
-          primary: '#485363',
-          secondary: '#FFFFFF',
-        },
-      })
+      deleteNotify(res.data.message);
     } catch (error) {
       console.error(error);
     }
