@@ -81,9 +81,7 @@ const AddProduct = () => {
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         const formData = new FormData();
-        // Check for products status
-        const shit = values.isActive === 'true';
-        console.log(shit);
+
         if (selectedProduct) {
             formData.append('name', values.name)
             formData.append('description', values.description)
@@ -94,33 +92,23 @@ const AddProduct = () => {
             formData.append('isActive', values.isActive)
 
             proImage ? formData.append('mainImage', proImage) : '';
-            console.log(proImage)
-            // const updatedImages = productImages.filter(item => item.file ? item.preview : '');
+
             updatedImages.length > 0 && updatedImages.forEach((file) => {
                 formData.append("images", file);
             });
-
-            console.log("Removed Images:", removedImages);
-            // updatedImages.length>0 ? formData.append("images", updatedImages) : '';
-            // removedImages.length>0 ? formData.append("removedImagesPaths[0]", removedImages) : '';
 
             removedImages && removedImages.forEach((item, index) => {
                 formData.append(`removedImagesPaths[${index}]`, item);
             });
 
-            values.variants.forEach((variant, index) => {
-                formData.append(`variants[${index}][barCode]`, variant.barCode);
-                formData.append(`variants[${index}][color]`, variant.color);
-                formData.append(`variants[${index}][size]`, variant.size);
-                formData.append(`variants[${index}][stock]`, variant.stock);
+            variations.forEach((variant, index) => {
+                if (variant.stock) { // Ensure stock exists before adding variant
+                    if (variant.barCode) formData.append(`variants[${index}][barCode]`, variant.barCode);
+                    if (variant.color) formData.append(`variants[${index}][color]`, variant.color);
+                    if (variant.size) formData.append(`variants[${index}][size]`, variant.size);
+                    formData.append(`variants[${index}][stock]`, variant.stock);
+                }
             });
-            values.reviews.forEach((review, index) => {
-                formData.append(`reviews[${index}][rating]`, review.rating);
-                formData.append(`reviews[${index}][comment]`, review.comment);
-            });
-            formData.append(`ratings[average]`, values.ratings.average);
-            formData.append(`ratings[count]`, values.ratings.count);
-
 
 
             try {
@@ -130,7 +118,6 @@ const AddProduct = () => {
                 const response = await axios.put(`/products/${paramID}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                console.log("Product edited:", response);
                 successNotify('تهانينا!, تم تعديل المنتج بنجاح');
 
                 resetForm();
@@ -141,6 +128,14 @@ const AddProduct = () => {
                 console.error("Error editing product:", error.response?.data || error.message);
             }
         } else {
+            values.variants = values.variants
+                .map((item, index) => {
+                    if (index === 0 && item.stock) return item;
+                    if (index > 0 && item.stock && (item.size || item.color)) return item;
+                    return null; // Explicitly return null instead of an implicit undefined
+                })
+                .filter(Boolean); // Remove null or undefined values
+
             // Append form values
             Object.keys(values).forEach((key) => {
                 if (key === "images") {
@@ -149,9 +144,11 @@ const AddProduct = () => {
                     });
                 } else if (key === "variants") {
                     values.variants.forEach((variant, index) => {
-                        formData.append(`variants[${index}][color]`, variant.color);
-                        formData.append(`variants[${index}][size]`, variant.size);
-                        formData.append(`variants[${index}][stock]`, variant.stock);
+                        if (variant.stock) { // Ensure stock exists before adding variant
+                            if (variant.color) formData.append(`variants[${index}][color]`, variant.color);
+                            if (variant.size) formData.append(`variants[${index}][size]`, variant.size);
+                            formData.append(`variants[${index}][stock]`, variant.stock);
+                        }
                     });
                 } else if (key === "reviews") {
                     values.reviews.forEach((review, index) => {
@@ -270,7 +267,7 @@ const AddProduct = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="block min-w-40 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-full hover:be-indigo-600"
+                            className="block min-w-60 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-lg hover:be-indigo-600"
                         >
                             {selectedProduct ?
                                 (isSubmitting ? "يتم تعديل المنتج..." : "تعديل المنتج") :
@@ -280,7 +277,7 @@ const AddProduct = () => {
                 )}
             </Formik>
 
-            <Toaster toastOptions={{ duration: 7000 }} />
+            <Toaster toastOptions={{ duration: 3000 }} />
         </div>
     )
 }

@@ -29,25 +29,16 @@ Font.register({
 })
 
 // Reference font
-const styles = StyleSheet.create({
+const styles = {
   page: {
-    fontFamily: 'rubik',
-    padding: 3,
-    fontSize: 10,
-    textAlign: 'right'
+    padding: 10, // Add padding to the page
   },
-  containerColumn: {
+  barcodeContainer: {
     display: 'flex',
-    flexDirection: 'column'
-  },
-  containerRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
-    border: '1px solid black'
-  }
-})
+  },
+};
 
 // Component to create PDF with the barcode
 const BarcodePDF = ({ variant, stock }) => {
@@ -55,34 +46,37 @@ const BarcodePDF = ({ variant, stock }) => {
 
   return (
     <Document>
-            {Array.from({ length: stock }, (_, index) => {
-                const canvas = document.createElement("canvas");
-                JsBarcode(canvas, variant, {
-                    format: "CODE128",
-                    height: 50,
-                    displayValue: true,
-                });
-
-                // Get the barcode's width and height
-                const barcodeWidth = canvas.width;
-                const barcodeHeight = canvas.height;
-
-                // Convert canvas to data URL
-                const barcodeDataURL = canvas.toDataURL("image/png");
-
-                return (
-                    <Page
-                        key={index}
-                        style={styles.page}
-                        size={[barcodeWidth + 20, barcodeHeight + 10]} // Set page size to barcode size
-                    >
-                        <View>
-                            <Image src={barcodeDataURL} />
-                        </View>
-                    </Page>
-                );
-            })}
-        </Document>
+      {Array.from({ length: stock }, (_, index) => {
+        const canvas = document.createElement("canvas");
+        JsBarcode(canvas, variant, {
+          format: "CODE128",
+          height: 50,
+          displayValue: true,
+        });
+  
+        // Get the barcode's width and height
+        const barcodeWidth = canvas.width;
+        const barcodeHeight = canvas.height;
+  
+        // Convert canvas to data URL
+        const barcodeDataURL = canvas.toDataURL("image/png");
+  
+        return (
+          <Page
+            key={index}
+            style={styles.page}
+            size={[barcodeWidth + 20, barcodeHeight + 20]} // Add some padding
+          >
+            <View style={styles.barcodeContainer}>
+              <Image
+                src={barcodeDataURL}
+                style={{ width: barcodeWidth, height: barcodeHeight }}
+              />
+            </View>
+          </Page>
+        );
+      })}
+    </Document>
   );
 };
 

@@ -39,7 +39,7 @@ const OrderForm = () => {
             length: 30,
             weight: 5.02,
             itemsValue: totalPrice + shippingPrice,
-            remark: `${cart.map(item => item.selectedVariant)} -/- ${values.receiver.additionalInfo}`,
+            remark: `${cart.map(item => item.selectedVariant)} - ${values.receiver.additionalInfo}`,
             billCode: "", ////////////////////
             goodsType: "ITN1",
             totalQuantity: "1",
@@ -126,7 +126,7 @@ const OrderForm = () => {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className="w-full bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 disabled:bg-gray-400"
+                            className="w-full bg-indigo-500 text-white py-2 px-4 rounded-full hover:bg-indigo-600 disabled:bg-gray-400"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? "تسجيل الاوردر..." : "تسجيل"}

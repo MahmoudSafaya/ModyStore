@@ -100,7 +100,12 @@ export const CartProvider = ({ children }) => {
         setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
         saveCartItems(newCart);
         setIsCartOpen(true);
-        console.log(item.selectedVariant);
+        toast.success('تم إضافة المنتج إلى سلة التسوق.', {
+            style: {
+                padding: '16px',
+                color: '#61D345',
+            },
+        })
     };
 
     // Increase item quantity

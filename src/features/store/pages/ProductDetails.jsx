@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../../context/CartContext";
 import { useEffect } from "react";
@@ -8,13 +8,13 @@ import Loading from "../../../shared/components/Loading";
 import toast, { Toaster } from "react-hot-toast";
 import { FaStar } from "react-icons/fa";
 
-
 const ProductDetails = ({ }) => {
     const { addToCart } = useCart();
     const [product, setProduct] = useState();
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
     const [mainImgSrc, setMainImgSrc] = useState('');
+    const scrollContainerRef = useRef(null);
 
     const [proVariants, setProVariants] = useState([]);
     const [selectedSize, setSelectedSize] = useState("");
@@ -50,22 +50,19 @@ const ProductDetails = ({ }) => {
     }
 
     // Get unique sizes and colors
-    const availableSizes = [
-        ...new Set(
-            proVariants
-                .filter((v) => v.stock > 0 && v.size) // Ensure size exists
-                .map((v) => v.size)
-        ),
-    ];
-    const availableColors = [
-        ...new Set(
-            proVariants
-                .filter((v) => v.stock > 0 && v.color) // Ensure color exists
-                .map((v) => v.color)
-        ),
-    ];
+    const variantSizes = proVariants
+        .filter((v) => v.stock > 0 && v.size) // Ensure size exists and stock is available
+        .map((v) => v.size); // Extract size values
+    const availableSizes = variantSizes[0] !== 'undefined' ? [...new Set(variantSizes)] : []; // Get unique sizes
+   
+    const variantColors = proVariants
+        .filter((v) => v.stock > 0 && v.color) // Ensure color exists and stock is available
+        .map((v) => v.color); // Extract color values
+    const availableColors = variantColors[0] !== 'undefined' ? [...new Set(variantColors)] : []; // Get unique colors
+
 
     // Determine visibility logic
+    // Set 1 to 0 to display the single variant
     const hasMultipleSizes = availableSizes.length > 1;
     const hasMultipleColors = availableColors.length > 1;
 
@@ -95,7 +92,19 @@ const ProductDetails = ({ }) => {
         ]
         : availableSizes;
 
-    const increaseQty = () => setQuantity(quantity + 1);
+    const increaseQty = () => {
+        const totalStock = proVariants.reduce((total, item) => total + item.stock, 0);
+        console.log(totalStock)
+        if (quantity < totalStock) {
+            setQuantity(quantity + 1)
+        } else {
+            toast('عفوا, الكمية المطلوبة لست متوفرة في الوقت الحالي.', {
+                style: {
+                    textAlign: 'center'
+                }
+            })
+        }
+    };
     const decreaseQty = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
     const handleBuyNow = (product, quantity) => {
@@ -162,42 +171,49 @@ const ProductDetails = ({ }) => {
         }
     };
 
-
-
     if (loading) {
         return <Loading loading={loading} />
     }
 
     return (
-        <div className="container py-12 px-12 text-gray-800">
+        <div className="py-12 px-6 md:px-12 text-gray-800">
             {product && (
                 <div>
                     <div className="flex flex-col lg:flex-row gap-8">
                         {/* Image Section */}
-                        <div className="w-3/5 flex justify-start items-center gap-2">
-                            {/* Thumbnails */}
-                            <div className="flex flex-row md:flex-col gap-4">
-                                {product.images.map(image => {
-                                    const imgSrc = `${baseUrl}/${image.url.replace(/\\/g, '/')}`;
-                                    return (
-                                        <img
-                                            key={image._id}
-                                            src={imgSrc}
-                                            alt={image.alt}
-                                            className={`w-30 cursor-pointer border-3 rounded-lg hover:border-indigo-400 transition-all duration-300 ${mainImgSrc === imgSrc ? 'border-indigo-400' : 'border-gray-300'}`}
-                                            onClick={() => setMainImgSrc(imgSrc)}
-                                        />
-                                    )
-                                })}
+                        <div className="w-full md:w-3/5 flex flex-col-reverse justify-start items-center gap-2">
+
+                            <div className="flex flex-col-reverse md:flex-row w-full gap-4">
+                                {/* Thumbnail Container */}
+                                <div
+                                    ref={scrollContainerRef}
+                                    className="relative w-full md:w-20 h-20 md:h-[350px] my-auto overflow-x-auto md:overflow-y-auto flex md:flex-col gap-2 scrollbar-hide"
+                                >
+                                    {product.images.map((image, index) => {
+                                        const imgSrc = `${baseUrl}/${image.url.replace(/\\/g, '/')}`;
+                                        return (
+                                            <img
+                                                key={image._id}
+                                                src={imgSrc}
+                                                alt={image.alt}
+                                                className={`w-full h-20 object-cover cursor-pointer rounded-md border-3 ${mainImgSrc === imgSrc ? "border-indigo-400" : "border-gray-100"
+                                                    }`}
+                                                onClick={() => setMainImgSrc(imgSrc)}
+                                            />
+                                        )
+                                    })}
+                                </div>
+
+                                {/* Main Image Display */}
+                                <div className="flex-1 rounded-xl overflow-hidden">
+                                    <img
+                                        src={mainImgSrc}
+                                        alt={product.mainImage.alt}
+                                        className="w-full object-cover rounded-xl duration-500 hover:scale-130"
+                                    />
+                                </div>
                             </div>
-                            {/* Displayed Image */}
-                            <div className="w-[85%] overflow-hidden rounded-xl border border-gray-300">
-                                <img
-                                    src={mainImgSrc}
-                                    alt={product.mainImage.alt}
-                                    className="w-full transition-transform duration-300 ease-in-out transform hover:scale-120"
-                                />
-                            </div>
+
                         </div>
 
                         {/* Product Details */}

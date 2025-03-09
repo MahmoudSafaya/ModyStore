@@ -5,6 +5,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { useStore } from "../../../context/StoreContext";
 import { useCart } from "../../../context/CartContext";
 import { useApp } from "../../../context/AppContext";
+import modyStoreLogo from '../../../assets/mody-store-logo.png'
 
 const EcommerceHeader = ({ toggleSidebar }) => {
   const { storeMainNav, products } = useStore();
@@ -44,7 +45,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
       <div className="w-full py-4 px-4 md:px-12 flex justify-between items-center gap-2 lg:gap-10">
         <div className="logo">
           <Link to="/" className="logo-link">
-            <img src="images/mody-store-logo.png" className="w-12 h-12" />
+            <img src={modyStoreLogo} className="w-12 h-12" />
           </Link>
         </div>
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../../api/axios";
 import { Toaster } from 'react-hot-toast';
-import OrdersTable from "../components/OrdersTable";
 import { useApp } from "../../../context/AppContext";
+import { A_OrdersTable, A_SearchFeature } from "../components";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -40,8 +40,13 @@ const Orders = () => {
 
   return (
     <div>
+      <div className="custom-bg-white">
+        {/* Search Features */}
+        <A_SearchFeature inConfirmed={true} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} />
+      </div>
+
       {/* Table With Search */}
-      <OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} />
+      <A_OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} />
 
       {/* Toaster notify*/}
       <Toaster />

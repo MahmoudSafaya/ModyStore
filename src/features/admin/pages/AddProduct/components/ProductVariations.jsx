@@ -2,11 +2,24 @@ import React, { useState } from 'react';
 import { IoClose } from "react-icons/io5";
 import { Field, ErrorMessage } from 'formik';
 import { useEffect } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
 
   const addVariation = () => {
-    setVariations([...variations, { barCode: "", size: "", color: "", stock: "" }]);
+    if (!variations[0]?.stock) {
+      // If there's no stock, don't allow adding variations
+      return;
+    }
+
+    if (variations.some(v => v.size || v.color)) {
+      // If at least one variant has size or color, allow adding a new empty variant
+      setVariations([...variations, { barCode: "", size: "", color: "", stock: "" }]);
+    } else {
+      // If no variant has size or color, keep only the stock in the first variant
+      setVariations([{ barCode: variations[0].barCode, size: variations[0].size, color: variations[0].color, stock: variations[0].stock }]);
+      toast('الرجاء, إضافة مقاس او لون اولا.')
+    }
   };
 
   const updateVariation = (index, field, value) => {
@@ -56,13 +69,15 @@ const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
               <ErrorMessage name={`variants[${variationIndex}].stock`} component="div" className="text-red-500" />
             </div>
 
-            <button
-              type="button"
-              onClick={() => handleRemoveVariation(variationIndex)}
-              className="bg-red-200 text-red-400 text-2xl w-20 h-10 flex-grow rounded-lg flex justify-center items-center duration-500 hover:bg-red-500 hover:text-white"
-            >
-              <IoClose />
-            </button>
+            {variationIndex !== 0 && (
+              <button
+                type="button"
+                onClick={() => handleRemoveVariation(variationIndex)}
+                className="bg-red-200 text-red-400 text-2xl w-20 h-10 flex-grow rounded-lg flex justify-center items-center duration-500 hover:bg-red-500 hover:text-white"
+              >
+                <IoClose />
+              </button>
+            )}
           </div>
         </div>
       ))}
@@ -73,6 +88,8 @@ const ProductVariations = ({ setFieldValue, variations, setVariations }) => {
       >
         إضافة متغير جديد
       </button>
+
+      <Toaster />
     </div>
   );
 };

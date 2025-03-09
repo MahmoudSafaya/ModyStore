@@ -223,7 +223,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       </Formik>
 
       {/* Notify popup */}
-      <Toaster toastOptions={{ duration: 7000 }} />
+      <Toaster toastOptions={{ duration: 3000 }} />
     </div>
   );
 };

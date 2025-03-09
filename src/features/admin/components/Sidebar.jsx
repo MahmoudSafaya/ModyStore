@@ -4,9 +4,9 @@ import { useAuth } from "../../../context/AuthContext";
 import { useLocation } from "react-router-dom";
 import { GiClothes } from "react-icons/gi";
 import { MdOutlineAddBusiness } from "react-icons/md";
-import { IoStorefront } from "react-icons/io5";
 import { Menu, House, ChevronsRight, ChevronsLeft, Settings, PackagePlus, PackageOpen, LogOut, ScanBarcode } from "lucide-react";
 import modyStoreLogo from '../../../assets/mody-store-logo.png'
+import { IoStorefrontOutline } from "react-icons/io5";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
 
@@ -26,7 +26,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { icon: <House />, label: "الرئيسية", link: '/admin' },
     { icon: <PackagePlus />, label: "تسجيل اوردر", link: '/admin/place-order' },
     { icon: <PackageOpen />, label: "قائمة الطلبات", link: '/admin/orders' },
-    { icon: <IoStorefront />, label: "طلبات الموقع", link: '/admin/unconfirmed-orders' },
+    { icon: <IoStorefrontOutline />, label: "طلبات الموقع", link: '/admin/unconfirmed-orders' },
   ];
   const storeNav = [
     { icon: <GiClothes />, label: "المنتجات", link: '/admin/products' },
@@ -36,7 +36,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   ];
 
   return (
-    <div className="flex fixed top-0 right-0 z-40">
+    <div className="flex fixed top-0 right-0 z-80">
       <div className={`bg-white text-gray-800 h-screen transition-all duration-500 overflow-hidden flex flex-col justify-between items-center overflow-y-auto ${isOpen ? "w-[200px] shadow-md lg:shadow-none" : "w-[50px]"
         }`}
       >

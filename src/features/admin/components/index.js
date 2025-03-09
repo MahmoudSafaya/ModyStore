@@ -4,6 +4,7 @@ export { default as A_Register } from './Register';
 export { default as A_BarcodeScanner } from './BarcodeScanner';
 export { default as A_BillOfLading } from './BillOfLading';
 export { default as A_OrderInfo } from './OrderInfo';
+export { default as A_OrdersTable } from './OrdersTable';
 export { default as A_ProductForm } from './ProductForm';
 export { default as A_RequireAuth } from './RequireAuth';
 export { default as A_OrderEdit } from './OrderEdit';

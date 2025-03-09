@@ -57,7 +57,9 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
       axios.post("/addresses/seprated", { Province: firstSelection })
         .then(response => {
           setSecondOptions(response.data.data.result);
-          setShippingPrice(Number(response.data.data.price));
+          if(parent === 'receiver') {
+            setShippingPrice(Number(response.data.data.price));
+          }
         })
         .catch(error => console.error("Error fetching second options:", error));
     } else {

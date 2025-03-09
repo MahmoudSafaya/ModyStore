@@ -5,7 +5,6 @@ import axios from "../../../api/axios";
 import { Search } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
-import { A_DeleteConfirmModal } from ".";
 
 const CustomDatePicker = ({ startDate, endDate, onChange }) => {
   return (
@@ -26,12 +25,10 @@ const CustomDatePicker = ({ startDate, endDate, onChange }) => {
 };
 
 
-const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders, setCheckedOrders }) => {
+const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
   const [orderNumber, setOrderNumber] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
-
-  const { isDelete, setIsDelete, successNotify, deleteNotify } = useApp();
 
   // Date Range Picker
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
@@ -61,48 +58,6 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders, set
     fetchOrders();
   };
 
-  const deleteAllSelected = async () => {
-    if (inConfirmed) {
-      try {
-        // Iterate over each product in the array
-        for (const item of checkedOrders) {
-          // Send a DELETE request for each product using its _id
-          await axios.delete(`/jnt/orders/${item._id}`);
-        }
-        deleteNotify("تم حذف الطلبات المحددة بنجاح.");
-        fetchOrders();
-      } catch (error) {
-        console.error('Error deleting products:', error);
-      }
-    } else {
-      try {
-        // Iterate over each product in the array
-        for (const item of checkedOrders) {
-          // Send a DELETE request for each product using its _id
-          await axios.delete(`/visitors/orders/${item._id}`);
-        }
-        deleteNotify("تم حذف الطلبات المحددة بنجاح.");
-        fetchOrders();
-      } catch (error) {
-        console.error('Error deleting products:', error);
-      }
-    }
-    setCheckedOrders([]);
-  };
-  const signAllSelected = async () => {
-    try {
-      // Iterate over each product in the array
-      for (const item of checkedOrders) {
-        // Send a DELETE request for each product using its _id
-        await axios.post(`/jnt/orders/${item._id}`);
-        console.log(`Product with _id ${item._id} signed successfully.`);
-      }
-      console.log('All products signed successfully.');
-      fetchOrders();
-    } catch (error) {
-      console.error('Error deleting products:', error);
-    }
-  };
 
   return (
     <div>
@@ -112,7 +67,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders, set
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div className="z-100">
+        <div className="z-60">
           <CustomDatePicker
             startDate={startDate}
             endDate={endDate}
@@ -151,46 +106,26 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, checkedOrders, set
             placeholder="ادخل رقم موبيل العميل"
           />
         </div>
-
+      </div>
+      <div className="flex items-center justify-center gap-4 mt-8">
         <button
           type="button"
           onClick={handleQuery}
-          className="w-full bg-indigo-500 text-slate-100 py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600"
+          className="min-w-30 bg-indigo-500 text-slate-100 py-2 px-4 rounded-lg duration-500 shadow-sm hover:bg-indigo-600"
         >
           بحث
         </button>
         <button
           type="button"
           onClick={handleClear}
-          className="w-full bg-gray-600 text-slate-100 py-2 px-4 rounded-lg duration-500 hover:bg-gray-700"
+          className="min-w-30 bg-gray-600 text-slate-100 py-2 px-4 rounded-lg duration-500 shadow-sm hover:bg-gray-700"
         >
           مسح
         </button>
-        {!inConfirmed && (
-          <button
-            type="button"
-            onClick={signAllSelected}
-            className={`py-2 px-4 rounded-lg duration-500 shadow-md bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
-            disabled={!checkedOrders.length > 0}
-          >
-            تسجيل الكل
-          </button>
-        )}
-        <button
-          type="button"
-          className={`py-2 px-4 rounded-lg duration-500 shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
-          onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}
-        >
-          حذف الكل
-        </button>
       </div>
 
-      <Toaster toastOptions={{ duration: 7000 }} />
+      <Toaster toastOptions={{ duration: 3000 }} />
 
-
-      {isDelete.purpose === 'delete-selected' && (
-        <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={deleteAllSelected} setIsDelete={setIsDelete} />
-      )}
     </div>
   );
 };

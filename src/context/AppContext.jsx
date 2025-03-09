@@ -42,12 +42,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const successNotify = (message) => {
-    toast.success(message, {
-      style: {
-        padding: '16px',
-        color: '#61D345',
-      },
-    })
+    toast.success(message)
   };
 
   const deleteNotify = (message) => {

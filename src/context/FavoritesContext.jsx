@@ -1,5 +1,6 @@
 import CryptoJS from 'crypto-js';
 import { createContext, useContext, useState } from "react";
+import toast from 'react-hot-toast';
 
 // Secret key for hashing (keep this secure)
 const SECRET_KEY = import.meta.env.VITE_FAVS_SECRET_KEY;
@@ -48,12 +49,23 @@ export const FavoritesProvider = ({ children }) => {
     const newFAVs = [...favorites, item];
     setFavorites(newFAVs);
     saveFavoritesItems(newFAVs);
+    toast.success('تم إضافة المنتج إلى قائمة المفضله.')
 };
 
   const removeFromFavorites = (itemId) => {
     const newFAVs = favorites.filter(item => item._id !== itemId);
     setFavorites(newFAVs);
     saveFavoritesItems(newFAVs);
+    toast.success('تم إزالة المنتج من قائمة المفضله.', {
+      style: {
+        padding: '16px',
+        color: '#485363',
+      },
+      iconTheme: {
+        primary: '#485363',
+        secondary: '#FFFFFF',
+      },
+    });
   };
 
 

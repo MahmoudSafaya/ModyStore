@@ -97,8 +97,8 @@ const Register = () => {
                                         <p className='text-gray-700 text-center'>user</p>
                                     )}</div>
                                     <div className='flex flex-col md:flex-row gap-6'>
-                                        <button className="w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditClick(user)}>تعديل</button>
-                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ purpose: 'one-user', itemId: user._id, itemName: user.userName })}>حذف</button>
+                                        <button className="min-w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditClick(user)}>تعديل</button>
+                                        <button className="min-w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ purpose: 'one-user', itemId: user._id, itemName: user.userName })}>حذف</button>
                                     </div>
                                 </div>
                             )
@@ -160,7 +160,7 @@ const Register = () => {
                     )}
                 </Formik>
 
-                <Toaster toastOptions={{ duration: 7000 }} />
+                <Toaster toastOptions={{ duration: 3000 }} />
             </div>
         </div>
     )

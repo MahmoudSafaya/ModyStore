@@ -1,22 +1,35 @@
 import { useState } from 'react';
 import axios from '../../../api/axios';
-import { useAuth } from '../../../context/AuthContext';
 import ReactEchart from '../../../shared/components/ReactEchart';
-import { FaDollarSign, FaUndo, FaCalendar, FaBan, FaTree } from "react-icons/fa";
 import { useEffect } from 'react';
 import Loading from '../../../shared/components/Loading';
-
-const cards = [
-  { title: "جميع الاوردارات", value: "16,689", icon: <FaDollarSign />, iconBg: "bg-indigo-500" },
-  { title: "اوردارات المسجله", value: "$36,715", icon: <FaTree />, iconBg: "bg-green-500" },
-  { title: "مرتجعات", value: "148", icon: <FaUndo />, iconBg: "bg-yellow-500" },
-  { title: "يتم التسليم", value: "$156K", icon: <FaCalendar />, iconBg: "bg-blue-500" },
-  { title: "اوردارات ملغية", value: "64", icon: <FaBan />, iconBg: "bg-red-500" },
-];
+import { BiCategory } from "react-icons/bi";
+import { IoStorefrontOutline } from "react-icons/io5";
+import { PackageOpen } from 'lucide-react'
+import { A_OrdersTable } from '../components';
+import { useOrders } from '../../../context/OrdersContext';
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const [dashCounts, setDashCounts] = useState({});
+  // const [unconfirmedOrders, setUnconfirmedOrders] = useState([]);
+
+  const { setOrderPopup, getUnconfirmedOrders, unconfirmedOrders, setUnconfirmedOrders, currentPage, setCurrentPage, totalPages } = useOrders();
+
+  const cards = [
+    [
+      { title: "أقسام أساسية", value: dashCounts?.mainCategories, icon: <BiCategory className='w-6 h-6' />, iconBg: "bg-indigo-500" },
+      { title: "أقسام فرعية", value: dashCounts?.subCategories, icon: <BiCategory className='w-6 h-6' />, iconBg: "bg-indigo-500" },
+    ],
+    [
+      { title: "اوردرات مسجلة", value: dashCounts?.confirmedOrders, icon: <PackageOpen className='w-6 h-6' />, iconBg: "bg-yellow-500" },
+      { title: "اوردارات غير مسجلة", value: dashCounts?.unconfirmedOrders, icon: <PackageOpen className='w-6 h-6' />, iconBg: "bg-yellow-500" },
+    ],
+    [
+      { title: "منتجات نشطة", value: dashCounts?.acitvePoducts, icon: <IoStorefrontOutline className='w-6 h-6' />, iconBg: "bg-green-500" },
+      { title: "منتجات غير نشطة", value: dashCounts?.unactivePoducts, icon: <IoStorefrontOutline className='w-6 h-6' />, iconBg: "bg-green-500" },
+    ]
+  ];
 
   const fetchCounts = async () => {
     try {
@@ -47,8 +60,36 @@ const Home = () => {
     }
   };
 
+  const fetchUnconfirmedOrders = async () => {
+    setLoading(true);
+    const date = new Date();
+    try {
+      const res = await axios.get('/visitors/orders/', {
+        date
+      });
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleDeleteOrder = async (orderID) => {
+    try {
+      await axios.delete(`/visitors/orders/${orderID}`);
+      deleteNotify('تم حذف الطلب بنجاح!');
+      const newOrders = unconfirmedOrders.filter(item => item._id !== orderID)
+      setUnconfirmedOrders(newOrders);
+      setOrderPopup({ display: false, editing: false, info: {} })
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     fetchCounts();
+    fetchUnconfirmedOrders();
   }, []);
 
   if (loading) return <Loading />
@@ -56,45 +97,33 @@ const Home = () => {
   return (
     <div>
       <div>
-        <div className="grid lg:grid-cols-5 gap-8 mt-8">
-          {/* {cards.map((card, index) => (
-            <div key={index} className={`custom-bg-white flex items-center justify-center flex-col`}>
-              <div className={`w-12 h-12 flex items-center justify-center rounded-lg text-white ${card.iconBg}`}>
-                {card.icon}
-              </div>
-              <h3 className="text-gray-500 mt-6 mb-2">{card.title}</h3>
-              <p className="text-2xl font-bold text-gray-700">{card.value}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+
+
+          {cards.map((inCard, index) => (
+            <div key={index} className='grid grid-cols-2 md:grid-cols-1 gap-6'>
+              {inCard.map(({icon, iconBg, title, value}, index) => (
+                <div key={index} className={`bg-white py-6 px-4 rounded-xl shadow-md flex flex-col justify-between items-center gap-6`}>
+                  <div className={`w-12 h-12 p-0 flex items-center justify-center rounded-lg text-white ${iconBg}`}>
+                    {icon}
+                  </div>
+                  <div className='flex flex-col items-center justify-center gap-2'>
+                    <h3 className="text-gray-500 text-center mb-2">{title}</h3>
+                    <p className="text-2xl font-bold text-gray-700">{value}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))} */}
-          <div className='custom-bg-white flex items-center justify-center flex-col'>
-            <h3 className="text-gray-500 mt-6 mb-2">Main Categories</h3>
-            <p className="text-2xl font-bold text-gray-700">{dashCounts?.mainCategories}</p>
-          </div>
-          <div className='custom-bg-white flex items-center justify-center flex-col'>
-            <h3 className="text-gray-500 mt-6 mb-2">Sub Categories</h3>
-            <p className="text-2xl font-bold text-gray-700">{dashCounts?.subCategories}</p>
-          </div>
-          <div className='custom-bg-white flex items-center justify-center flex-col'>
-            <h3 className="text-gray-500 mt-6 mb-2">Confirmed</h3>
-            <p className="text-2xl font-bold text-gray-700">{dashCounts?.confirmedOrders}</p>
-          </div>
-          <div className='custom-bg-white flex items-center justify-center flex-col'>
-            <h3 className="text-gray-500 mt-6 mb-2">UnConfirmed</h3>
-            <p className="text-2xl font-bold text-gray-700">{dashCounts?.unconfirmedOrders}</p>
-          </div>
-          <div className='custom-bg-white flex items-center justify-center flex-col'>
-            <h3 className="text-gray-500 mt-6 mb-2">Active Products</h3>
-            <p className="text-2xl font-bold text-gray-700">{dashCounts?.acitvePoducts}</p>
-          </div>
-          <div className='custom-bg-white flex items-center justify-center flex-col'>
-            <h3 className="text-gray-500 mt-6 mb-2">InActive Products</h3>
-            <p className="text-2xl font-bold text-gray-700">{dashCounts?.unactivePoducts}</p>
-          </div>
+          ))}
+
         </div>
       </div>
-      <div className="admin-home-echarts">
+      {/* <div className="admin-home-echarts">
         <ReactEchart />
-      </div>
+      </div> */}
+
+      {/* Table With Search */}
+      <A_OrdersTable orders={unconfirmedOrders} setOrders={setUnconfirmedOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchUnconfirmedOrders} />
     </div>
   );
 };

@@ -124,8 +124,8 @@ const AddCategory = () => {
                                 <div key={item._id} className='w-full flex items-center justify-between border-b border-gray-300 pb-4'>
                                     <p className='min-w-40 text-center'>{item.name}</p>
                                     <div className='flex flex-col md:flex-row gap-6'>
-                                        <button className="w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditCategory(item)}>تعديل</button>
-                                        <button className="w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ purpose: 'one-category', itemId: item._id, itemName: item.name })}>حذف</button>
+                                        <button className="min-w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditCategory(item)}>تعديل</button>
+                                        <button className="min-w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ purpose: 'one-category', itemId: item._id, itemName: item.name })}>حذف</button>
                                     </div>
                                 </div>
                             )

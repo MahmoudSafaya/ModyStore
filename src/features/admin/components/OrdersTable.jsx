@@ -6,14 +6,15 @@ import { IoStorefrontOutline } from "react-icons/io5";
 import { A_OrderEdit, A_OrderInfo } from "./";
 import { useOrders } from "../../../context/OrdersContext";
 import { Toaster } from 'react-hot-toast';
-import { A_SearchFeature, A_DeleteConfirmModal } from "./";
+import { A_DeleteConfirmModal } from "./";
 import { useApp } from "../../../context/AppContext";
+import axios from "../../../api/axios";
 
 const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders }) => {
     const { orderPopup, setOrderPopup } = useOrders();
-    const { isDelete, setIsDelete } = useApp();
     const [checkedAll, setCheckedAll] = useState(false);
     const [checkedOrders, setCheckedOrders] = useState([]);
+    const { isDelete, setIsDelete, successNotify, deleteNotify } = useApp();
 
     const handleCheckOrder = (orderID) => {
         if (checkedOrders.some(item => item._id === orderID)) {
@@ -40,16 +41,75 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
         }
     };
 
+    const signAllSelected = async () => {
+        try {
+            // Iterate over each product in the array
+            for (const item of checkedOrders) {
+                // Send a DELETE request for each product using its _id
+                await axios.post(`/jnt/orders/${item._id}`);
+            }
+            successNotify('تم تسجيل جميع الاوردرارت المحددة بنجاح.');
+            fetchOrders();
+        } catch (error) {
+            console.error('Error deleting products:', error);
+        }
+    };
+
+
+    const deleteAllSelected = async () => {
+        if (inConfirmed) {
+            try {
+                // Iterate over each product in the array
+                for (const item of checkedOrders) {
+                    // Send a DELETE request for each product using its _id
+                    await axios.delete(`/jnt/orders/${item._id}`);
+                }
+                deleteNotify("تم حذف الطلبات المحددة بنجاح.");
+                fetchOrders();
+            } catch (error) {
+                console.error('Error deleting products:', error);
+            }
+        } else {
+            try {
+                // Iterate over each product in the array
+                for (const item of checkedOrders) {
+                    // Send a DELETE request for each product using its _id
+                    await axios.delete(`/visitors/orders/${item._id}`);
+                }
+                deleteNotify("تم حذف الطلبات المحددة بنجاح.");
+                fetchOrders();
+            } catch (error) {
+                console.error('Error deleting products:', error);
+            }
+        }
+        setCheckedOrders([]);
+    };
+
     return (
         <div>
-            <div className="custom-bg-white">
-                {/* Search Features */}
-                <A_SearchFeature inConfirmed={inConfirmed} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} checkedOrders={checkedOrders} setCheckedOrders={setCheckedOrders} />
-            </div>
-
             {/* Table */}
             <div className="custom-bg-white mt-8">
-                <div className="overflow-x-auto">
+                <div className="flex items-center justify-end gap-4 mb-8">
+                    {!inConfirmed && (
+                        <button
+                            type="button"
+                            onClick={signAllSelected}
+                            className={`min-w-30 py-2 px-4 rounded-lg duration-500 shadow-sm bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                            disabled={!checkedOrders.length > 0}
+                        >
+                            تسجيل الكل
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        className={`min-w-30 py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                        onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}
+                    >
+                        حذف الكل
+                    </button>
+                </div>
+
+                <div className="overflow-x-auto overflow-y-hidden">
                     {orders?.length > 0 ? (
                         <table className="w-full bg-white">
                             <thead className="text-gray-700 border-b border-gray-300 font-bold text-center whitespace-nowrap">
@@ -91,7 +151,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                             </thead>
                             <tbody>
                                 {orders && orders.map((order) => (
-                                    <tr key={order._id} className="border-b border-gray-200 hover:bg-gray-50 text-center  whitespace-nowrap">
+                                    <tr key={order._id} className="border-b border-gray-200 hover:bg-gray-50 text-center  whitespace-nowrap text-gray-600">
                                         <td className='p-3'>
                                             <label className="flex items-center justify-center h-5">
                                                 <input
@@ -110,24 +170,24 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                                                 </div>
                                             </label>
                                         </td>
-                                        <td className="p-2 text-indigo-400 cursor-pointer duration-500 hover:text-indigo-600" onClick={() => setOrderPopup({ display: true, editing: false, info: order })}>
+                                        <td className="p-2 cursor-pointer duration-300 hover:text-indigo-400 hover:underline" onClick={() => setOrderPopup({ display: true, editing: false, info: order })}>
                                             {inConfirmed ? order.billCode : order.txlogisticId}
                                         </td>
-                                        <td className="p-2 text-gray-600">
+                                        <td className="p-2">
                                             {order.receiver.name}
                                         </td>
-                                        <td className="p-2 text-gray-600">{order.receiver.mobile}</td>
-                                        <td className="p-2 text-gray-600 min-w-35">{order.items.length}</td>
-                                        <td className="p-2 text-gray-600">{order.receiver.prov}</td>
-                                        <td className="p-2 text-gray-600">{order.receiver.city}</td>
-                                        <td className="p-2 text-gray-600">{order.receiver.area}</td>
-                                        <td className="p-2 text-gray-600">{order.receiver.street.slice(0, 20)}</td>
-                                        <td className="p-2 text-gray-600 font-semibold">{order.itemsValue}</td>
-                                        <td className="p-2 text-gray-600">{order.sender.name}</td>
-                                        <td className="p-2 text-gray-600">{order.sender.prov}</td>
-                                        <td className="p-2 text-gray-600">{order.sender.city}</td>
-                                        <td className="p-2 text-gray-600">{order.sender.area}</td>
-                                        <td className="p-2 text-gray-600">{order.sender.street.slice(0, 20)}</td>
+                                        <td className="p-2">{order.receiver.mobile}</td>
+                                        <td className="p-2 min-w-35">{order.items.length}</td>
+                                        <td className="p-2">{order.receiver.prov}</td>
+                                        <td className="p-2">{order.receiver.city}</td>
+                                        <td className="p-2">{order.receiver.area}</td>
+                                        <td className="p-2">{order.receiver.street.slice(0, 20)}</td>
+                                        <td className="p-2 font-semibold">{order.itemsValue}</td>
+                                        <td className="p-2">{order.sender.name}</td>
+                                        <td className="p-2">{order.sender.prov}</td>
+                                        <td className="p-2">{order.sender.city}</td>
+                                        <td className="p-2">{order.sender.area}</td>
+                                        <td className="p-2">{order.sender.street.slice(0, 20)}</td>
                                         <td className="p-2 flex items-center">
                                             {!inConfirmed && (
                                                 <div className='px-4 py-2 cursor-pointer duration-500 hover:text-indigo-500 hover:rotate-45' onClick={() => setOrderPopup({ display: false, editing: true, info: order })}>
@@ -147,7 +207,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                             <div>
                                 <IoStorefrontOutline className="w-20 h-20 opacity-25" />
                             </div>
-                            <p className="text-2xl font-medium">لا يوجد طلبات في الوقت الحالي</p>
+                            <p className="text-2xl font-medium text-center">لا يوجد طلبات في الوقت الحالي</p>
                             {!inConfirmed && (
                                 <Link to='/admin/orders' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">الطلبات المسجلة</Link>
                             )}
@@ -183,13 +243,15 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                 {isDelete.purpose === 'one-order' && (
                     <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDelete(isDelete.itemId)} setIsDelete={setIsDelete} />
                 )}
-
+                {isDelete.purpose === 'delete-selected' && (
+                    <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={deleteAllSelected} setIsDelete={setIsDelete} />
+                )}
 
                 {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} handleDelete={handleDelete} />}
                 {orderPopup.editing && <A_OrderEdit />}
             </div>
             {/* Success notify*/}
-            <Toaster />
+            <Toaster toastOptions={{ duration: 3000 }} />
         </div>
     )
 }

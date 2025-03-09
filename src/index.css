@@ -101,3 +101,16 @@ button {
     direction: rtl;
     text-align: right;
 }
+
+.react-datepicker__tab-loop {
+    z-index: 1500;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
