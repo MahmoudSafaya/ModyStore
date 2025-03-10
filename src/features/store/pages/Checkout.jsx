@@ -13,7 +13,7 @@ const Checkout = () => {
     return (
         <div>
             {/* Checkour page header*/}
-            <div className='flex flex-col md:flex-row item-center gap-6 p-12'>
+            <div className='flex flex-col md:flex-row item-center gap-6 px-6'>
                 <div className='w-full md:w-1/2 pt-8'>
                     <h2 className='font-bold'>طلباتك</h2>
 
@@ -26,11 +26,15 @@ const Checkout = () => {
                                 <div className='mt-3'>
                                     <div className='flex items-center justify-between border-b border-gray-300 py-3'>
                                         <h4>الإجمالي الفرعي</h4>
-                                        <p className='text-indigo-400'>{totalPrice} <span className='text-sm'>EGP</span></p>
+                                        <p className='text-indigo-500'>{totalPrice} <span className='text-sm'>EGP</span></p>
                                     </div>
                                     <div className='flex items-center justify-between border-b border-gray-300 py-3'>
                                         <h4>مصاريف الشحن</h4>
-                                        <p className='text-indigo-400'>{shippingPrice} <span className='text-sm'>EGP</span></p>
+                                        {shippingPrice ? (
+                                            <p className='text-indigo-500'>{shippingPrice} <span className='text-sm'>EGP</span></p>
+                                        ) : (
+                                            <p className='text-indigo-500 opacity-75'>اكتب عنوانك اولآ...</p>
+                                        )}
                                     </div>
                                     <div className='flex items-center justify-between py-3'>
                                         <h4 className='font-bold'>الإجمالي</h4>

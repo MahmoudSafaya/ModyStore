@@ -176,7 +176,7 @@ const ProductDetails = ({ }) => {
     }
 
     return (
-        <div className="py-12 px-6 md:px-12 text-gray-800">
+        <div className="pt-12 px-6 md:px-12 text-gray-800">
             {product && (
                 <div>
                     <div className="flex flex-col lg:flex-row gap-8">
@@ -187,7 +187,7 @@ const ProductDetails = ({ }) => {
                                 {/* Thumbnail Container */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="relative w-full md:w-20 h-20 md:h-[350px] my-auto overflow-x-auto md:overflow-y-auto flex md:flex-col gap-2 scrollbar-hide"
+                                    className="relative w-full md:w-20 h-20 md:h-[350px] my-auto overflow-x-auto md:overflow-y-auto flex justify-center items-center md:flex-col gap-2 scrollbar-hide"
                                 >
                                     {product.images.map((image, index) => {
                                         const imgSrc = `${baseUrl}/${image.url.replace(/\\/g, '/')}`;
@@ -196,7 +196,7 @@ const ProductDetails = ({ }) => {
                                                 key={image._id}
                                                 src={imgSrc}
                                                 alt={image.alt}
-                                                className={`w-full h-20 object-cover cursor-pointer rounded-md border-3 ${mainImgSrc === imgSrc ? "border-indigo-400" : "border-gray-100"
+                                                className={`w-24 object-cover cursor-pointer rounded-lg border-3 ${mainImgSrc === imgSrc ? "border-indigo-400" : "border-gray-100"
                                                     }`}
                                                 onClick={() => setMainImgSrc(imgSrc)}
                                             />
@@ -217,7 +217,7 @@ const ProductDetails = ({ }) => {
                         </div>
 
                         {/* Product Details */}
-                        <div className="w-2/5 flex flex-col justify-center gap-6">
+                        <div className="w-full md:w-2/5 flex flex-col justify-center gap-6">
                             <h1 className="text-2xl font-semibold">{product.name}</h1>
 
                             <div className="flex items-center gap-4">
@@ -319,7 +319,7 @@ const ProductDetails = ({ }) => {
 
                     {/* Product Reviews and Comments */}
                     <div className="flex flex-col lg:flex-row gap-8 mt-12">
-                        <div className="w-3/5 custom-bg-white max-h-max">
+                        <div className="w-full md:w-3/5 custom-bg-white max-h-max">
                             <h2 className="text-xl font-bold text-center mb-4">آراء العملاء</h2>
                             {product.reviews.length > 0 ? (
                                 <div className="text-center mb-4">
@@ -352,7 +352,7 @@ const ProductDetails = ({ }) => {
                         </div>
 
                         {/* Add Review Form */}
-                        <div className="w-2/5 custom-bg-white max-h-max">
+                        <div className="w-full md:w-2/5 custom-bg-white max-h-max">
                             <form onSubmit={(e) => submitReview(e, product._id)} className="space-y-4">
                                 <div className="flex items-center gap-4">
                                     <label className="block text-gray-700 font-medium">تقييمك</label>

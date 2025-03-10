@@ -307,7 +307,7 @@ const Products = () => {
       {/* Product Info Popup */}
       {selectedProduct && (
         <div className='fixed inset-0 flex items-center justify-center z-100 bg-[#00000035] overflow-y-auto'>
-          <div className='w-[70%] custom-bg-white my-12'>
+          <div className='w-5/6 lg:w-1/2 custom-bg-white my-12'>
             <div className="relative flex items-center justify-between mb-8">
               <p className='flex-grow text-center font-semibold'>{selectedProduct.name}</p>
               <div className='w-7 h-7 p-1 absolute top-0 left-0 bg-gray-100 rounded-full flex items-center justify-center'>
@@ -320,13 +320,15 @@ const Products = () => {
             {popupPurpose === 'variants' && (
               <div className='mb-8 flex flex-col gap-4'>
                 {selectedProduct.variants.map(variant => (
-                  <div key={variant._id} className='flex items-center justify-between'>
-                    {variant.size && (<p>المقاس: {variant.size}</p>)}
-                    {variant.color && (<p>اللون: {variant.color}</p>)}
-                    {variant.stock && (<p>الكمية: {variant.stock}</p>)}
-                    <div className='flex items-center gap-4'>
+                  <div key={variant._id} className='flex items-center justify-between flex-col md:flex-row gap-4'>
+                    <div className='w-full md:w-auto flex items-center justify-center md:justify-between gap-4'>
+                      {variant.size && (<p>المقاس: {variant.size}</p>)}
+                      {variant.color && (<p>اللون: {variant.color}</p>)}
+                      {variant.stock && (<p>الكمية: {variant.stock}</p>)}
+                    </div>
+                    <div className='w-full md:w-auto flex items-center gap-4'>
                       <label htmlFor="barcode-num">
-                        <input type="text" name='barcode-num' id='barcode-num' className='custom-input-field max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => setBarcodeNums(prev => ({
+                        <input type="text" name='barcode-num' id='barcode-num' className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => setBarcodeNums(prev => ({
                           ...prev,
                           [variant.barCode]: Number(e.target.value)
                         }))} />

@@ -4,6 +4,7 @@ import { Filter } from "lucide-react";
 import { useStore } from "../../../context/StoreContext";
 import { S_ProductCard, S_ProductFilter } from "../components";
 import axios from "../../../api/axios";
+import Loading from "../../../shared/components/Loading";
 
 const Products = () => {
 
@@ -30,6 +31,25 @@ const Products = () => {
             setLoading(false);
         }
     }, [categoryId]);
+
+    useEffect(() => {
+        const getSubcategoriesProducts = async () => {
+            setLoading(true);
+            try {
+                subCategories.map(async (subCate) => {
+                    const response = await axios.get(`/products?isActive=true&category=${subCate._id}`);
+                    setProducts([...products, ...response.data.products]);
+                })
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        if(subCategories) {
+            getSubcategoriesProducts();
+        }
+    }, [subCategories]);
 
     const fetchProductsByCategory = async (categoryId) => {
         try {
@@ -58,23 +78,12 @@ const Products = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loading />
     }
 
     return (
         <div className="px-4 md:px-12 pt-12">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-semibold">بعض المنتجات</h2>
-                <div className="flex flex-col gap-2">
-                    <button type="button" className={`group flex items-center gap-2 text-gray-700 ${showFilters && 'text-indigo-400'}`} onClick={() => setShowFilters(!showFilters)}>
-                        <span className="text-xl duration-500 group-hover:text-indigo-400">فلتر</span>
-                        <Filter className="w-5 h-5 duration-500 group-hover:rotate-45 group-hover:text-indigo-400" />
-                    </button>
-                    <div className="relative">
-                        <S_ProductFilter showFilters={showFilters} />
-                    </div>
-                </div>
-            </div>
+
             <div className="flex flex-row flex-wrap items-center justify-center gap-6 mb-12">
                 {subCategories && subCategories.map(item => {
                     const correctedPath = item.image.url.replace(/\\/g, '/');
@@ -87,6 +96,19 @@ const Products = () => {
                         </div>
                     )
                 })}
+            </div>
+
+            <div className="flex items-center justify-between my-8">
+                <h2 className="text-2xl font-semibold">بعض المنتجات</h2>
+                <div className="flex flex-col gap-2">
+                    <button type="button" className={`group flex items-center gap-2 text-gray-700 ${showFilters && 'text-indigo-400'}`} onClick={() => setShowFilters(!showFilters)}>
+                        <span className="text-xl duration-500 group-hover:text-indigo-400">فلتر</span>
+                        <Filter className="w-5 h-5 duration-500 group-hover:rotate-45 group-hover:text-indigo-400" />
+                    </button>
+                    <div className="relative">
+                        <S_ProductFilter showFilters={showFilters} />
+                    </div>
+                </div>
             </div>
 
             <div className="flex flex-col lg:flex-row items-start gap-8">

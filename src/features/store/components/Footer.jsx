@@ -34,7 +34,7 @@ const Footer = () => {
                     <div className='flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-3'>
                         {storeMainNav && storeMainNav.map((item, index) => {
                             return (
-                                <Link to={item.link} key={index}>
+                                <Link to={item.link} key={index} className='duration-500 hover:text-indigo-500'>
                                     {item.label}
                                 </Link>
                             )
@@ -47,7 +47,7 @@ const Footer = () => {
                     <div className='flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-3'>
                         {categories && categories.map(item => {
                             return (
-                                <Link to='/' key={item._id}>
+                                <Link to='/' key={item._id} className='duration-500 hover:text-indigo-500'>
                                     {item.name}
                                 </Link>
                             )

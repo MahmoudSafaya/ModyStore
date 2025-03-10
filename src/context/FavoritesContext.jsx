@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import CryptoJS from 'crypto-js';
 import { createContext, useContext, useState } from "react";
 import toast from 'react-hot-toast';
@@ -68,6 +69,13 @@ export const FavoritesProvider = ({ children }) => {
     });
   };
 
+  // Load cart when component mounts
+      useEffect(() => {
+        const savedFavorites = getFavoritesItems();
+        if (savedFavorites) {
+          setFavorites(savedFavorites);
+        }
+      }, []);
 
   return (
     <FavoritesContext.Provider value={{ favorites, setFavorites, saveFavoritesItems, getFavoritesItems, addToFavorites, removeFromFavorites }}>

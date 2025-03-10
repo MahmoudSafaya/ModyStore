@@ -12,6 +12,7 @@ import { ProductSchema } from "../../../../schemas/productSchema";
 import axios from "../../../../api/axios";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../../context/AppContext";
+import Loading from "../../../../shared/components/Loading";
 
 const AddProduct = () => {
     const [thumbnail, setThumbnail] = useState(null);
@@ -181,7 +182,7 @@ const AddProduct = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>
+        return <Loading />
     }
 
     return (

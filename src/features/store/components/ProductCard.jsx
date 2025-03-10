@@ -5,11 +5,12 @@ import { useCart } from '../../../context/CartContext';
 import { useFavorites } from '../../../context/FavoritesContext';
 import { useApp } from '../../../context/AppContext';
 import { Toaster } from "react-hot-toast";
+import { FaHeart } from "react-icons/fa";
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
     const { categories } = useApp();
-    const { addToFavorites } = useFavorites();
+    const { favorites, addToFavorites } = useFavorites();
 
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -19,13 +20,19 @@ const ProductCard = ({ product }) => {
         <div className="group bg-white p-4 rounded-xl shadow-md relative overflow-hidden">
             <div className="max-w-max absolute top-4 -right-14 z-20 opacity-0 duration-500 group-hover:right-4 group-hover:opacity-100 rounded-lg bg-white shadow-md flex flex-col">
                 <Link to={`/products/${product._id}`}>
-                    <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-gray-800 border-b border-gray-300">
-                        <Eye />
+                    <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-indigo-500 border-b border-gray-300">
+                        <Eye className='w-6 h-6' />
                     </div>
                 </Link>
-                <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-gray-800" onClick={() => addToFavorites(product)}>
-                    <Heart />
-                </div>
+                {favorites.find(item => item._id === product._id) ? (
+                    <Link to='/favorites' className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-red-500 hover:text-red-600">
+                        <FaHeart className='w-6 h-6' />
+                    </Link>
+                ) : (
+                    <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-indigo-500" onClick={() => addToFavorites(product)}>
+                        <Heart className='w-6 h-6' />
+                    </div>
+                )}
             </div>
             {product.badge && (
                 <span className="absolute top-2 left-2 z-40 bg-red-500 text-white text-xs px-3 py-1 rounded-full">

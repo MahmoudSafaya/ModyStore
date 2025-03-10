@@ -10,9 +10,6 @@ export const AppProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [shippingPrice, setShippingPrice] = useState(0);
   const [isDelete, setIsDelete] = useState({ purpose: '', itemId: '', itemName: '' });
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteItem, setDeleteItem] = useState(null);
-
 
   const getAllCategories = async () => {
     try {
@@ -34,12 +31,6 @@ export const AppProvider = ({ children }) => {
       categories.map(item => item._id === cateID ? item.name : '')
     )
   }
-
-  // Open modal with selected item
-  const handleDeleteClick = (item) => {
-    setDeleteItem(item);
-    setIsModalOpen(true);
-  };
 
   const successNotify = (message) => {
     toast.success(message)

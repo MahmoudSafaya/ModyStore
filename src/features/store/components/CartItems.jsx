@@ -14,7 +14,7 @@ const CartItems = () => {
                 <div className='absolute top-6 left-4 z-100 text-gray-500 text-[14px] cursor-pointer duration-500 hover:text-gray-800' onClick={() => removeFromCart(item._id)}>
                   <X className='w-5 h-5' />
                 </div>
-                <div className='w-[25%] rounded-lg overflow-hidden'>
+                <div className='w-[30%] rounded-lg overflow-hidden'>
                   <img src={`${baseUrl}/${item.mainImage.url}`} alt={item.mainImage.alt} />
                 </div>
                 <div>

@@ -14,13 +14,6 @@ export const AuthProvider = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Save the last visited path before logging out
-  //   if (auth) {
-  //     sessionStorage.setItem("lastPage", location.pathname);
-  //   }
-  // }, [auth, location]);
-
   // Load session from cookies or sessionStorage on initialization
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,8 +41,6 @@ export const AuthProvider = ({ children }) => {
           }
         } else {
           setAuth(decoded);
-          // const res = await axios.get(`/users/${decoded.id}`);
-          // console.log(res);
         }
       } catch (error) {
         console.error("Error handling auth:", error);
@@ -59,23 +50,27 @@ export const AuthProvider = ({ children }) => {
       setLoading(false); // Stop loading
     };
 
+    // Store the current route before running auth check
+    if (!localStorage.getItem("lastPath")) {
+      localStorage.setItem("lastPath", location.pathname);
+    }
+
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    // Redirect to the last visited path after authentication is confirmed
+    const lastPath = localStorage.getItem("lastPath");
+    if (lastPath && auth) {
+      navigate(lastPath, { replace: true });
+      localStorage.removeItem("lastPath");
+    }
+  }, [auth, navigate]);
+
 
   if (loading) {
     return <Loading loading={loading} />; // Show a loading indicator
   }
-
-  // useEffect(() => {
-  //   // Redirect to the last visited page after successful login
-  //   if (auth) {
-  //     const lastPage = sessionStorage.getItem("lastPage");
-  //     if (lastPage) {
-  //       navigate(lastPage);
-  //       sessionStorage.removeItem("lastPage"); // Remove it after use
-  //     }
-  //   }
-  // }, [auth, navigate]);
 
   const login = (accessToken) => {
     setAuth(jwtDecode.jwtDecode(accessToken));  // Decode and store user role
@@ -89,6 +84,7 @@ export const AuthProvider = ({ children }) => {
     Cookies.remove("accessToken");
     sessionStorage.removeItem("accessToken");
   };
+
 
   return (
     <AuthContext.Provider

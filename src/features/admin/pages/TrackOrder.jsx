@@ -32,7 +32,7 @@ const TrackOrder = () => {
         if (orderId) {
             fetchOrderTrack();
         }
-    }, []);
+    }, [orderId]);
 
     if (loading) return <Loading loading={loading} />
 
@@ -56,8 +56,9 @@ const TrackOrder = () => {
                     return (
                         <div key={index} className={`custom-bg-white ${index !== 0 ? 'opacity-50' : ''}`}>
                             <div className='flex flex-col items-center justify-center gap-2'>
-                                <div className='min-w-40 text-gray-800'>
-                                    <span className='font-semibold'>{detail.scanType}</span> - {detail.scanTime}
+                                <div className='min-w-40 text-gray-800 text-center flex md:block flex-col gap-2'>
+                                    <span className='font-semibold'>{detail.scanType} -</span> 
+                                    <span> {detail.scanTime}</span>
                                 </div>
                                 <div className='flex-grow text-gray-500 mx-4 md:mx-12 text-center'>
                                     {detail.desc}

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../api/axios';
+import ParticlesBg from '../../../shared/components/ParticlesBg';
 
 const Login = () => {
   const { login } = useAuth();
@@ -8,6 +9,8 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const MemoizedParticlesBg = useMemo(() => <ParticlesBg />, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,45 +28,44 @@ const Login = () => {
   };
 
   return (
-    <div className='w-screen h-screen grid grid-cols-1 md:grid-cols-2'>
-      <div className="h-screen bg-indigo-500 text-white  flex items-center justify-center">
-        <h1>ModyStore</h1>
-      </div>
-      <div className="h-screen bg-white text-gray-800 flex items-center justify-center">
-        <div className="w-2/3">
-          <h2 className='text-center mx-auto mb-8 font-bold'>تسجيل الدخول</h2>
-          <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
-            <div className='flex flex-col'>
-              <label htmlFor='user-email' className='custom-label-field'>البريد الإلكتروني</label>
+    <div className='w-screen h-screen'>
+        
+      <div className="absolute top-0 left-0 z-100 w-full h-full flex items-center justify-center">
+        <div className="w-5/6 md:w-1/2 lg:w-1/3 bg-[#ffffffb0] text-gray-700 py-14 p-8 rounded-xl shadow-md text-gray-800 flex flex-col items-center justify-center gap-8">
+          <h2 className='text-2xl text-center mx-auto font-bold'>تسجيل الدخول</h2>
+          <form onSubmit={handleSubmit} className='w-full flex flex-col gap-8'>
+            <div className='flex flex-col flex-grow'>
               <input
                 type="text"
                 id='user-email'
-                className='custom-input-field'
-                placeholder='أدخل البريد الإلكتروني...'
+                className='custom-input-field w-full'
+                placeholder='اسم المستخدم'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-            <div className='flex flex-col'>
-              <label htmlFor='password' className='custom-label-field'>كلمه السر</label>
+            <div className='flex flex-col flex-grow'>
               <input
                 type="Password"
                 id='password'
-                className='custom-input-field'
-                placeholder='أدخل كلمه السر...'
+                className='custom-input-field w-full'
+                placeholder='كلمة السر'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
             {error && <div className='text-red-400'>{error}</div>}
-            <button type="submit" className='w-full bg-indigo-500 text-white py-2 px-4 rounded-xl duration-500 hover:bg-indigo-600' disabled={loading}>
+            <button type="submit" className='w-full bg-indigo-500 text-white py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600' disabled={loading}>
               {loading ? 'جار التسجيل...' : 'تسجيل'}
             </button>
           </form>
         </div>
       </div>
+
+      
+      {MemoizedParticlesBg}
     </div>
   );
 };

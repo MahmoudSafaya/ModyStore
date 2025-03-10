@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { visitorOrderSchema } from "../../../schemas/addressesSchema";
 import axios from "../../../api/axios";
@@ -10,6 +11,8 @@ import { useApp } from "../../../context/AppContext";
 const OrderForm = () => {
     const { cart, setCart, totalPrice, setTotalPrice } = useCart();
     const { shippingPrice } = useApp();
+
+    const navigate = useNavigate();
 
     const emptyCart = () => {
         localStorage.removeItem('mody_store_cart');
@@ -33,6 +36,16 @@ const OrderForm = () => {
 
     // Handle Form Submission
     const submitViritorOrder = async (values, { setSubmitting, resetForm }) => {
+
+        if(cart.length < 1) {
+            toast('من فضلك, اختر منتج أولآ قبل تسجيل طلبك.', {
+                icon: 'ⓘ'
+            });
+            setTimeout(() => {
+                navigate('/');
+            }, 1000);
+            return;
+        }
 
         // Create the orderData object with updated receiver values
         const visitorOrderData = {

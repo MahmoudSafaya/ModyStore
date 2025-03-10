@@ -83,11 +83,11 @@ const BarcodePDF = ({ variant, stock }) => {
 const BillOfLading = ({ variant, stock }) => {
 
   return (
-    <div>
+    <div className="w-full md:w-auto text-center">
       <PDFDownloadLink
         document={<BarcodePDF variant={variant} stock={stock} />}
         fileName="barcode.pdf"
-        className="inline-block bg-green-500 text-slate-100 font-bold p-2 px-4 rounded-lg shabdow-md duration-500 hover:bg-green-600 cursor-pointer"
+        className="w-full md:w-auto inline-block bg-green-500 text-slate-100 font-bold p-2 px-4 rounded-lg shabdow-md duration-500 hover:bg-green-600 cursor-pointer"
       >
         {({ blob, url, loading, error }) =>
           loading ? "جار إنشاء الملف..." : "طباعة كود شحن"

@@ -14,24 +14,25 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   return (
-    <div className={`flex fixed top-0 right-0 z-40 transition-all duration-1000 overflow-hidden ${isOpen ? 'w-[250px] lg:w-auto shadow-md lg:shadow-none' : 'w-0 lg:w-[50px]'}`}>
+    <div className={`flex fixed top-0 right-0 z-40 transition-all duration-1000 overflow-hidden ${isOpen ? 'w-[250px] shadow-md lg:shadow-none' : 'w-0 lg:w-[50px]'}`}>
       <div className={`w-full bg-white text-gray-800 h-screen transition-all duration-1000 overflow-hidden flex flex-col justify-between items-center`}
       >
         <div className="w-full">
-          <button onClick={toggleSidebar} className="w-full">
-            <div className={`flex items-center text-indigo-600 gap-4 px-6 py-6 hover:bg-gray-100 ${isOpen ? 'justify-between' : 'justify-center'}`}>
+          <button onClick={() => {
+            toggleSidebar();
+            setOpenDropdown(null);
+          }} className="w-full">
+            <div className={`flex items-center text-indigo-600 gap-4 px-6 py-6 h-20 hover:bg-gray-100 justify-between duration-1000 ${isOpen ? '' : 'lg:px-0 lg:justify-center lg:gap-0'}`}>
               {/* {isOpen && <span className="text-base">جميع الأقسام</span>} */}
-              {isOpen && (
-                <div>
-                  <img src={modyStoreLogo} alt="mody store logo" className='w-10 object-cover' />
-                </div>
-              )}
+              <div>
+                <img src={modyStoreLogo} alt="mody store logo" className={`w-10 object-cover duration-1000 ${isOpen ? '' : 'lg:hidden'}`} />
+              </div>
               <div className="hidden lg:block text-xl">{isOpen ? <ChevronsRight /> : <ChevronsLeft />}</div>
               <div className="lg:hidden text-xl"><X /></div>
             </div>
           </button>
 
-          <div className='grid md:hidden grid-cols-2'>
+          <div className='grid lg:hidden grid-cols-2'>
             <div className={`p-4 flex items-center justify-center duration-300 ${isMain ? 'bg-gray-200' : 'bg-gray-100'}`} onClick={() => setIsMain(true)}>
               <p>الرئيسية</p>
             </div>
@@ -42,7 +43,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
           {
             isMain ? (
-              <div className="flex md:hidden flex-col justify-center mt-2">
+              <div className="flex lg:hidden flex-col justify-center mt-2">
                 {storeMainNav && storeMainNav.map((item, index) => (
                   <Link key={index} to={item.link} className={`py-4 px-6 text-base font-semibold`}>
                     {item.label}
@@ -55,14 +56,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                   <div key={category._id} className="relative">
                     {/* Main Category */}
                     <div
-                      onMouseEnter={() => {
-                        setOpenDropdown(category._id);
-                      }}
+                      // onMouseEnter={() => {
+                      //   isOpen && setOpenDropdown(category._id);
+                      // }}
                       onLoad={() => getSubcategories(category._id)}
                     // onMouseLeave={() => setOpenDropdown(null)}
                     >
-                      <div className='flex items-center justify-between flex-grow duration-500 hover:bg-slate-100'>
-                        <Link to={`/products/?category=${category._id}`} className={`group flex items-center flex-grow gap-4 py-4 hover:text-indigo-600 cursor-pointer duration-500 ${isOpen ? 'px-6' : 'md:justify-center md:px-1'} ${location.pathname === category.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
+                      <div className='flex items-center justify-between lg:justify-center flex-grow duration-500 hover:bg-slate-100'>
+                        <Link to={`/products/?category=${category._id}`} className={`group flex items-center flex-grow py-4 hover:text-indigo-600 cursor-pointer duration-500 px-6 gap-4 ${location.pathname === category.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
                           <div className={`w-[34px] h-[34px] flex justify-center items-center rounded-lg`}>
                             <img
                               src={`${baseUrl}/${category.icon.url.replace(/\\/g, '/')}`}
@@ -73,12 +74,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                           {/* {isOpen && (<div className="text-gray-700">
                             <p className="text-base font-semibold">{category.name}</p>
                           </div>)} */}
-                          <div className={`text-gray-700 duration-1000 ${isOpen ? '' : 'w-0 opacity-0'}`}>
+                          <div className={`text-gray-700 ${isOpen ? '' : 'lg:hidden'}`}>
                             <p className="text-base font-semibold">{category.name}</p>
                           </div>
                         </Link>
-                        {isOpen && (subcategories[category._id].length > 0) && (
-                          <div className="text-gray-700 h-full p-1 pl-6 cursor-pointer" onClick={() => {
+                        {subcategories[category._id]?.length > 0 && (
+                          <div className={`text-gray-700 h-full p-1 ml-6 cursor-pointer border border-gray-300 rounded-lg duration-500 hover:border-indigo-500 ${isOpen ? '' : 'lg:hidden'}`} onClick={() => {
                             openDropdown ? setOpenDropdown(null) : setOpenDropdown(category._id)
                           }}>
                             <span>
@@ -91,16 +92,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                       {/* Subcategories (Shown inline, not absolute) */}
                       {openDropdown === category._id && subcategories[category._id]?.length > 0 && (
                         <div className="bg-gray-50">
-                          {subcategories[category._id].map((sub) => (
-                            <Link key={sub._id} to={`/products/?category=${sub._id}`} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === sub.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
+                          {isOpen && subcategories[category._id].map((sub) => (
+                            <Link key={sub._id} to={`/products/?category=${sub._id}`} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer px-6 pr-10 ${location.pathname === sub.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
                               <div className={`w-[34px] h-[34px] flex justify-center items-center rounded-lg opacity-75`}>
                                 <img
                                   src={`${baseUrl}/${sub.icon.url.replace(/\\/g, '/')}`}
                                   alt={sub.icon.alt}
-                                  className="w-8 h-8 rounded-lg"
+                                  className="w-6 h-6 rounded-lg"
                                 />
                               </div>
-                              {isOpen && <span className="text-base text-gray-500">{sub.name}</span>}
+                              <span className="text-sm text-gray-500">{sub.name}</span>
                             </Link>
                           ))}
                         </div>

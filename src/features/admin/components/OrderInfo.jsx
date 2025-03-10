@@ -23,15 +23,15 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
 
   return (
     <div className="w-full h-full fixed top-0 left-0 z-100 bg-[#00000070] py-16 overflow-y-auto">
-      <div className="w-5/6 relative mx-auto custom-bg-white flex flex-col gap-6">
+      <div className="w-5/6 relative mx-auto flex flex-col gap-6 bg-white rounded-xl shadow-md py-8 px-4 md:px-8">
         <div
-          className="absolute -top-3 right-[50%] translate-x-[-50%] bg-white rounded-full p-1 text-gray-500 shadow-sm cursor-pointer duration-500 hover:text-gray-900 hover:rotate-90"
+          className="absolute -top-3 right-1/2 translate-x-1/2 bg-white rounded-full p-1 text-gray-500 shadow-sm cursor-pointer duration-500 hover:text-gray-900 hover:rotate-90"
           onClick={() => setOrderPopup({ display: false, editing: false, info: {} })}
         >
           <X />
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between mb-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-4">
             <p>
               <span className="ml-2 font-bold">بيانات أوردر:-</span>
@@ -53,9 +53,9 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-8">
           {/* Sender Info */}
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
             <h2 className="text-gray-800 font-bold text-center">بيانات الراسل</h2>
             <div className="flex flex-wrap justify-center gap-4">
               <DetailBox itemName={'الاسم:'} itemValue={sender.name} />
@@ -68,7 +68,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
             </div>
           </div>
           {/* Receiver Info */}
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
             <h2 className="text-gray-800 font-bold text-center">بيانات العميل</h2>
             <div className="flex flex-wrap justify-center gap-4">
               <DetailBox itemName={'الاسم:'} itemValue={receiver.name} />
@@ -83,7 +83,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
         </div>
 
         {/* Product Info */}
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 mt-4">
           <h2 className="text-gray-800 font-bold text-center">بيانات الأوردر</h2>
           <div className="flex flex-wrap justify-center gap-4">
             {items && items.map(product => {
@@ -98,17 +98,17 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
         </div>
 
         {/* Order Operations */}
-        <div className="w-full flex flex-col md:flex-row items-center justify-between">
-          <div>
+        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
+          <div className="w-full md:w-auto">
             {!inConfirmed && (
-              <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => confirmOrderToJNT(info._id)}>Sign</button>
+              <button className="w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => confirmOrderToJNT(info._id)}>Sign</button>
             )}
           </div>
-          <div className="flex gap-6">
+          <div className="w-full md:w-auto flex items-center justify-between gap-6">
             {!inConfirmed && (
-              <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-600 text-white duration-500 hover:bg-gray-700" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>Edit</button>
+              <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-600 text-white duration-500 hover:bg-gray-700" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>Edit</button>
             )}
-            <button className="min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-400 text-white duration-500 hover:bg-red-500" onClick={() => handleDelete(info._id)}>Delete</button>
+            <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-400 text-white duration-500 hover:bg-red-500" onClick={() => handleDelete(info._id)}>Delete</button>
           </div>
         </div>
       </div>

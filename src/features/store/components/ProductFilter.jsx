@@ -45,7 +45,7 @@ const ProductFilter = ({ showFilters }) => {
     }, [searchParams]);
 
     return (
-        <div className="absolute top-0 left-0">
+        <div className="absolute top-0 left-0 z-100">
             {showFilters && (
                 <div className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 text-gray-700">
                     {/* <div>
@@ -70,8 +70,8 @@ const ProductFilter = ({ showFilters }) => {
                         </div>
                     </div>
                     <div className="flex flex-col items-start gap-2">
-                        <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("ratings")}>* ترتيب حسب: التقيمات</button>
-                        <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("price")}>* ترتيب حسب: السعر</button>
+                        <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("ratings")}> ترتيب حسب: التقيمات</button>
+                        <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("price")}>ترتيب حسب: السعر</button>
                     </div>
                     <div className="flex items-center gap-2">
                         <label className=" whitespace-nowrap">عدد المنتجات:</label>

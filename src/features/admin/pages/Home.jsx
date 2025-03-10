@@ -12,9 +12,11 @@ import { useOrders } from '../../../context/OrdersContext';
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const [dashCounts, setDashCounts] = useState({});
-  // const [unconfirmedOrders, setUnconfirmedOrders] = useState([]);
+  const [todayOrders, setTodayOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState();
 
-  const { setOrderPopup, getUnconfirmedOrders, unconfirmedOrders, setUnconfirmedOrders, currentPage, setCurrentPage, totalPages } = useOrders();
+  const { setOrderPopup } = useOrders();
 
   const cards = [
     [
@@ -31,7 +33,7 @@ const Home = () => {
     ]
   ];
 
-  const fetchCounts = async () => {
+  const getCounts = async () => {
     try {
       setLoading(true);
 
@@ -60,20 +62,29 @@ const Home = () => {
     }
   };
 
-  const fetchUnconfirmedOrders = async () => {
+  const getTodayOrders = async (page) => {
     setLoading(true);
-    const date = new Date();
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString(); // Start of today in UTC
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString(); // End of today in UTC
+
     try {
-      const res = await axios.get('/visitors/orders/', {
-        date
+      const response = await axios.get(`/visitors/orders/?page=${page}`, {
+        params: {
+          startDate: startOfDay,
+          endDate: endOfDay
+        }
       });
-      console.log(res);
+      const data = response.data;
+      setTodayOrders(data.orders);
+      setCurrentPage(data.currentPage);
+      setTotalPages(data.totalPages);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handleDeleteOrder = async (orderID) => {
     try {
@@ -88,9 +99,12 @@ const Home = () => {
   }
 
   useEffect(() => {
-    fetchCounts();
-    fetchUnconfirmedOrders();
+    getCounts();
   }, []);
+
+  useEffect(() => {
+    getTodayOrders(currentPage);
+  }, [currentPage]);
 
   if (loading) return <Loading />
 
@@ -102,7 +116,7 @@ const Home = () => {
 
           {cards.map((inCard, index) => (
             <div key={index} className='grid grid-cols-2 md:grid-cols-1 gap-6'>
-              {inCard.map(({icon, iconBg, title, value}, index) => (
+              {inCard.map(({ icon, iconBg, title, value }, index) => (
                 <div key={index} className={`bg-white py-6 px-4 rounded-xl shadow-md flex flex-col justify-between items-center gap-6`}>
                   <div className={`w-12 h-12 p-0 flex items-center justify-center rounded-lg text-white ${iconBg}`}>
                     {icon}
@@ -123,7 +137,7 @@ const Home = () => {
       </div> */}
 
       {/* Table With Search */}
-      <A_OrdersTable orders={unconfirmedOrders} setOrders={setUnconfirmedOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchUnconfirmedOrders} />
+      <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={getTodayOrders} />
     </div>
   );
 };
