@@ -14,6 +14,7 @@ const StoreRoutes = () => {
           <Route element={<StoreLayout />}>
             <Route path="/" element={<S_Home />} />
             <Route path="/products" element={<S_Products />} />
+            <Route path="/products/category/:categoryId" element={<S_Products />} />
             <Route path="/about-us" element={<S_AboutUs />} />
             <Route path="/favorites" element={<S_Favorites />} />
             <Route path="/products/:id" element={<S_ProductDetails />} />

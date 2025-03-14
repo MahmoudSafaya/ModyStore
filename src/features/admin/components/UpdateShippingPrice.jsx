@@ -32,7 +32,6 @@ const UpdateShippingPrice = () => {
     const handleSubmit = async (values, actions) => {
         try {
             const res = await axios.put('/addresses/change_shipping_price', values);
-            console.log(res);
             actions.resetForm();
             setFirstSelection('');
             successNotify(res.data.message)

@@ -104,7 +104,6 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
           <div className="w-full md:w-auto">
             {!inConfirmed && (
               <button className="w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => {
-                console.log(info);
                 confirmOrderToJNT(info._id)
               }}>تسجيل</button>
             )}

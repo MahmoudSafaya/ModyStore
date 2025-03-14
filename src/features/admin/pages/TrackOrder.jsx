@@ -19,12 +19,10 @@ const TrackOrder = () => {
             try {
                 setLoading(true);
                 const res = await axios.get(`/jnt/orders/track/${orderId}`);
-                console.log(res);
                 setOrderData(res.data.data);
             } catch (error) {
                 console.error(error);
             } finally {
-                console.log(orderData)
                 setLoading(false);
             }
         }

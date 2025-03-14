@@ -83,7 +83,6 @@ const ProductDetails = ({ }) => {
 
     const increaseQty = () => {
         const totalStock = proVariants.reduce((total, item) => total + item.stock, 0);
-        console.log(totalStock)
         if (quantity < totalStock) {
             setQuantity(quantity + 1)
         } else {
@@ -130,7 +129,7 @@ const ProductDetails = ({ }) => {
                 }
                 setLoading(false)
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
 
@@ -157,8 +156,7 @@ const ProductDetails = ({ }) => {
     const submitReview = async (e, productId) => {
         e.preventDefault();
         if (newReview.name && newReview.rating > 0 && newReview.comment) {
-            const res = await axios.post(`/products/${productId}/reviews`, newReview);
-            console.log(res);
+            await axios.post(`/products/${productId}/reviews`, newReview);
             setNewReview({ name: "", rating: 0, comment: "" });
         }
     };

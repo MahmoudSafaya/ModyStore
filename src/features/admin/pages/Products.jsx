@@ -50,7 +50,6 @@ const Products = () => {
     try {
       const res = await axios.get(`/products?page=${page}`);
       const data = res.data;
-      console.log(res);
       setProducts(data.Products);
       setCurrentPage(data.currentPage);
       setTotalPages(data.totalPages);
@@ -104,8 +103,8 @@ const Products = () => {
 
   const deleteProductReview = async (productId, reviewId) => {
     try {
-      const res = await axios.delete(`/products/${productId}/reviews/${reviewId}`);
-      console.log(res);
+      await axios.delete(`/products/${productId}/reviews/${reviewId}`);
+      deleteNotify('تم حذف التعليق بنجاح.')
     } catch (error) {
       console.error(error);
     }

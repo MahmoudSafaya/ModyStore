@@ -44,7 +44,6 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
         endDate: dateRange[1]
       });
       setOrders(res.data);
-      console.log(res)
     } catch (error) {
       console.error(error);
     }

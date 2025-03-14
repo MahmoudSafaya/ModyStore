@@ -100,7 +100,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
         values.receiver.prov = '';
 
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 

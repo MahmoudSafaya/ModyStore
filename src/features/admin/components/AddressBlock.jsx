@@ -83,12 +83,8 @@ const AddressBlock = () => {
     const handleBlockAddress = async (values, actions) => {
         if (!unBlocking) {
             try {
-                const res = await axios.post('/addresses/changestatus', values);
-                console.log(res);
-
-                if (res.status === 200 || res.statusText === 'OK') {
-                    deleteNotify('تم حظر المنطقة بنجاح!');
-                }
+                await axios.post('/addresses/changestatus', values);
+                deleteNotify('تم حظر المنطقة بنجاح!');
             } catch (error) {
                 console.error(error);
                 if (error.status === 404) {
@@ -97,12 +93,8 @@ const AddressBlock = () => {
             }
         } else {
             try {
-                const res = await axios.post('/addresses/changestatus', { ...values, enabled: '1' });
-                console.log(res);
-
-                if (res.status === 200 || res.statusText === 'OK') {
-                    successNotify('تم فك الحظر عن المنظقة بنجاح.!');
-                }
+                await axios.post('/addresses/changestatus', { ...values, enabled: '1' });
+                successNotify('تم فك الحظر عن المنظقة بنجاح.!');
             } catch (error) {
                 console.error(error);
             }

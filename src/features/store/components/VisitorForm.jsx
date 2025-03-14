@@ -97,11 +97,9 @@ const OrderForm = () => {
             }),
         };
 
-        console.log("Final Order Data:", visitorOrderData);
 
         try {
             const response = await axios.post('/visitors/orders/', visitorOrderData);
-            console.log(response);
             if (response.status === 201) {
                 toast.success('تم تسجيل طلبك بنجاح!');
                 emptyCart();

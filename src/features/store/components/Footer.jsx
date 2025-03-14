@@ -2,11 +2,10 @@ import React from 'react'
 import { FaFacebookF, FaInstagram, FaWhatsapp, FaTiktok } from "react-icons/fa";
 import { useStore } from '../../../context/StoreContext';
 import { Link } from 'react-router-dom';
-import { useApp } from '../../../context/AppContext';
 
 const Footer = () => {
     const { storeMainNav } = useStore();
-    const { categories } = useApp();
+    const { mainCategories } = useStore();
     const date = new Date();
     const thisYear = date.getFullYear();
 
@@ -47,8 +46,8 @@ const Footer = () => {
 
                 <div className='text-center'>
                     <h2 className='font-bold mb-4'> الأقسام</h2>
-                    <div className='flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-3'>
-                        {categories && categories.map(item => {
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 justify-center items-center">
+                        {mainCategories && mainCategories.map(item => {
                             return (
                                 <Link to='/' key={item._id} className='duration-500 hover:text-indigo-500'>
                                     {item.name}

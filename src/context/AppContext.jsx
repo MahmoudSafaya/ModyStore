@@ -16,7 +16,6 @@ export const AppProvider = ({ children }) => {
   const getAllCategories = async () => {
     try {
       const res = await axios.get('/categories');
-      console.log(res);
       setCategories(res.data)
     } catch (error) {
       console.error(error);

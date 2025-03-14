@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { Filter } from "lucide-react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { S_ProductCard, S_ProductFilter } from "../components";
@@ -20,7 +20,8 @@ const Products = () => {
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
     // Extract the category ID from the query string
-    const categoryId = searchParams.get("category");
+    // const categoryId = searchParams.get("category");
+    const {categoryId} = useParams();
 
     // Fetch products with debouncing
     useEffect(() => {
@@ -28,6 +29,9 @@ const Products = () => {
             setLoading(true);
             try {
                 const params = Object.fromEntries(searchParams.entries());
+                if (categoryId) {
+                    params.category = categoryId; // Add categoryId to the query params
+                }
                 const response = await axios.get('/products', {
                     params,
                 });
@@ -51,7 +55,7 @@ const Products = () => {
 
         // Cleanup function
         return () => clearTimeout(debounceTimer);
-    }, [searchParams]);
+    }, [searchParams, categoryId]);
 
     // Fetch subcategories when categoryId changes
     useEffect(() => {
@@ -80,7 +84,7 @@ const Products = () => {
 
     // Handle category click
     const handleCategoryClick = (categoryId) => {
-        navigate(`/products?category=${categoryId}`);
+        navigate(`/products/category/${categoryId}`);
     };
 
     // Clear all search params on page reload

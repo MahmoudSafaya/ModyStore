@@ -51,9 +51,9 @@ const HeroSlider = () => {
             alt={slide.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#00000020] text-white">
-            <h1 className="text-4xl font-bold mb-6 drop-shadow-sm">{slide.title}</h1>
-            <p className="text-2xl drop-shadow-sm">{slide.description}</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#00000020] text-white px-6">
+            <h1 className="text-4xl font-bold mb-6 drop-shadow-sm text-center">{slide.title}</h1>
+            <p className="text-2xl drop-shadow-sm text-center">{slide.description}</p>
           </div>
         </div>
       ))}

@@ -59,7 +59,7 @@ const ProductFilter = React.memo(({ showFilters, searchParams, setSearchParams }
             {showFilters && (
                 <div className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 text-gray-700">
 
-                    <div style={{ width: "300px", margin: "20px" }}>
+                    <div className="w-full">
                         <Slider
                             range
                             min={10} // Minimum price
@@ -67,8 +67,9 @@ const ProductFilter = React.memo(({ showFilters, searchParams, setSearchParams }
                             value={priceRange}
                             onChange={handleSliderChange}
                         />
-                        <div>
-                            النطاق المحدد: EGP{priceRange[0]} - EGP{priceRange[1]}
+                        <div className="flex items-center justify-between gap-2 text-sm whitespace-nowrap">
+                            <p>EGP {priceRange[1]}</p>
+                            <p>EGP {priceRange[0]}</p>
                         </div>
                     </div>
 

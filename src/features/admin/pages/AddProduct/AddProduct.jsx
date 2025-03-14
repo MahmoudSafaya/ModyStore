@@ -41,7 +41,6 @@ const AddProduct = () => {
         try {
             setLoading(true);
             const res = await axios.get(`/products/${paramID}`);
-            console.log(res);
             setSelectedProduct(res.data);
             setThumbnail(`${baseUrl}/${res.data.mainImage.url.replace(/\\/g, '/')}`);
             setProductImages(res.data.images)
@@ -116,10 +115,7 @@ const AddProduct = () => {
             });
 
             try {
-                for (let pair of formData.entries()) {
-                    console.log(pair[0], pair[1]);
-                }
-                const response = await axios.put(`/products/${paramID}`, formData, {
+                await axios.put(`/products/${paramID}`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
                 successNotify('تهانينا!, تم تعديل المنتج بنجاح');
@@ -164,10 +160,9 @@ const AddProduct = () => {
                 }
             });
             try {
-                const response = await axios.post("/products", formData, {
+                await axios.post("/products", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
-                console.log("Product uploaded:", response);
                 successNotify('تهانينا!, تم إضافة المنتج بنجاح');
 
                 resetForm();

@@ -8,7 +8,7 @@ const Categories = () => {
     const navigate = useNavigate();
 
     const handleCategoryClick = (categoryId) => {
-        navigate(`/products?category=${categoryId}`);
+        navigate(`/products/category/${categoryId}`);
     };
 
     return (

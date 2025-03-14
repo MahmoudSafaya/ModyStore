@@ -34,7 +34,6 @@ const SenderAddress = () => {
         try {
             const res = await axios.get('/addresses/senders/');
             setSenderAddresses(res.data.senders);
-            console.log(res);
         } catch (error) {
             console.error(error);
         }
@@ -94,8 +93,7 @@ const SenderAddress = () => {
 
         if (selectedAddress) {
             try {
-                const res = await axios.put(`/addresses/senders/${selectedAddress._id}`, values);
-                console.log(res);
+                await axios.put(`/addresses/senders/${selectedAddress._id}`, values);
                 successNotify('تم تعديل العنوان بنجاح.');
                 resetForm();
                 setFirstSelection('');
@@ -106,8 +104,7 @@ const SenderAddress = () => {
             }
         } else {
             try {
-                const res = await axios.post('/addresses/senders', values);
-                console.log(res);
+                await axios.post('/addresses/senders', values);
                 successNotify('تم إضافة العنوان بنجاح.');
                 resetForm();
                 setFirstSelection('');

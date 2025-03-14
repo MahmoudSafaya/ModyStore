@@ -53,8 +53,6 @@ const Home = () => {
         unactivePoducts: productsRes.data.counts.unactivePoducts,
         variants: productsRes.data.counts.variants,
       }));
-
-      console.log(productsRes)
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -70,15 +68,12 @@ const Home = () => {
   const getTodayOrders = async () => {
     setLoading(true);
     const todayDate = getTodayDateISO();
-    console.log(`${todayDate}T00:00:00Z`);
-    console.log( `${todayDate}T23:59:59Z`);
     try {
       const response = await axios.post('/orders/search', {
         confirmed: "0",
         startDate: `${todayDate}T00:00:00Z`,  // Start of the day
         endDate: `${todayDate}T23:59:59Z`    // End of the day
       });
-      console.log(response)
       const data = response.data;
       setTodayOrders(data);
     } catch (error) {

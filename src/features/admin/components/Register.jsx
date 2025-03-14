@@ -29,7 +29,7 @@ const Register = () => {
                 if (error.response && error.response.status === 400) {
                     errorNotify(`اسم المستخدم ${values.userName} موجود بالفعل.`);
                 } else {
-                    console.log(error);
+                    console.error(error);
                 }
                 return; // Stop execution if email exists or other errors occur
             }
@@ -48,7 +48,7 @@ const Register = () => {
                 if (error.response && error.response.status === 400) {
                     errorNotify(`اسم المستخدم ${values.userName} موجود بالفعل.`);
                 } else {
-                    console.log(error);
+                    console.error(error);
                 }
                 return; // Stop execution if email exists or other errors occur
             }
@@ -77,8 +77,7 @@ const Register = () => {
 
     const handleDeleteUser = async (userID) => {
         try {
-            const res = await axios.delete(`/users/${userID}`);
-            console.log(res);
+            await axios.delete(`/users/${userID}`);
             setIsDelete({ purpose: '', itemId: '', itemName: '' });
             const remainUsers = users.filter(user => user._id !== userID);
             setUsers(remainUsers);
