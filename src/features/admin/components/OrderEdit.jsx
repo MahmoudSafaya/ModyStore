@@ -2,6 +2,7 @@ import React from 'react';
 import NewOrder from '../pages/NewOrder';
 import { X } from 'lucide-react';
 import { useOrders } from '../../../context/OrdersContext';
+import toast from 'react-hot-toast';
 
 const OrderEdit = () => {
     const { orderPopup, setOrderPopup, handleOrderPopup } = useOrders();
@@ -12,10 +13,11 @@ const OrderEdit = () => {
                 <div className="flex items-center justify-between mb-4">
                     <h2 className='flex items-center gap-2'>
                         <span>تعديل أوردر رقم:</span>
-                        <span className='cursor-pointer text-indigo-400 duration-500 hover:text-indigo-500'
-                            onClick={() =>
-                                navigator.clipboard.writeText(orderPopup.info.txlogisticId)
-                            }
+                        <span className='cursor-pointer text-gray-700 duration-500 hover:text-indigo-500'
+                            onClick={() => {
+                                navigator.clipboard.writeText(orderPopup.info.txlogisticId);
+                                toast.success('تم النسخ!');
+                            }}
                         >
                             {orderPopup.info.txlogisticId}
                         </span>

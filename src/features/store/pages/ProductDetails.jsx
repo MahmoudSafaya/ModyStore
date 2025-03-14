@@ -19,31 +19,64 @@ const ProductDetails = ({ }) => {
     const [proVariants, setProVariants] = useState([]);
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
-    const [selectedVariant, setSelectedVariant] = useState('');
-
+    const [selectedVariant, setSelectedVariant] = useState({ size: '', color: '' });
     const [newReview, setNewReview] = useState({ name: "", rating: 0, comment: "" });
     const [reviewDone, setReviewDone] = useState(false);
 
+    const [finalVariant, setFinalVariant] = useState('');
+
     const baseUrl = import.meta.env.VITE_SERVER_URL;
-
     const { id } = useParams();
-
     const navigate = useNavigate();
 
-    const handleSelectVariant = (key, value) => {
+    useEffect(() => {
+        const getProductById = async () => {
+            setLoading(true);
+            try {
+                const res = await axios.get(`/products/${id}`);
+                const data = res.data;
+                setProduct(data)
+                setProVariants(data.variants);
+                if (data.variants.length === 1) {
+                    setSelectedVariant(`${data.name} ${data.variants[0].color} (${data.variants[0].size})`);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        getProductById();
+    }, [id]);
+
+    useEffect(() => {
+        if (product?.mainImage) {
+            setMainImgSrc(encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`));
+        }
+    }, [product])
+
+    const handleSelectVariant = (key, value, proName) => {
         setSelectedVariant(prev => ({
             ...prev,
+            productName: proName,
             [key]: prev[key] && prev[key] === value ? '' : value, // Toggle selection
         }));
     };
-    
+
+    useEffect(() => {
+        if (selectedVariant.size && selectedVariant.color) {
+            console.log('reute')
+            setFinalVariant(`${selectedVariant.productName} ${selectedVariant.color} (${selectedVariant.size})`)
+        }
+    }, [selectedVariant])
 
     // Get unique sizes and colors
     const variantSizes = proVariants
         .filter((v) => v.stock > 0 && v.size) // Ensure size exists and stock is available
         .map((v) => v.size); // Extract size values
     const availableSizes = variantSizes[0] !== 'undefined' ? [...new Set(variantSizes)] : []; // Get unique sizes
-   
+
     const variantColors = proVariants
         .filter((v) => v.stock > 0 && v.color) // Ensure color exists and stock is available
         .map((v) => v.color); // Extract color values
@@ -100,7 +133,7 @@ const ProductDetails = ({ }) => {
             addToCart(product, quantity);
             navigate('/checkout');
         } else if (selectedColor || selectedSize) {
-            addToCart(product, quantity, selectedVariant);
+            addToCart(product, quantity, finalVariant);
             navigate('/checkout');
         } else {
             toast(
@@ -115,32 +148,6 @@ const ProductDetails = ({ }) => {
             return false;
         }
     }
-
-    useEffect(() => {
-        const getProductById = async () => {
-            setLoading(true);
-            try {
-                const res = await axios.get(`/products/${id}`);
-                const data = res.data;
-                setProduct(data)
-                setProVariants(data.variants);
-                if(data.variants.length === 1) {
-                    setSelectedVariant(`${data.name} ${data.variants[0].color} (${data.variants[0].size})`);
-                }
-                setLoading(false)
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        getProductById();
-    }, [id]);
-
-    useEffect(() => {
-        if (product?.mainImage) {
-            setMainImgSrc(encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`));
-        }
-    }, [product])
 
 
     // Reviews Section
@@ -162,7 +169,7 @@ const ProductDetails = ({ }) => {
     };
 
     if (loading) {
-        return <Loading loading={loading} />
+        return <Loading />
     }
 
     return (
@@ -228,24 +235,24 @@ const ProductDetails = ({ }) => {
                             </div>
 
                             {/* Color Selection */}
-                            {(availableSizes.length > 0 || availableColors.lenght > 0) && (
+                            {(availableSizes.length > 0 || availableColors.length > 0) && (
                                 <div className="flex flex-col gap-4">
                                     {/* Size Dropdown */}
                                     {hasMultipleSizes && (
                                         <div className="flex items-center gap-4">
                                             <label>المقاسات:</label>
                                             {availableSizes.map((size) => (
-                                                <div
+                                                <button
                                                     key={size}
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedSize === size) && filteredSizes.includes(size) ? 'border-indigo-300' : ''} ${!filteredSizes.includes(size) ? 'line-through' : ''}`}
                                                     onClick={() => {
-                                                        handleSelectVariant('size', size);
-                                                        setSelectedSize(size);
+                                                        handleSelectVariant('size', size, product.name);
+                                                        setSelectedSize(selectedSize === size ? '' : size);
                                                     }}
                                                     disabled={!filteredSizes.includes(size)}
                                                 >
                                                     {size}
-                                                </div>
+                                                </button>
                                             ))}
                                         </div>
                                     )}
@@ -255,17 +262,17 @@ const ProductDetails = ({ }) => {
                                         <div className="flex items-center gap-4">
                                             <label>الألوان:</label>
                                             {availableColors.map((color) => (
-                                                <option
+                                                <button
                                                     key={color}
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedColor === color) && filteredColors.includes(color) ? 'border-indigo-300' : ''} ${!filteredColors.includes(color) ? 'line-through' : ''}`}
                                                     onClick={() => {
-                                                        handleSelectVariant('color', color);
-                                                        setSelectedColor(color)
+                                                        handleSelectVariant('color', color, product.name);
+                                                        setSelectedColor(selectedColor === color ? '' : color);
                                                     }}
                                                     disabled={!filteredColors.includes(color)}
                                                 >
                                                     {color}
-                                                </option>
+                                                </button>
                                             ))}
                                         </div>
                                     )}
@@ -297,7 +304,7 @@ const ProductDetails = ({ }) => {
                                 <button className="w-full lg:min-w-40 lg:w-auto bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => handleBuyNow(product, quantity)}>
                                     اشتري الان
                                 </button>
-                                <button className="w-full lg:min-w-40 lg:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product, quantity, selectedVariant)}>
+                                <button className="w-full lg:min-w-40 lg:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product, quantity, finalVariant)}>
                                     أضف إلى السلة
                                 </button>
                             </div>

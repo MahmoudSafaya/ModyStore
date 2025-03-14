@@ -23,6 +23,10 @@ const ParticlesBg = () => {
     });
   }, []);
 
+  const particlesLoaded = (container) => {
+    console.log(container);
+  };
+
   const options = useMemo(
     () => ({
       background: {

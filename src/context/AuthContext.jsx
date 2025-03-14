@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
       if (!token) {
         setAuth(null);
         setLoading(false);
+        navigate('/admin/login'); // Redirect to login if no token
         return;
       }
 
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }) => {
             setAuth(newDecoded);
           } else {
             setAuth(null);
+            navigate('/admin/login'); // Redirect to login if token refresh fails
           }
         } else {
           setAuth(decoded);
@@ -45,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error("Error handling auth:", error);
         setAuth(null);
+        navigate('/admin/login'); // Redirect to login on error
       }
 
       setLoading(false); // Stop loading
@@ -56,6 +59,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     checkAuth();
+    console.log(auth)
   }, []);
 
   useEffect(() => {
@@ -67,13 +71,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, [auth, navigate]);
 
-
   if (loading) {
     return <Loading loading={loading} />; // Show a loading indicator
   }
 
   const login = (accessToken) => {
     setAuth(jwtDecode.jwtDecode(accessToken));  // Decode and store user role
+    console.log(auth);
 
     Cookies.set("accessToken", accessToken, { expires: 1, path: "/" });
     sessionStorage.setItem("accessToken", accessToken);
@@ -83,8 +87,8 @@ export const AuthProvider = ({ children }) => {
     setAuth(null);
     Cookies.remove("accessToken");
     sessionStorage.removeItem("accessToken");
+    navigate('/admin/login'); // Redirect to login after logout
   };
-
 
   return (
     <AuthContext.Provider

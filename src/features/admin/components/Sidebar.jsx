@@ -17,7 +17,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
   };
 
   const adminNav = [

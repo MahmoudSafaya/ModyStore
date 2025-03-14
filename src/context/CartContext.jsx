@@ -72,9 +72,22 @@ export const CartProvider = ({ children }) => {
 
     // Add item to cart
     const addToCart = (item, quantity, selectedVariant) => {
-        if (cart.some(cartItem => cartItem._id === item._id)) {
+        // Check if item already exists in the cart
+        // const existingItem = cart.find(cartItem =>
+        //     cartItem._id === item._id &&
+        //     cartItem.selectedVariant === selectedVariant
+        // );
+        const existingItem = cart.find(cartItem => cartItem._id === item._id  );
+
+        if (existingItem) {
             setIsCartOpen(true);
-            return false;
+            toast('المنتج موجود بالفعل في سلة التسوق.', {
+                style: {
+                    textAlign: 'center',
+                    color: '#485363'
+                }
+            });
+            return;
         }
 
         // Auto-select variant if only one exists (avoid mutation)
@@ -84,7 +97,7 @@ export const CartProvider = ({ children }) => {
         }
 
         // Ensure the user has selected a valid variant
-        if (item.variants.length > 1 && (!selectedVariant?.color || !selectedVariant?.size)) {
+        if (item.variants.length > 1 && !selectedVariant) {
             toast(`من فضلك, اختر مقاس أو لون مناسب لك أولاً.`, {
                 duration: 3000,
                 style: { textAlign: 'center' },
@@ -94,8 +107,8 @@ export const CartProvider = ({ children }) => {
         }
 
         // Find matching variant name
-        const matchName = `${item.name} ${selectedVariant?.color} (${selectedVariant?.size})`;
-        const matchingProduct = variantsProducts.find(variant => variant.product === matchName);
+        // const matchName = `${item.name} ${selectedVariant?.color} (${selectedVariant?.size})`;
+        const matchingProduct = variantsProducts.find(variant => variant.product === selectedVariant);
         const finalVariant = matchingProduct?.product || "غير متوفر";
 
         const newItem = {

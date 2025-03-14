@@ -53,7 +53,7 @@ const OrderForm = () => {
             length: "",
             weight: 1.00,
             itemsValue: totalPrice + shippingPrice,
-            remark: `${cart.map(item => item.selectedVariant)} - ${values.receiver.additionalInfo}`,
+            remark: `${cart.map(item => item.selectedVariant)}  ${values.receiver.additionalInfo && '- ملحوظة العميل:'} ${values.receiver.additionalInfo}`,
             billCode: "",
             goodsType: "ITN16",
             totalQuantity: "1",

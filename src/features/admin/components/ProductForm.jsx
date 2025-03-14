@@ -12,6 +12,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
   const [quantities, setQuantities] = useState({});
 
   const [loading, setLoading] = useState(false);
+  const [clientNotes, setClientNotes] = useState(values.remark.split('- ملحوظة العميل:')[1]);
 
   useEffect(() => {
     const fetchProductsNames = async () => {
@@ -67,7 +68,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
       }
     });
   
-    values.remark = updatedRemark;
+    values.remark = updatedRemark + '- ملحوظة العميل:' + clientNotes;
   }, [quantities, selections]);
 
 

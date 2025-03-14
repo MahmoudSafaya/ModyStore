@@ -29,7 +29,6 @@ const Header = ({ isOpen }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
   };
 
   return (

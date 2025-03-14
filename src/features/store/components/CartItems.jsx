@@ -19,6 +19,7 @@ const CartItems = () => {
                 </div>
                 <div>
                   <h1 className="font-medium">{item.name}</h1>
+                  <p className="text-xs text-gray-500 mt-2">{item.selectedVariant}</p>
                   <div className="grid grid-cols-3 items-center text-gray-700 border border-gray-300 w-20 mt-2 rounded-lg">
                     <button
                       className="rounded-r-md border-l border-gray-300"
