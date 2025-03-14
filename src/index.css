@@ -114,3 +114,22 @@ button {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+
+@keyframes scanTypeAnime {
+    0% {
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.05;
+    }
+
+    100% {
+        scale: 1;
+    }
+}
+
+.selected {
+    animation: scanTypeAnime 3s infinite alternate;
+}

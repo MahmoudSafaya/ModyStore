@@ -62,7 +62,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
   return (
     <div>
       <div className="flex items-center justify-center gap-2 mb-8">
-        <h1 className="text-2xl font-bold text-center">ابحث عن أوردر</h1>
+        <h1 className="text-2xl font-bold text-center text-gray-800">ابحث عن أوردر</h1>
         <Search />
       </div>
 

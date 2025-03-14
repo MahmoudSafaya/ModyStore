@@ -22,6 +22,7 @@ const AddProduct = () => {
     const [updatedImages, setUpdatedImages] = useState([]);
     const [variations, setVariations] = useState([{ size: "", color: "", stock: "" }]);
     const [discount, setDiscount] = useState('none');
+    const [cutPrice, setCutPrice] = useState("");
 
     const [loading, setLoading] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState();
@@ -37,18 +38,21 @@ const AddProduct = () => {
     const paramID = queryParams.get('product');
 
     const getProductById = async () => {
-        setLoading(true);
         try {
+            setLoading(true);
             const res = await axios.get(`/products/${paramID}`);
             console.log(res);
             setSelectedProduct(res.data);
             setThumbnail(`${baseUrl}/${res.data.mainImage.url.replace(/\\/g, '/')}`);
             setProductImages(res.data.images)
             setVariations(res.data.variants);
+            setDiscount('percentage');
+            setCutPrice(res.data.discount);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
 
     useEffect(() => {
@@ -110,7 +114,6 @@ const AddProduct = () => {
                     formData.append(`variants[${index}][stock]`, variant.stock);
                 }
             });
-
 
             try {
                 for (let pair of formData.entries()) {
@@ -204,7 +207,7 @@ const AddProduct = () => {
                                 <ProductImages setFieldValue={setFieldValue} isSubmitting={isSubmitting} productImages={productImages} setProductImages={setProductImages} removedImages={removedImages} setRemovedImages={setRemovedImages} updatedImages={updatedImages} setUpdatedImages={setUpdatedImages} />
 
                                 {/* Pricing the product */}
-                                <ProductPrice values={values} setFieldValue={setFieldValue} discount={discount} setDiscount={setDiscount} />
+                                <ProductPrice values={values} setFieldValue={setFieldValue} discount={discount} setDiscount={setDiscount} cutPrice={cutPrice} setCutPrice={setCutPrice} />
 
                                 {/* Variations */}
                                 <ProductVariations setFieldValue={setFieldValue} isSubmitting={isSubmitting} variations={variations} setVariations={setVariations} />
@@ -219,6 +222,7 @@ const AddProduct = () => {
                                     >
                                         <input
                                             type="file"
+                                            id="mainImage"
                                             accept="image/*"
                                             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
                                             onChange={(e) => {
@@ -258,7 +262,7 @@ const AddProduct = () => {
                                     <h2 className="custom-header">العلامة</h2>
                                     <div className="relative">
                                         <Field type="text" name="badge" id="badge" className="custom-input-field w-full" placeholder="اكتب علامة مميزة للمنتج ..." />
-                                        <Tag className="w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
+                                        <Tag className="w-10 lg:w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
                                         <ErrorMessage name="badge" component="div" className="text-red-500" />
                                     </div>
                                 </div>
@@ -268,7 +272,7 @@ const AddProduct = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="block min-w-60 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-lg hover:be-indigo-600"
+                            className="block w-full md:w-auto md:min-w-60 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-lg hover:be-indigo-600"
                         >
                             {selectedProduct ?
                                 (isSubmitting ? "يتم تعديل المنتج..." : "تعديل المنتج") :

@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaWhatsapp, FaTiktok } from "react-icons/fa";
 import { useStore } from '../../../context/StoreContext';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../../context/AppContext';
@@ -14,17 +14,20 @@ const Footer = () => {
         <footer className='w-full lg:w-[calc(100%-50px)] lg:mr-[50px] flex flex-col bg-white'>
             <div className='py-8 px-4 md:px-12 flex flex-col md:flex-row md:flex-wrap items-center justify-between gap-14'>
                 <div>
-                    <h2 className='text-center md:text-right font-bold mb-4'>ModyStore</h2>
+                    <h2 className='text-center md:text-right font-bold mb-4'>DiveStore</h2>
                     <div className='flex items-center gap-4'>
-                        <div className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-blue-500 hover:scale-110">
+                        <a href='https://www.facebook.com/share/16KbeZQodb/' target='_blanck' className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-blue-500 hover:scale-110">
                             <FaFacebookF />
-                        </div>
-                        <div className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-gradient-to-r from-purple-600 via-pink-600 to-yellow-500 hover:scale-110">
+                        </a>
+                        <a href='https://www.instagram.com/divastore1997?igsh=MXRoZDZuamVxZzFteg==' target='_blanck' className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-gradient-to-r from-purple-600 via-pink-600 to-yellow-500 hover:scale-110">
                             <FaInstagram />
-                        </div>
-                        <div className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-green-400 hover:scale-110">
+                        </a>
+                        <a href='https://www.tiktok.com/@diva.store50?_t=ZS-8uf4EEAnYyg&_r=1' target='_blanck' className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-gray-900 hover:scale-110">
+                            <FaTiktok />
+                        </a>
+                        <a href='https://wa.me/01011789966' target='_blanck' className="w-10 h-10 p-1 flex justify-center items-center rounded-full cursor-pointer duration-500 shadow-sm text-white bg-green-400 hover:scale-110">
                             <FaWhatsapp />
-                        </div>
+                        </a>
                     </div>
                 </div>
 
@@ -59,7 +62,7 @@ const Footer = () => {
 
             {/* Footer Bottom*/}
             <div className='py-3 px-4 md:px-12 p border-t border-gray-200 text-gray-600 text-center'>
-                <p>جميع الحقوق محفوظة ModyStore © {thisYear}</p>
+                <p>جميع الحقوق محفوظة DiveStore © {thisYear}</p>
             </div>
         </footer>
     )

@@ -11,7 +11,7 @@ const CartItems = () => {
         {cart && cart.map((item, index) => {
             return (
               <div key={index} className='relative flex items-center gap-4 p-2 md:p-4 lg:p-6 border-b border-gray-300'>
-                <div className='absolute top-6 left-4 z-100 text-gray-500 text-[14px] cursor-pointer duration-500 hover:text-gray-800' onClick={() => removeFromCart(item._id)}>
+                <div className='absolute top-6 left-4 z-100 text-gray-500 text-[14px] cursor-pointer duration-500 hover:text-gray-800 hover:rotate-90' onClick={() => removeFromCart(item._id)}>
                   <X className='w-5 h-5' />
                 </div>
                 <div className='w-[30%] rounded-lg overflow-hidden'>

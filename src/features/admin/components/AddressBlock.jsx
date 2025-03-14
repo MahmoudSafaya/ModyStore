@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { blockedAddress } from '../../../schemas/addressesSchema';
 import { Toaster } from 'react-hot-toast';
 import { useApp } from '../../../context/AppContext';
+import { LockKeyhole } from 'lucide-react';
 
 const AddressBlock = () => {
     const [unBlocking, setUnBlocking] = useState(false);
@@ -112,9 +113,13 @@ const AddressBlock = () => {
 
 
     return (
-        <div className='custom-bg-white mt-8'>
+        <div className='custom-bg-white max-h-max mt-8'>
             <div className='w-full flex items-center justify-between'>
-                <h2 className='mb-6 font-bold'>حظر منطقة معينة</h2>
+                <div className='relative max-w-max flex items-center justify-center gap-2 mb-8'>
+                    <LockKeyhole />
+                    <h2 className='font-bold'>حظر منطقة معينة</h2>
+                    <span className='absolute -bottom-1 right-0 w-[60%] h-[2px] bg-indigo-200 rounded-sm'></span>
+                </div>
                 <button type='button' className={`max-w-max py-2 px-4 rounded-lg border border-gray-300 duration-500 ${unBlocking ? 'bg-indigo-500 text-white hover:bg-indigo-600' : 'bg-white hover:bg-gray-600 hover:text-white'}`} onClick={() => setUnBlocking(!unBlocking)}>{unBlocking ? 'وضع الإلغاء مفعل' : 'إلغاء حظر منظقة'}</button>
             </div>
             <Formik
@@ -129,7 +134,7 @@ const AddressBlock = () => {
             >
                 {({ values, isSubmitting, setFieldValue, handleBlur }) => (
                     <Form>
-                        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+                        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
 
                             {/* Province */}
                             <div className="relative">
@@ -251,10 +256,10 @@ const AddressBlock = () => {
                                     </ul>
                                 )}
                             </div>
-                            
+
                         </div>
 
-                        <button type='submit' className={`block mt-8 min-w-60 p-3 text-white text-center font-bold hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto ${unBlocking ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-gray-600 hover:bg-gray-700'}`}>
+                        <button type='submit' className={`block mt-8 w-full md:w-auto md:min-w-60 p-3 text-white text-center font-bold hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto ${unBlocking ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-gray-600 hover:bg-gray-700'}`}>
                             {unBlocking ? 'إلغاء الحظر' : 'حظر المنطقة'}
                         </button>
                     </Form>

@@ -13,7 +13,7 @@ const Checkout = () => {
     return (
         <div>
             {/* Checkour page header*/}
-            <div className='flex flex-col md:flex-row item-center gap-6 px-6'>
+            <div className='flex flex-col md:flex-row item-center gap-6 px-6 md:px-12 py-12'>
                 <div className='w-full md:w-1/2 pt-8'>
                     <h2 className='font-bold'>طلباتك</h2>
 

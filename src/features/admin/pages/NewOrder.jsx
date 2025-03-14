@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { A_ProductForm } from "../components";
 import { newOrderSchema } from "../../../schemas";
@@ -7,17 +7,18 @@ import { useOrders } from "../../../context/OrdersContext";
 import JNTAddresses from "../../../shared/components/JNTAddresses";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
+import Loading from "../../../shared/components/Loading";
 
 const NewOrder = ({ editMode, info, handleOrderPopup }) => {
-  const { jntOrders, setJNTOrders, unconfirmedOrders, setUnconfirmedOrders, getUnconfirmedOrders, currentPage } = useOrders();
-  const { shippingPrice, successNotify, deleteNotify } = useApp();
+  const { getUnconfirmedOrders, currentPage } = useOrders();
+  const { shippingPrice, successNotify, senderAddress } = useApp();
 
   const initialValues = info || {
     length: '',
     weight: 1,
     itemsValue: "",
     remark: "",
-    billCode: "", ////////////////////
+    billCode: "",
     goodsType: "ITN16",
     totalQuantity: "1",
     width: '',
@@ -44,7 +45,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       floor: "",
       flats: ""
     },
-    sender: {
+    sender: senderAddress || {
       area: "كفر الزيات",
       street: "كفر الزيات",
       address: "kkk",
@@ -55,7 +56,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       mailBox: "ant_li123@qq.com",
       phone: "",
       countryCode: "EGY",
-      name: "modystore",
+      name: "DiveStore",
       alternateReceiverPhoneNo: "",
       company: "JT",
       postCode: "54830",
@@ -84,9 +85,6 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
     if (editMode) {
       try {
         await axios.put(`/visitors/orders/${values._id}`, values);
-        // update unconfirmedOrder state
-        // const newOrders = unconfirmedOrders.map(item => item._id === values._id ? item = values : item)
-        // setUnconfirmedOrders(newOrders)
         getUnconfirmedOrders(currentPage);
         // Hide popup
         handleOrderPopup({ display: false, editing: false, info: {} });
@@ -95,10 +93,8 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
         console.error(error)
       }
     } else {
-      values.items.map(item => item.itemName = item.englishName);
       try {
-        const response = await axios.post('/jnt/orders/', values);
-        console.log(response);
+        await axios.post('/jnt/orders/', values);
         successNotify('تم تسجل الأوردر بنجاح');
         actions.resetForm();
         values.receiver.prov = '';
@@ -106,7 +102,6 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
       } catch (error) {
         console.log(error)
       }
-      console.log(values)
     }
 
   };
@@ -134,42 +129,50 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
 
             <div className="custom-bg-white w-full mt-8">
               <h2 className="font-bold mb-4 text-center">بيانات المنتج</h2>
-              <A_ProductForm values={values} />
+              <A_ProductForm values={values} info={info} setFieldValue={setFieldValue} handleBlur={handleBlur} />
 
               {/* Remark field */}
               <h2 className="font-bold mb-4 mt-8 text-center">بيانات الأوردر</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {/* Total price */}
                 <div>
-                  <label className="custom-label-field">إجمالى سعر الأوردر: <span className="text-red-500">*</span></label>
+                  <label className="custom-label-field" htmlFor="itemsValue">إجمالى سعر الأوردر:</label>
                   <Field
                     type="text"
+                    id="itemsValue"
                     name="itemsValue"
                     className="custom-input-field"
-                    placeholder="Enter itemsValue"
+                    placeholder="إجمالي سعر الأوردر"
+                    value={values.items.reduce((sum, item) => sum + Number(item.itemValue * item.number || 0), Number(shippingPrice || 0))}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      setFieldValue("itemsValue", newValue);
+                    }}
                   />
                   <ErrorMessage name="itemsValue" component="div" className="text-red-400 mt-1 text-sm" />
                 </div>
 
                 {/* Order Weight */}
                 <div>
-                  <label className="custom-label-field">الوزن:</label>
+                  <label className="custom-label-field" htmlFor="weight">الوزن:</label>
                   <Field
                     type="text"
+                    id="weight"
                     name="weight"
                     className="custom-input-field text-center"
-                    placeholder="Enter weight"
+                    placeholder="الوزن"
                   />
                 </div>
 
                 {/* Shipping Price */}
                 <div>
-                  <label className="custom-label-field">مصاريف الشحن:</label>
+                  <label className="custom-label-field" htmlFor="shippingPrice">مصاريف الشحن:</label>
                   <input
                     type="text"
+                    id="shippingPrice"
                     name="shippingPrice"
                     className="custom-input-field text-center opacity-50 bg-gray-100"
-                    placeholder="Enter shippingPrice"
+                    placeholder="سعر الشحن"
                     value={shippingPrice}
                     disabled
                   />
@@ -177,7 +180,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
 
                 {/* Order Type */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-gray-500 cursor-pointer">نوع الأوردر:</label>
+                  <label className="text-gray-500 cursor-pointer" htmlFor="goodsType">نوع الأوردر:</label>
                   <Field as="select" id="goodsType" name="goodsType" className='custom-input-field max-h-40 text-gray-800' >
                     <option value="">اختر نوع المنتج</option>
                     <option value="ITN1">Clothes</option>
@@ -206,7 +209,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
                     as="textarea"
                     id="description"
                     name="remark"
-                    placeholder="Enter your description"
+                    placeholder="ملاحظات الأوردر"
                     className='custom-input-field resize-none'
                   />
                   <ErrorMessage name="remark" component="div" className="error-message" />
@@ -215,7 +218,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
               </div>
             </div>
 
-            <button type="submit" className="block mt-8 min-w-50 p-3 text-center bg-indigo-500 text-white font-bold hover:bg-indigo-400 hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto">
+            <button type="submit" className="block mt-8 w-full md:w-auto md:min-w-60 p-3 text-center bg-indigo-500 text-white font-bold hover:bg-indigo-400 hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto">
               {editMode ? (isSubmitting ? 'جار التعديل...' : '  تعديل') : (isSubmitting ? 'جار التسجيل...' : 'تسجيل')}
             </button>
           </Form>

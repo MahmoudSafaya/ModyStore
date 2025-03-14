@@ -11,6 +11,8 @@ export const AppProvider = ({ children }) => {
   const [shippingPrice, setShippingPrice] = useState(0);
   const [isDelete, setIsDelete] = useState({ purpose: '', itemId: '', itemName: '' });
 
+  const [senderAddress, setSenderAddress] = useState(null);
+
   const getAllCategories = async () => {
     try {
       const res = await axios.get('/categories');
@@ -32,8 +34,27 @@ export const AppProvider = ({ children }) => {
     )
   }
 
+
+  const fetchSenderAddress = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get('/addresses/senders/default');
+      setSenderAddress(res.data.sender);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+
   const successNotify = (message) => {
-    toast.success(message)
+    toast.success(message, {
+      style: {
+        textAlign: 'center'
+      }
+    })
   };
 
   const deleteNotify = (message) => {
@@ -41,6 +62,7 @@ export const AppProvider = ({ children }) => {
       style: {
         padding: '16px',
         color: '#485363',
+        textAlign: 'center'
       },
       iconTheme: {
         primary: '#485363',
@@ -50,10 +72,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const errorNotify = (message) => {
-    toast.success(message, {
+    toast(message, {
       style: {
         padding: '16px',
         color: '#fb2c36',
+        textAlign: 'center'
       },
       iconTheme: {
         primary: '#fb2c36',
@@ -64,7 +87,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider
-      value={{ categories, setCategories, getAllCategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById, isDelete, setIsDelete, successNotify, deleteNotify, errorNotify }}
+      value={{ categories, setCategories, getAllCategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById, isDelete, setIsDelete, senderAddress, setSenderAddress, fetchSenderAddress, successNotify, deleteNotify, errorNotify }}
     >
       {children}
     </AppContext.Provider>

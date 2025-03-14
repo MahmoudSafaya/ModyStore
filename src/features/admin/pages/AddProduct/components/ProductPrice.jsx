@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { BadgePoundSterling, BadgePercent } from "lucide-react";
 import { Field, ErrorMessage } from "formik";
 
-const ProductPrice = ({ values, setFieldValue, discount, setDiscount }) => {
+const ProductPrice = ({ values, setFieldValue, discount, setDiscount, cutPrice, setCutPrice }) => {
     const [actualPrice, setActualPrice] = useState();
-    const [cutPrice, setCutPrice] = useState();
+    const [minusPrice, setMinusPrice] = useState('');
 
     useEffect(() => {
         if(discount === 'none') {
@@ -14,15 +14,15 @@ const ProductPrice = ({ values, setFieldValue, discount, setDiscount }) => {
             setActualPrice(values.price - (values.price * (cutPrice / 100)))
             setFieldValue('discount', cutPrice);
         } else if (discount === 'fixed-price') {
-            setActualPrice(values.price - cutPrice);
-            setFieldValue('discount', ((cutPrice / values.price) * 100));
+            setActualPrice(values.price - minusPrice);
+            setFieldValue('discount', ((minusPrice / values.price) * 100));
         }
-    }, [cutPrice, values.price])
+    }, [cutPrice, minusPrice, values.price])
 
-    useEffect(() => {
-        setCutPrice('');
-        setActualPrice('');
-    }, [discount])
+    // useEffect(() => {
+    //     setCutPrice('');
+    //     setActualPrice('');
+    // }, [discount])
 
     return (
         <div className="custom-bg-white mt-8">
@@ -34,7 +34,7 @@ const ProductPrice = ({ values, setFieldValue, discount, setDiscount }) => {
             </div>
 
             <div className="flex flex-col gap-2 my-8">
-                <label htmlFor="product-price" className="custom-label-field"> نوع الخصم</label>
+                <p className="custom-label-field"> نوع الخصم</p>
                 <div className="flex justify-between items-center gap-4 flex-wrap">
                     <button type='button' className="flex grow justify-center items-center gap-2 border border-gray-300 rounded-lg p-4" onClick={() => setDiscount('none')}>
                         <span className={`w-5 h-5 rounded-full duration-500 ${discount === 'none' ? 'border-6 border-indigo-500' : 'border border-gray-300'}`}></span>
@@ -54,7 +54,7 @@ const ProductPrice = ({ values, setFieldValue, discount, setDiscount }) => {
                 <div>
                     <label htmlFor="discount-percentage" className="custom-label-field">إضافة نسبة الخصم</label>
                     <div className="relative">
-                        <Field type="text" name="discount-percentage" id="discount-percentage" className="custom-input-field w-full" placeholder="(10, 15, 20, ...)" onChange={(e) => setCutPrice(e.target.value)} />
+                        <Field type="text" name="discount-percentage" id="discount-percentage" className="custom-input-field w-full" placeholder="(10, 15, 20, ...)" value={cutPrice} onChange={(e) => setCutPrice(e.target.value)} />
                         <BadgePercent className="w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
                     </div>
                 </div>
@@ -63,16 +63,16 @@ const ProductPrice = ({ values, setFieldValue, discount, setDiscount }) => {
                 <div>
                     <label htmlFor="discount-price" className="custom-label-field">خصم سعر محدد</label>
                     <div className="relative">
-                        <Field type="text" name="discount-percentage" id="discount-price" className="custom-input-field w-full" placeholder="اكتب السعر المراد خصمه..." onChange={(e) => setCutPrice(e.target.value)} />
+                        <Field type="text" name="discount-percentage" id="discount-price" className="custom-input-field w-full" placeholder="اكتب السعر المراد خصمه..." value={minusPrice} onChange={(e) => setMinusPrice(e.target.value)} />
                         <BadgePoundSterling className="w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
                     </div>
                 </div>
             )}
 
             {discount !== 'none' && (
-                <div className='w-full my-4'>
+                <div className='w-full my-4 flex items-center gap-2'>
                     <p>سعر البيع النهائي:</p>
-                    <p>{actualPrice}</p>
+                    <p className='text-indigo-500'>{actualPrice}</p>
                 </div>
             )}
         </div>

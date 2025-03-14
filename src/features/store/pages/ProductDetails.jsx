@@ -19,7 +19,7 @@ const ProductDetails = ({ }) => {
     const [proVariants, setProVariants] = useState([]);
     const [selectedSize, setSelectedSize] = useState("");
     const [selectedColor, setSelectedColor] = useState("");
-    const [selectedVariant, setSelectedVariant] = useState();
+    const [selectedVariant, setSelectedVariant] = useState('');
 
     const [newReview, setNewReview] = useState({ name: "", rating: 0, comment: "" });
     const [reviewDone, setReviewDone] = useState(false);
@@ -30,24 +30,13 @@ const ProductDetails = ({ }) => {
 
     const navigate = useNavigate();
 
-    const handleSelectSize = (size) => {
-        if (selectedSize === size) {
-            setSelectedSize('');
-            setSelectedVariant({ ...selectedVariant, size: '' });
-        } else {
-            setSelectedSize(size);
-            setSelectedVariant({ ...selectedVariant, size: size });
-        }
-    }
-    const handleSelectColor = (color) => {
-        if (selectedColor === color) {
-            setSelectedColor('');
-            setSelectedVariant({ ...selectedVariant, color: '' });
-        } else {
-            setSelectedColor(color);
-            setSelectedVariant({ ...selectedVariant, color: color });
-        }
-    }
+    const handleSelectVariant = (key, value) => {
+        setSelectedVariant(prev => ({
+            ...prev,
+            [key]: prev[key] && prev[key] === value ? '' : value, // Toggle selection
+        }));
+    };
+    
 
     // Get unique sizes and colors
     const variantSizes = proVariants
@@ -118,7 +107,7 @@ const ProductDetails = ({ }) => {
             toast(
                 "من فضلك, اختر مقاس أو لون مناسب لك أولاً.",
                 {
-                    duration: 7000,
+                    duration: 3000,
                     style: {
                         textAlign: 'center',
                     },
@@ -133,9 +122,12 @@ const ProductDetails = ({ }) => {
             setLoading(true);
             try {
                 const res = await axios.get(`/products/${id}`);
-                setProduct(res.data)
-                setProVariants(res.data.variants);
-                console.log(res)
+                const data = res.data;
+                setProduct(data)
+                setProVariants(data.variants);
+                if(data.variants.length === 1) {
+                    setSelectedVariant(`${data.name} ${data.variants[0].color} (${data.variants[0].size})`);
+                }
                 setLoading(false)
             } catch (error) {
                 console.log(error);
@@ -147,7 +139,7 @@ const ProductDetails = ({ }) => {
 
     useEffect(() => {
         if (product?.mainImage) {
-            setMainImgSrc(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`);
+            setMainImgSrc(encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`));
         }
     }, [product])
 
@@ -179,7 +171,7 @@ const ProductDetails = ({ }) => {
         <div className="pt-12 px-6 md:px-12 text-gray-800">
             {product && (
                 <div>
-                    <div className="flex flex-col lg:flex-row gap-8">
+                    <div className="flex flex-col md:flex-row gap-8">
                         {/* Image Section */}
                         <div className="w-full md:w-3/5 flex flex-col-reverse justify-start items-center gap-2">
 
@@ -187,10 +179,10 @@ const ProductDetails = ({ }) => {
                                 {/* Thumbnail Container */}
                                 <div
                                     ref={scrollContainerRef}
-                                    className="relative w-full md:w-20 h-20 md:h-[350px] my-auto overflow-x-auto md:overflow-y-auto flex justify-center items-center md:flex-col gap-2 scrollbar-hide"
+                                    className="relative w-full md:w-20 h-20 md:h-[350px] my-auto overflow-x-auto md:overflow-y-auto flex justify-start items-center md:flex-col gap-2 scrollbar-hide"
                                 >
                                     {product.images.map((image, index) => {
-                                        const imgSrc = `${baseUrl}/${image.url.replace(/\\/g, '/')}`;
+                                        const imgSrc = encodeURI(`${baseUrl}/${image.url.replace(/\\/g, '/')}`);
                                         return (
                                             <img
                                                 key={image._id}
@@ -248,7 +240,10 @@ const ProductDetails = ({ }) => {
                                                 <div
                                                     key={size}
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedSize === size) && filteredSizes.includes(size) ? 'border-indigo-300' : ''} ${!filteredSizes.includes(size) ? 'line-through' : ''}`}
-                                                    onClick={() => handleSelectSize(size)}
+                                                    onClick={() => {
+                                                        handleSelectVariant('size', size);
+                                                        setSelectedSize(size);
+                                                    }}
                                                     disabled={!filteredSizes.includes(size)}
                                                 >
                                                     {size}
@@ -265,7 +260,10 @@ const ProductDetails = ({ }) => {
                                                 <option
                                                     key={color}
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedColor === color) && filteredColors.includes(color) ? 'border-indigo-300' : ''} ${!filteredColors.includes(color) ? 'line-through' : ''}`}
-                                                    onClick={() => handleSelectColor(color)}
+                                                    onClick={() => {
+                                                        handleSelectVariant('color', color);
+                                                        setSelectedColor(color)
+                                                    }}
                                                     disabled={!filteredColors.includes(color)}
                                                 >
                                                     {color}
@@ -297,11 +295,11 @@ const ProductDetails = ({ }) => {
                             </div>
 
                             {/* Buttons */}
-                            <div className="flex gap-6">
-                                <button className="min-w-40 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => handleBuyNow(product, quantity)}>
+                            <div className="flex md:flex-col lg:flex-row gap-6">
+                                <button className="w-full lg:min-w-40 lg:w-auto bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => handleBuyNow(product, quantity)}>
                                     اشتري الان
                                 </button>
-                                <button className="min-w-40 bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product, quantity, selectedVariant)}>
+                                <button className="w-full lg:min-w-40 lg:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product, quantity, selectedVariant)}>
                                     أضف إلى السلة
                                 </button>
                             </div>
@@ -318,7 +316,7 @@ const ProductDetails = ({ }) => {
                     </div>
 
                     {/* Product Reviews and Comments */}
-                    <div className="flex flex-col lg:flex-row gap-8 mt-12">
+                    <div className="flex flex-col md:flex-row gap-8 mt-12">
                         <div className="w-full md:w-3/5 custom-bg-white max-h-max">
                             <h2 className="text-xl font-bold text-center mb-4">آراء العملاء</h2>
                             {product.reviews.length > 0 ? (

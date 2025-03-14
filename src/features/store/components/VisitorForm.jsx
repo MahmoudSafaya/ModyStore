@@ -10,12 +10,12 @@ import { useApp } from "../../../context/AppContext";
 
 const OrderForm = () => {
     const { cart, setCart, totalPrice, setTotalPrice } = useCart();
-    const { shippingPrice } = useApp();
+    const { shippingPrice, senderAddress } = useApp();
 
     const navigate = useNavigate();
 
     const emptyCart = () => {
-        localStorage.removeItem('mody_store_cart');
+        localStorage.removeItem('diva_store_cart');
         setCart([]);
         setTotalPrice(0);
     }
@@ -44,52 +44,54 @@ const OrderForm = () => {
             setTimeout(() => {
                 navigate('/');
             }, 1000);
+            resetForm();
             return;
         }
 
         // Create the orderData object with updated receiver values
         const visitorOrderData = {
-            length: 30,
-            weight: 5.02,
+            length: "",
+            weight: 1.00,
             itemsValue: totalPrice + shippingPrice,
             remark: `${cart.map(item => item.selectedVariant)} - ${values.receiver.additionalInfo}`,
-            billCode: "", ////////////////////
-            goodsType: "ITN1",
+            billCode: "",
+            goodsType: "ITN16",
             totalQuantity: "1",
-            width: 10,
-            height: 60,
+            width: "",
+            height: "",
             offerFee: 1,
             receiver: {
                 area: values.receiver.area,
                 street: values.receiver.street,
-                address: "kkk",
-                addressBak: "FFF",
-                town: "ll",
+                address: "",
+                addressBak: "",
+                town: "",
                 city: values.receiver.city,
                 mobile: values.receiver.mobile,
-                mailBox: "ant_li123@qq.com",
-                phone: "034351203",
+                mailBox: "",
+                phone: "",
                 countryCode: "EGY",
                 name: values.receiver.name,
                 alternateReceiverPhoneNo: values.receiver.alternateReceiverPhoneNo,
                 company: "JT",
-                postCode: "54830",
+                postCode: "",
                 prov: values.receiver.prov,
-                areaCode: "A0003324",
-                building: "13",
-                floor: "25",
-                flats: "47"
+                areaCode: "",
+                building: "",
+                floor: "",
+                flats: ""
             },
+            sender: senderAddress,
             items: cart.map(item => {
                 return ({
-                    englishName: item.name,
-                    number: 1,
+                    englishName: item.selectedVariant,
+                    number: item.quantity,
                     itemType: "ITN16",
-                    itemName: "file type",
+                    itemName: item.selectedVariant,
                     priceCurrency: "DHS",
-                    itemValue: item.actualPrice + shippingPrice,
-                    chineseName: "test_order",
-                    itemUrl: "http://www.baidu.com",
+                    itemValue: item.actualPrice,
+                    chineseName: "",
+                    itemUrl: "",
                     desc: item.description
                 })
             }),
@@ -130,7 +132,7 @@ const OrderForm = () => {
                                 as="textarea"
                                 name="receiver.additionalInfo"
                                 className="custom-input-field resize-none"
-                                placeholder="Enter additional details"
+                                placeholder="اكتب ملاحظاتك..."
                                 rows="4"
                             />
                             <ErrorMessage name="receiver.additionalInfo" component="div" className="text-red-400 mt-1 text-sm" />

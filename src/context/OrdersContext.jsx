@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import axios from "../api/axios";
 import toast from 'react-hot-toast';
 
@@ -35,7 +35,6 @@ export const OrdersProvider = ({ children }) => {
         try {
             const response = await axios.get('/jnt/orders/');
             setJNTOrders(response.data.orders);
-            console.log(response)
         } catch (error) {
             console.error(error);
         }
@@ -43,9 +42,14 @@ export const OrdersProvider = ({ children }) => {
 
     const confirmOrderToJNT = async (orderID) => {
         try {
-            const response = await axios.post(`/jnt/orders/${orderID}`);
-            console.log(response);
+            await axios.post(`/jnt/orders/${orderID}`);
             setOrderPopup({ display: false, editing: false, info: {} })
+            getUnconfirmedOrders();
+            toast.success('تم تسجيل الأوردر بنجاح علي J&T.', {
+                style: {
+                    textAlign: 'center'
+                }
+            })
         } catch (error) {
             console.error(error);
         }

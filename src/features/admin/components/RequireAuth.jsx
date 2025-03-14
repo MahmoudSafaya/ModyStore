@@ -5,14 +5,21 @@ const RequireAuth = ({ allowedRoles }) => {
   const { auth } = useAuth();
   const location = useLocation();
 
+  if (!auth) {
+    // If auth state is still loading or unavailable, prevent rendering
+    return null;
+  }
+
   return allowedRoles?.includes(auth?.role) ? (
     <Outlet />
   ) : auth?.role ? (
+    auth?.role === 'user' ?
+    <Navigate to="/admin/place-order" state={{ from: location }} replace />
+    :
     <Navigate to="/unauthorized" state={{ from: location }} replace />
   ) : (
-    <Navigate to="/admin/login" state={{ from: location }} replace />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
-  // return <Outlet />
 };
 
 export default RequireAuth;

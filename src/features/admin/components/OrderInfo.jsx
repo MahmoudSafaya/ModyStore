@@ -88,11 +88,13 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
           <div className="flex flex-wrap justify-center gap-4">
             {items && items.map(product => {
               return (
-                <div key={product._id} className="text-gray-500 min-w-full sm:min-w-auto">
+                <div key={product._id} className="text-gray-500 min-w-full sm:min-w-auto flex items-center gap-4">
                   <DetailBox itemName={'اسم المنتج:'} itemValue={product.englishName} />
+                  <DetailBox itemName={'الكمية:'} itemValue={product.number} />
                 </div>
               )
             })}
+            <DetailBox itemName={'سعر الأوردر'} itemValue={itemsValue} />
             <DetailBox itemName={'ملاحظات العميل:'} itemValue={remark} />
           </div>
         </div>
@@ -101,14 +103,17 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
         <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
           <div className="w-full md:w-auto">
             {!inConfirmed && (
-              <button className="w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => confirmOrderToJNT(info._id)}>Sign</button>
+              <button className="w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => {
+                console.log(info);
+                confirmOrderToJNT(info._id)
+              }}>تسجيل</button>
             )}
           </div>
           <div className="w-full md:w-auto flex items-center justify-between gap-6">
             {!inConfirmed && (
-              <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-600 text-white duration-500 hover:bg-gray-700" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>Edit</button>
+              <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-600 text-white duration-500 hover:bg-gray-700" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>تعديل</button>
             )}
-            <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-400 text-white duration-500 hover:bg-red-500" onClick={() => handleDelete(info._id)}>Delete</button>
+            <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-400 text-white duration-500 hover:bg-red-500" onClick={() => handleDelete(info._id)}>حذف</button>
           </div>
         </div>
       </div>

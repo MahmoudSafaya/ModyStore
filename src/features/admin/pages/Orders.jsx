@@ -3,12 +3,14 @@ import axios from "../../../api/axios";
 import { Toaster } from 'react-hot-toast';
 import { useApp } from "../../../context/AppContext";
 import { A_OrdersTable, A_SearchFeature } from "../components";
+import { useOrders } from "../../../context/OrdersContext";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { deleteNotify } = useApp();
+  const {setOrderPopup} = useOrders();
 
   const fetchOrders = async (page) => {
     try {

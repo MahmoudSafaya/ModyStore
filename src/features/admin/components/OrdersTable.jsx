@@ -132,21 +132,21 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                                             </div>
                                         </label>
                                     </th>
-                                    <th className="p-2">رقم الطلب</th>
-                                    <th className="p-2">اسم العميل</th>
-                                    <th className="p-2">رقم الهاتف</th>
-                                    <th className="p-2">المنتجات</th>
-                                    <th className="p-2">محافظة العميل</th>
-                                    <th className="p-2">مدينة العميل</th>
-                                    <th className="p-2">منطقة العميل</th>
-                                    <th className="p-2">شارع العميل</th>
-                                    <th className="p-2">سعر الطلب</th>
-                                    <th className="p-2">اسم الراسل</th>
-                                    <th className="p-2">محافظة الراسل</th>
-                                    <th className="p-2">مدينة الراسل</th>
-                                    <th className="p-2">منطقة الراسل</th>
-                                    <th className="p-2">شارع الراسل</th>
-                                    <th className="p-2">الإجراءات</th>
+                                    <th className="p-3">رقم الطلب</th>
+                                    <th className="p-3">اسم العميل</th>
+                                    <th className="p-3">رقم الهاتف</th>
+                                    <th className="p-3">المنتجات</th>
+                                    <th className="p-3">محافظة العميل</th>
+                                    <th className="p-3">مدينة العميل</th>
+                                    <th className="p-3">منطقة العميل</th>
+                                    <th className="p-3">شارع العميل</th>
+                                    <th className="p-3">سعر الطلب</th>
+                                    <th className="p-3">اسم الراسل</th>
+                                    <th className="p-3">محافظة الراسل</th>
+                                    <th className="p-3">مدينة الراسل</th>
+                                    <th className="p-3">منطقة الراسل</th>
+                                    <th className="p-3">شارع الراسل</th>
+                                    <th className="p-3">الإجراءات</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -170,25 +170,25 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                                                 </div>
                                             </label>
                                         </td>
-                                        <td className="p-2 cursor-pointer duration-300 hover:text-indigo-400 hover:underline" onClick={() => setOrderPopup({ display: true, editing: false, info: order })}>
+                                        <td className="p-3 cursor-pointer duration-300 hover:text-indigo-400 hover:underline" onClick={() => setOrderPopup({ display: true, editing: false, info: order })}>
                                             {inConfirmed ? order.billCode : order.txlogisticId}
                                         </td>
-                                        <td className="p-2">
+                                        <td className="p-3">
                                             {order.receiver.name}
                                         </td>
-                                        <td className="p-2">{order.receiver.mobile}</td>
-                                        <td className="p-2 min-w-35">{order.items.length}</td>
-                                        <td className="p-2">{order.receiver.prov}</td>
-                                        <td className="p-2">{order.receiver.city}</td>
-                                        <td className="p-2">{order.receiver.area}</td>
-                                        <td className="p-2">{order.receiver.street.slice(0, 20)}</td>
-                                        <td className="p-2 font-semibold">{order.itemsValue}</td>
-                                        <td className="p-2">{order.sender.name}</td>
-                                        <td className="p-2">{order.sender.prov}</td>
-                                        <td className="p-2">{order.sender.city}</td>
-                                        <td className="p-2">{order.sender.area}</td>
-                                        <td className="p-2">{order.sender.street.slice(0, 20)}</td>
-                                        <td className="p-2 flex items-center">
+                                        <td className="p-3">{order.receiver.mobile}</td>
+                                        <td className="p-3 min-w-35">{order.items.length}</td>
+                                        <td className="p-3">{order.receiver.prov}</td>
+                                        <td className="p-3">{order.receiver.city}</td>
+                                        <td className="p-3">{order.receiver.area}</td>
+                                        <td className="p-3">{order.receiver.street.slice(0, 20)}</td>
+                                        <td className="p-3 font-semibold">{order.itemsValue}</td>
+                                        <td className="p-3">{order.sender.name}</td>
+                                        <td className="p-3">{order.sender.prov}</td>
+                                        <td className="p-3">{order.sender.city}</td>
+                                        <td className="p-3">{order.sender.area}</td>
+                                        <td className="p-3">{order.sender.street.slice(0, 20)}</td>
+                                        <td className="p-3 flex items-center">
                                             {!inConfirmed && (
                                                 <div className='px-4 py-2 cursor-pointer duration-500 hover:text-indigo-500 hover:rotate-45' onClick={() => setOrderPopup({ display: false, editing: true, info: order })}>
                                                     <FaRegEdit className="w-5 h-5" />
@@ -217,7 +217,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
 
 
                 {/* Pagination Controls */}
-                {orders.length > 0 && (
+                {/* {orders.length > 0 && (
                     <div className="flex justify-center mt-4">
                         <button
                             onClick={() => handlePageChange(currentPage - 1)}
@@ -229,6 +229,39 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                         <span className="px-4 py-2 mx-1">
                             صفحة {currentPage} من {totalPages}
                         </span>
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                        >
+                            <ChevronLeft />
+                        </button>
+                    </div>
+                )} */}
+
+                {/* Pagination Controls */}
+                {orders.length > 0 && (
+                    <div className="flex justify-center mt-4">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                        >
+                            <ChevronRight />
+                        </button>
+
+                        {/* Page Numbers */}
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index + 1}
+                                onClick={() => handlePageChange(index + 1)}
+                                className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
+                                    }`}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+
                         <button
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}

@@ -4,20 +4,20 @@ const slides = [
   {
     id: 1,
     image: 'images/mody-store-01.jpg',
-    title: 'Slide 1',
-    description: 'This is the first slide.',
+    title: 'عروض خاصة على أحدث المنتجات!',
+    description: 'اكتشف أحدث الإصدارات بأفضل الأسعار، تسوق الآن واستمتع بخصومات مميزة.',
   },
   {
     id: 2,
     image: 'images/mody-store-05.jpg',
-    title: 'Slide 2',
-    description: 'This is the second slide.',
+    title: 'توصيل سريع لجميع الطلبات!',
+    description: 'نوفر لك خدمة توصيل سريعة وآمنة إلى باب منزلك، أينما كنت.',
   },
   {
     id: 3,
     image: 'images/mody-store-02.jpg',
-    title: 'Slide 3',
-    description: 'This is the third slide.',
+    title: 'تسوق بأمان وراحة!',
+    description: 'نضمن لك تجربة شراء آمنة مع خيارات دفع مرنة وسهلة.',
   },
 ];
 
@@ -52,14 +52,14 @@ const HeroSlider = () => {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#00000020] text-white">
-            <h2 className="text-4xl font-bold">{slide.title}</h2>
-            <p className="text-xl">{slide.description}</p>
+            <h1 className="text-4xl font-bold mb-6 drop-shadow-sm">{slide.title}</h1>
+            <p className="text-2xl drop-shadow-sm">{slide.description}</p>
           </div>
         </div>
       ))}
 
       {/* Navigation Arrows */}
-      <button
+      {/* <button
         onClick={prevSlide}
         className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-r"
       >
@@ -70,7 +70,7 @@ const HeroSlider = () => {
         className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-l"
       >
         &#10095;
-      </button>
+      </button> */}
 
       {/* Dots */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">

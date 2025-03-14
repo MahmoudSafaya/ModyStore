@@ -14,7 +14,7 @@ const StoreLayout = () => {
             <S_Header toggleSidebar={toggleSidebar} />
             <S_Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
             <S_Cart />
-            <main className={`w-full lg:w-[calc(100%-50px)] lg:mr-[50px] pb-20 bg-slate-100 h-full`}>
+            <main className={`w-full lg:w-[calc(100%-50px)] lg:mr-[50px] pb-12 bg-slate-100 h-full`}>
                 <Outlet /> {/* Render the specific route's component */}
             </main>
             <S_Footer />

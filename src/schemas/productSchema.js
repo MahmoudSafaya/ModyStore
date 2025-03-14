@@ -12,8 +12,8 @@ export const ProductSchema = Yup.object().shape({
     isActive: Yup.boolean(),
     variants: Yup.array().of(
         Yup.object().shape({
-            color: Yup.string(),
-            size: Yup.string(),
+            color: Yup.string().required('هذا الحقل مطلوب'),
+            size: Yup.string().required('هذا الحقل مطلوب'),
             stock: Yup.number().min(1, "الكمية يجب ألا تقل عن 1").required('هذا الحقل مطلوب'),
         })
     ),

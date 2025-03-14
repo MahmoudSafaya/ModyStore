@@ -8,15 +8,15 @@ import { IoStorefrontOutline } from "react-icons/io5";
 import { PackageOpen } from 'lucide-react'
 import { A_OrdersTable } from '../components';
 import { useOrders } from '../../../context/OrdersContext';
+import { useApp } from '../../../context/AppContext';
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const [dashCounts, setDashCounts] = useState({});
   const [todayOrders, setTodayOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState();
 
-  const { setOrderPopup } = useOrders();
+  const { orderPopup, setOrderPopup } = useOrders();
+  const { deleteNotify } = useApp();
 
   const cards = [
     [
@@ -62,23 +62,25 @@ const Home = () => {
     }
   };
 
-  const getTodayOrders = async (page) => {
-    setLoading(true);
+  const getTodayDateISO = () => {
     const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString(); // Start of today in UTC
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString(); // End of today in UTC
+    return today.toISOString().split('T')[0]; // Extract only YYYY-MM-DD
+  };
 
+  const getTodayOrders = async () => {
+    setLoading(true);
+    const todayDate = getTodayDateISO();
+    console.log(`${todayDate}T00:00:00Z`);
+    console.log( `${todayDate}T23:59:59Z`);
     try {
-      const response = await axios.get(`/visitors/orders/?page=${page}`, {
-        params: {
-          startDate: startOfDay,
-          endDate: endOfDay
-        }
+      const response = await axios.post('/orders/search', {
+        confirmed: "0",
+        startDate: `${todayDate}T00:00:00Z`,  // Start of the day
+        endDate: `${todayDate}T23:59:59Z`    // End of the day
       });
+      console.log(response)
       const data = response.data;
-      setTodayOrders(data.orders);
-      setCurrentPage(data.currentPage);
-      setTotalPages(data.totalPages);
+      setTodayOrders(data);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
@@ -90,9 +92,8 @@ const Home = () => {
     try {
       await axios.delete(`/visitors/orders/${orderID}`);
       deleteNotify('تم حذف الطلب بنجاح!');
-      const newOrders = unconfirmedOrders.filter(item => item._id !== orderID)
-      setUnconfirmedOrders(newOrders);
-      setOrderPopup({ display: false, editing: false, info: {} })
+      getTodayOrders();
+      orderPopup.display && setOrderPopup({ display: false, editing: false, info: {} })
     } catch (error) {
       console.error(error);
     }
@@ -103,8 +104,8 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    getTodayOrders(currentPage);
-  }, [currentPage]);
+    getTodayOrders();
+  }, [orderPopup]);
 
   if (loading) return <Loading />
 
@@ -137,7 +138,7 @@ const Home = () => {
       </div> */}
 
       {/* Table With Search */}
-      <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={getTodayOrders} />
+      <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} fetchOrders={getTodayOrders} />
     </div>
   );
 };

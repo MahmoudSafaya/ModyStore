@@ -17,7 +17,7 @@ const Categories = () => {
             <div className="flex flex-row flex-wrap items-center justify-center gap-6">
                 {mainCategories && mainCategories.map(item => {
                     const correctedPath = item.image.url.replace(/\\/g, '/');
-                    const fullImageUrl = `${baseUrl}/${correctedPath}`;
+                    const fullImageUrl = encodeURI(`${baseUrl}/${correctedPath}`);
                     return (
                         <div key={item._id} onClick={() => handleCategoryClick(item._id)} className="group bg-white p-4 rounded-xl shadow-md flex flex-col items-center cursor-pointer">
                             <img src={fullImageUrl} alt={item.image.alt} className="w-32 h-32 object-cover mb-4 transform transition-transform duration-500 rounded-lg group-hover:scale-110" />

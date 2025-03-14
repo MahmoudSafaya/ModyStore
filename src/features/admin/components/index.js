@@ -12,3 +12,5 @@ export { default as A_AddressBlock } from './AddressBlock';
 export { default as A_AddCategory } from './AddCategory';
 export { default as A_SearchFeature } from './SearchFeature';
 export { default as A_DeleteConfirmModal } from './DeleteConfirmModal';
+export { default as A_UpdateShippingPrice } from './UpdateShippingPrice';
+export { default as A_SenderAddress } from './SenderAddress';

@@ -2,6 +2,7 @@ import CryptoJS from 'crypto-js';
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import axios from '../api/axios';
 
 // Secret key for hashing (keep this secure)
 const SECRET_KEY = import.meta.env.VITE_CART_SECRET_KEY;
@@ -23,6 +24,7 @@ export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [variantsProducts, setVariantsProducts] = useState([]);
 
     const navigate = useNavigate();
 
@@ -40,13 +42,13 @@ export const CartProvider = ({ children }) => {
     // Function to save cart to local storage
     const saveCartItems = (cart) => {
         const encryptedCart = encryptData(cart);
-        localStorage.setItem('mody_store_cart', encryptedCart);
+        localStorage.setItem('diva_store_cart', encryptedCart);
         setTotalPrice(calculateTotalPrice(cart)); // ✅ Update total price
     };
 
     // Function to get cart from local storage
     const loadCartItems = () => {
-        const encryptedCart = localStorage.getItem('mody_store_cart');
+        const encryptedCart = localStorage.getItem('diva_store_cart');
         if (!encryptedCart) return null;
 
         try {
@@ -59,54 +61,59 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+    const fetchProductsNames = async () => {
+        try {
+            const res = await axios.get("/products/search");
+            setVariantsProducts(res.data.products);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     // Add item to cart
     const addToCart = (item, quantity, selectedVariant) => {
-        if (cart.find(cartItem => cartItem._id === item._id)) {
+        if (cart.some(cartItem => cartItem._id === item._id)) {
             setIsCartOpen(true);
             return false;
+        }
 
-        } else if (item.variants.length > 1 && !selectedVariant) {
-            toast(
-                `من فضلك, اختر مقاس أو لون مناسب لك أولاً. 
-                \n
-                شكرا لتفهمك 🙏
-                `,
-                {
-                    duration: 7000,
-                    style: {
-                        textAlign: 'center',
-                    },
-                }
-            );
+        // Auto-select variant if only one exists (avoid mutation)
+        let finalSelectedVariant = typeof selectedVariant === 'string' ? selectedVariant : null;
+        if (item.variants.length === 1) {
+            finalSelectedVariant = `${item.name} ${item.variants[0].color} (${item.variants[0].size})`;
+        }
+
+        // Ensure the user has selected a valid variant
+        if (item.variants.length > 1 && (!selectedVariant?.color || !selectedVariant?.size)) {
+            toast(`من فضلك, اختر مقاس أو لون مناسب لك أولاً.`, {
+                duration: 3000,
+                style: { textAlign: 'center' },
+            });
             navigate(`/products/${item._id}`);
-            return false;
+            return;
         }
 
-        item.quantity = quantity;
+        // Find matching variant name
+        const matchName = `${item.name} ${selectedVariant?.color} (${selectedVariant?.size})`;
+        const matchingProduct = variantsProducts.find(variant => variant.product === matchName);
+        const finalVariant = matchingProduct?.product || "غير متوفر";
 
-        // Add selected variant only if it exists
-        if (selectedVariant) {
-            if (selectedVariant.size && selectedVariant.color) {
-                item.selectedVariant = `المقاس: ${selectedVariant.size} - اللون: ${selectedVariant.color}`;
-            } else if (selectedVariant.size) {
-                item.selectedVariant = `المقاس: ${selectedVariant.size}`;
-            } else if (selectedVariant.color) {
-                item.selectedVariant = `اللون: ${selectedVariant.color}`;
-            }
-        }
+        const newItem = {
+            ...item,
+            quantity,
+            selectedVariant: finalSelectedVariant || finalVariant,
+        };
 
-        const newCart = [...cart, item];
-        setCart(newCart);
-        setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
-        saveCartItems(newCart);
+        const updatedCart = [...cart, newItem];
+        setCart(updatedCart);
+        setTotalPrice(calculateTotalPrice(updatedCart));
+        saveCartItems(updatedCart);
         setIsCartOpen(true);
-        toast.success('تم إضافة المنتج إلى سلة التسوق.', {
-            style: {
-                padding: '16px',
-                color: '#61D345',
-            },
-        })
+
+        toast.success('تم إضافة المنتج إلى سلة التسوق.');
     };
+
+
 
     // Increase item quantity
     const increaseQuantity = (itemId) => {
@@ -139,6 +146,7 @@ export const CartProvider = ({ children }) => {
     // Load cart when component mounts
     useEffect(() => {
         loadCartItems();
+        fetchProductsNames();
     }, []);
 
     return (

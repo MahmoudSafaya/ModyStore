@@ -3,7 +3,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from '../../../api/axios';
 import { Toaster } from 'react-hot-toast';
-import { ChartColumnStacked } from 'lucide-react'
+import { Trash } from 'lucide-react';
+import { BiCategory } from "react-icons/bi";
+import { FaRegEdit } from "react-icons/fa";
 import { useApp } from '../../../context/AppContext';
 import { A_DeleteConfirmModal } from '.';
 
@@ -110,10 +112,10 @@ const AddCategory = () => {
     }, []);
 
     return (
-        <div>
-            <div className='custom-bg-white mt-8'>
+        <div className='lg:grid grid-cols-2 gap-6'>
+            <div className='custom-bg-white max-h-max mt-8'>
                 <div className='relative max-w-max flex items-center justify-center gap-2 mb-8 mx-auto'>
-                    <ChartColumnStacked />
+                    <BiCategory />
                     <h2 className='font-bold'>قائمة الأقسام</h2>
                     <span className='absolute -bottom-1 right-0 w-[60%] h-[2px] bg-indigo-200 rounded-sm'></span>
                 </div>
@@ -122,10 +124,23 @@ const AddCategory = () => {
                         {categories.map(item => {
                             return (
                                 <div key={item._id} className='w-full flex items-center justify-between border-b border-gray-300 pb-4'>
-                                    <p className='min-w-40 text-center'>{item.name}</p>
-                                    <div className='flex flex-col md:flex-row gap-6'>
+                                    <div className='flex items-center gap-2'>
+                                        <div>
+                                            <img src={`${baseUrl}/${item.image.url.replace(/\\/g, '/')}`} alt={item.image.alt} className='w-8 h-8 rounded-lg shadow-sm' />
+                                        </div>
+                                        <p className='text-center'>{item.name}</p>
+                                    </div>
+                                    {/* <div className='flex flex-col md:flex-row gap-6'>
                                         <button className="min-w-30 py-2 px-4 bg-gray-600 text-white shadow-sm rounded-lg duration-500 hover:bg-gray-700" onClick={() => handleEditCategory(item)}>تعديل</button>
                                         <button className="min-w-30 py-2 px-4 bg-red-500 text-white shadow-sm rounded-lg duration-500 hover:bg-red-600" onClick={() => setIsDelete({ purpose: 'one-category', itemId: item._id, itemName: item.name })}>حذف</button>
+                                    </div> */}
+                                    <div className="flex gap-6">
+                                        <div className='cursor-pointer duration-500 hover:text-indigo-500 hover:rotate-45' onClick={() => handleEditCategory(item)}>
+                                            <FaRegEdit className="w-5 h-5" />
+                                        </div>
+                                        <div className='cursor-pointer duration-500 hover:text-red-500 hover:rotate-45 rounded-b-lg' onClick={() => setIsDelete({ purpose: 'one-category', itemId: item._id, itemName: item.name })}>
+                                            <Trash className="w-5 h-5" />
+                                        </div>
                                     </div>
                                 </div>
                             )
@@ -141,7 +156,12 @@ const AddCategory = () => {
                 <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDeleteCategory(isDelete.itemId)} setIsDelete={setIsDelete} />
             )}
 
-            <div className="custom-bg-white mt-8" ref={formRef}>
+            <div className="custom-bg-white max-h-max mt-8" ref={formRef}>
+                <div className='relative max-w-max flex items-center justify-center gap-2 mb-8 mx-auto'>
+                    <BiCategory />
+                    <h2 className='font-bold'>إضافة قسم جديد</h2>
+                    <span className='absolute -bottom-1 right-0 w-[60%] h-[2px] bg-indigo-200 rounded-sm'></span>
+                </div>
                 <Formik
                     enableReinitialize
                     initialValues={{
@@ -153,7 +173,7 @@ const AddCategory = () => {
                     onSubmit={handleAddCategory}
                 >
                     {({ isSubmitting, setFieldValue }) => (
-                        <Form className="w-full p-4 space-y-4">
+                        <Form>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8'>
                                 {/* Name Field */}
                                 <div>
@@ -254,7 +274,7 @@ const AddCategory = () => {
                             <div className='mt-8 mx-auto text-center'>
                                 <button
                                     type="submit"
-                                    className="min-w-60 px-4 py-2 bg-indigo-500 text-white rounded-lg duration-500 hover:bg-indigo-600"
+                                    className="w-full md:w-auto md:min-w-60 px-4 py-2 bg-indigo-500 text-white rounded-lg duration-500 hover:bg-indigo-600"
                                 >
                                     {selectedCategory ? (isSubmitting ? 'جار التعديل...' : '  تعديل') : (isSubmitting ? 'جار الإضافة...' : 'إضافة')}
                                 </button>

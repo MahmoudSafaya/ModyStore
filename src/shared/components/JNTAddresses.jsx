@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { Field, ErrorMessage } from "formik";
 import { useApp } from "../../context/AppContext";
+import Loading from "./Loading";
 
 const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur }) => {
 
@@ -17,24 +18,31 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
   const [showSecondOptions, setShowSecondOptions] = useState(false);
   const [showThirdOptions, setShowThirdOptions] = useState(false);
 
-  const { setShippingPrice } = useApp();
+  const { setShippingPrice, senderAddress, fetchSenderAddress } = useApp();
+
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     axios.post("/addresses/seprated")
       .then(response => setFirstOptions(response.data.data.result))
       .catch(error => console.error("Error fetching first options:", error));
 
-    if (parent === 'sender') {
-      setFirstSelection('الغربية');
+    fetchSenderAddress();
+  }, []);
+
+  useEffect(() => {
+    if (parent === 'sender' && senderAddress && Object.keys(senderAddress).length > 0) {
+      setFirstSelection(senderAddress.prov);
       setTimeout(() => {
-        setSecondSelection('كفر الزيات');
-      }, 200);
+        setSecondSelection(senderAddress.city);
+      }, 300);
       setTimeout(() => {
-        setThirdSelection('كفر الزيات');
-      }, 400);
+        setThirdSelection(senderAddress.area);
+      }, 600);
     }
 
-    if (parent === 'receiver') {
+    if (parent === 'receiver' && values.receiver) {
       setFirstSelection(values.receiver.prov);
       setTimeout(() => {
         setSecondSelection(values.receiver.city);
@@ -43,8 +51,8 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         setThirdSelection(values.receiver.area);
       }, 400);
     }
+  }, [senderAddress]); // Wait for senderAddress to update
 
-  }, []);
 
   useEffect(() => {
     if (isSubmitting) {
@@ -57,7 +65,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
       axios.post("/addresses/seprated", { Province: firstSelection })
         .then(response => {
           setSecondOptions(response.data.data.result);
-          if(parent === 'receiver') {
+          if (parent === 'receiver') {
             setShippingPrice(Number(response.data.data.price));
           }
         })
@@ -90,13 +98,16 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
     }
   }
 
+  if (loading || !senderAddress) return <Loading />;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Name */}
       <div>
-        <label className="custom-label-field">الاسم: <span className="text-red-500">*</span></label>
+        <label className="custom-label-field" htmlFor={`${parent}.name`}>الاسم: <span className="text-red-500">*</span></label>
         <Field
           type="text"
+          id={`${parent}.name`}
           name={`${parent}.name`}
           autoComplete="off"
           className="custom-input-field"
@@ -107,9 +118,10 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
       {/* Mobile */}
       <div>
-        <label className="custom-label-field">رقم الهاتف: <span className="text-red-500">*</span></label>
+        <label className="custom-label-field" htmlFor={`${parent}.mobile`}>رقم الهاتف: <span className="text-red-500">*</span></label>
         <Field
           type="text"
+          id={`${parent}.mobile`}
           name={`${parent}.mobile`}
           autoComplete="off"
           className="custom-input-field"
@@ -120,9 +132,10 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
       {/* Mobile */}
       <div>
-        <label className="custom-label-field">رقم الهاتف 2: </label>
+        <label className="custom-label-field" htmlFor={`${parent}.alternateReceiverPhoneNo`}>رقم الهاتف 2: </label>
         <Field
           type="text"
+          id={`${parent}.alternateReceiverPhoneNo`}
           name={`${parent}.alternateReceiverPhoneNo`}
           autoComplete="off"
           className="custom-input-field"
@@ -133,11 +146,12 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
       {/* Province */}
       <div className="relative">
-        <label className="custom-label-field">
+        <label className="custom-label-field" htmlFor={`${parent}.prov`}>
           المحافظة: <span className="text-red-500">*</span>
         </label>
         <Field
           type="text"
+          id={`${parent}.prov`}
           name={`${parent}.prov`}
           placeholder="اسم المحافظة"
           className="custom-input-field"
@@ -182,9 +196,10 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
       {/* City */}
       <div className="relative">
-        <label className="custom-label-field">المدينة: <span className="text-red-500">*</span></label>
+        <label className="custom-label-field" htmlFor={`${parent}.city`}>المدينة: <span className="text-red-500">*</span></label>
         <Field
           type="text"
+          id={`${parent}.city`}
           name={`${parent}.city`}
           placeholder="اسم المدينة"
           autoComplete="off"
@@ -220,9 +235,10 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
       {/* Area */}
       <div className="relative">
-        <label className="custom-label-field">المنطقة: <span className="text-red-500">*</span></label>
+        <label className="custom-label-field" htmlFor={`${parent}.area`}>المنطقة: <span className="text-red-500">*</span></label>
         <Field
           type="text"
+          id={`${parent}.area`}
           name={`${parent}.area`}
           placeholder="اسم المنظقة"
           autoComplete="off"
@@ -257,9 +273,10 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
       {/* Street */}
       <div>
-        <label className="custom-label-field">العنوان: <span className="text-red-500">*</span></label>
+        <label className="custom-label-field" htmlFor={`${parent}.street`}>العنوان: <span className="text-red-500">*</span></label>
         <Field
           type="text"
+          id={`${parent}.street`}
           name={`${parent}.street`}
           autoComplete="off"
           className="custom-input-field"

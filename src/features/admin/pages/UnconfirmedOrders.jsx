@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import toast, { Toaster } from 'react-hot-toast';
+import React, { useEffect } from "react";
+import { Toaster } from 'react-hot-toast';
 import { useOrders } from "../../../context/OrdersContext";
-import Loading from "../../../shared/components/Loading";
 import axios from "../../../api/axios";
 import { useApp } from "../../../context/AppContext";
 import { A_OrdersTable, A_SearchFeature } from "../components";
@@ -9,7 +8,6 @@ import { A_OrdersTable, A_SearchFeature } from "../components";
 const UnconfirmedOrders = () => {
     const { setOrderPopup, getUnconfirmedOrders, unconfirmedOrders, setUnconfirmedOrders, currentPage, setCurrentPage, totalPages } = useOrders();
     const { deleteNotify } = useApp();
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         getUnconfirmedOrders(currentPage);
@@ -26,8 +24,6 @@ const UnconfirmedOrders = () => {
             console.error(error);
         }
     }
-
-    if (loading) return <Loading loading={loading} />;
 
     return (
         <div>

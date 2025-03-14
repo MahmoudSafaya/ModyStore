@@ -19,7 +19,7 @@ const Products = () => {
   const [searchInput, setSearchInput] = useState('');
   const [selectedProduct, setSelectedProduct] = useState();
   const [popupPurpose, setPopupPurpose] = useState('');
-  const [barcodeNums, setBarcodeNums] = useState({});
+  const [barcodeNums, setBarcodeNums] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -50,7 +50,8 @@ const Products = () => {
     try {
       const res = await axios.get(`/products?page=${page}`);
       const data = res.data;
-      setProducts(data.products);
+      console.log(res);
+      setProducts(data.Products);
       setCurrentPage(data.currentPage);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -124,8 +125,8 @@ const Products = () => {
   return (
     <div>
       {/* Search Feature */}
-      <div className="custom-bg-white flex flex-col md:flex-row items-center gap-4">
-        <div className='flex items-center gap-2 grow'>
+      <div className="custom-bg-white flex flex-col md:flex-row items-end gap-4">
+        <div className='w-full flex-grow'>
           <div className="relative w-full">
             <input type="text" name="product-search" id="product-search" className="custom-input-field w-full" placeholder="بحث عن منتج..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
             <Search className="w-20 h-[calc(100%-2px)] my-[1px] ml-[1px] text-2xl p-2 rounded-l-lg bg-gray-100 text-gray-400 absolute top-0 left-0 border border-gray-200" />
@@ -138,7 +139,7 @@ const Products = () => {
 
       {/* Table */}
       <div className="custom-bg-white mt-8 overflow-x-auto">
-        {products.length > 0 ? (
+        {products && products.length > 0 ? (
           <table className="w-full bg-white text-gray-800">
             <thead className="border-b border-gray-300 font-bold text-center whitespace-nowrap">
               <tr>
@@ -195,7 +196,7 @@ const Products = () => {
                   </td>
                   <td className='p-3'>
                     <div className="w-15 h-15 p-2 mx-auto">
-                      <img src={`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`} alt={product.mainImage.alt} className='w-full h-full rounded-lg' />
+                      <img src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} alt={product.mainImage.alt} className='w-full h-full object-cover rounded-lg' />
                     </div>
                   </td>
                   <td className="p-3 space-x-3">
@@ -333,7 +334,11 @@ const Products = () => {
                           [variant.barCode]: Number(e.target.value)
                         }))} />
                       </label>
-                      <A_BillOfLading variant={variant.barCode} stock={barcodeNums > 0 ? barcodeNums : variant.stock} />
+                      <A_BillOfLading
+                        variant={variant.barCode}
+                        stock={barcodeNums ? barcodeNums[variant.barCode] : Number(variant.stock)}
+                        billName={`${selectedProduct.name} ${variant.size} (${variant.color})`}
+                      />
                     </div>
                   </div>
                 )

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Field, ErrorMessage } from "formik";
@@ -19,9 +18,9 @@ const ProductDetails = ({values, setFieldValue}) => {
         <div className="custom-bg-white">
             <h2 className='custom-header'>معلومات المنتج</h2>
             <div className="flex flex-col gap-2">
-                <label className="custom-label-field">اسم المنتج:</label>
-                <Field name="name" type="text" className="custom-input-field" />
-                <ErrorMessage name="name" component="div" className="text-red-500" />
+                <label className="custom-label-field" htmlFor="name">اسم المنتج:</label>
+                <Field id="name" name="name" type="text" className="custom-input-field" />
+                <ErrorMessage name="name" component="div" className="text-red-400" />
             </div>
             <div className="flex flex-col gap-2 mt-6">
                 <label htmlFor="description" className="mb-1 custom-label-field">وصف المنتج</label>
@@ -32,7 +31,7 @@ const ProductDetails = ({values, setFieldValue}) => {
                     modules={modules}
                     placeholder="اكتب وصف مميز للمنتج..."
                 />
-                <ErrorMessage name="description" component="div" className="text-red-500" />
+                <ErrorMessage name="description" component="div" className="text-red-400" />
             </div>
         </div>
     )

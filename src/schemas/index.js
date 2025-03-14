@@ -36,7 +36,7 @@ export const newOrderSchema = Yup.object({
         .positive("ادخل رقم صحيح")
     }),
   ),
-  itemsValue: Yup.string().required('سعر الأوردر الإجمالى مطلوب'),
+  itemsValue: Yup.string(),
   goodsType: Yup.string(),
   remark: Yup.string()
     .max(500, 'الوصف يجب ألا يزيد علي 500 حرف')

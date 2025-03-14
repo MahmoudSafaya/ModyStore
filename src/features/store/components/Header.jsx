@@ -65,7 +65,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
                       className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     >
                       <div className="w-16">
-                        <img src={`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`} alt={product.mainImage.alt} />
+                        <img src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} alt={product.mainImage.alt} />
                       </div>
                       <div className="flex flex-col gap-1">
                         <div className="font-medium">{product.name}</div>
@@ -82,7 +82,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
 
         <div className="user-controls">
           <button className="max-w-content py-2 px-2 md:px-4 bg-green-400 text-gray-100 rounded-full duration-500 hover:bg-green-500 hover:text-white">
-            <a href="https://wa.me/1551448276" target="_blanck" className="flex items-center justify-center gap-2">
+            <a href="https://wa.me/01011789966" target="_blanck" className="flex items-center justify-center gap-2">
               <span className="hidden md:block"> ابعتلنا واتساب</span>
               <FaWhatsapp className="w-6 h-6" />
             </a>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import { S_Home, S_Favorites, S_ProductDetails, S_Products, S_Checkout } from "../features/store/pages";
+import { S_Home, S_Favorites, S_ProductDetails, S_Products, S_Checkout, S_AboutUs } from "../features/store/pages";
 import NotFound from "../shared/pages/NotFound";
 import StoreLayout from "../layouts/StoreLayout";
 import { CartProvider } from "../context/CartContext";
@@ -14,6 +14,7 @@ const StoreRoutes = () => {
           <Route element={<StoreLayout />}>
             <Route path="/" element={<S_Home />} />
             <Route path="/products" element={<S_Products />} />
+            <Route path="/about-us" element={<S_AboutUs />} />
             <Route path="/favorites" element={<S_Favorites />} />
             <Route path="/products/:id" element={<S_ProductDetails />} />
             <Route path="/checkout" element={<S_Checkout />} />

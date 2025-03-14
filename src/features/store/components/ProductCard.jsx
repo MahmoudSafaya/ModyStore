@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from "react-router-dom";
 import { Heart, Eye } from "lucide-react";
 import { useCart } from '../../../context/CartContext';
@@ -11,7 +11,13 @@ const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
     const { categories } = useApp();
     const { favorites, addToFavorites } = useFavorites();
+    const [selectedVariant, setSelectedVariant] = useState(null);
 
+    useEffect(() => {
+        if (product && product.variants.length === 1) {
+            setSelectedVariant(`${product.name} ${product.variants[0].color} (${product.variants[0].size})`);
+        }
+    }, [])
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
     const proCategory = categories.map(item => item._id === product.category ? item.name : '');
@@ -39,10 +45,20 @@ const ProductCard = ({ product }) => {
                     {product.badge}
                 </span>
             )}
-            <div className="relative w-full h-80 overflow-hidden rounded-lg">
+            {/* <div className="relative w-full h-80 overflow-hidden rounded-lg">
                 <Link to={`/products/${product._id}`}>
                     <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 hover:scale-110"
-                        style={{ backgroundImage: `url(${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')})` }}></div>
+                        style={{ backgroundImage: `url(${encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)})` }}
+                    ></div>
+                </Link>
+            </div> */}
+            <div className="relative w-full h-80 overflow-hidden rounded-lg">
+                <Link to={`/products/${product._id}`} className='w-full h-full'>
+                    <img
+                        src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)}
+                        alt={product.mainImage.alt}
+                        className='w-full h-full object-cover object-center'
+                    />
                 </Link>
             </div>
             <h3 className="text-lg font-medium my-2">
@@ -69,7 +85,7 @@ const ProductCard = ({ product }) => {
                     <p className="text-gray-500 line-through text-sm">EGP {product.price}</p>
                 )}
             </div>
-            <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product, 1)}>
+            <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product, 1, selectedVariant)}>
                 أضف إلى السلة
             </button>
 

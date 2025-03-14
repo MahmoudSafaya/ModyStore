@@ -6,15 +6,14 @@ export const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [subcategories, setSubcategories] = useState({});
 
   const storeMainNav = [
     { label: "الرئيسية", link: '/' },
-    { label: "متجرنا", link: '/products' },
+    // { label: "متجرنا", link: '/products' },
     { label: "من نحن", link: '/about-us' },
-    { label: "الشحن والاسترجاع", link: '/shippment' },
+    // { label: "الشحن والاسترجاع", link: '/shippment' },
   ];
 
   const getMainCategories = async () => {
@@ -44,7 +43,7 @@ export const StoreProvider = ({ children }) => {
 
 
   return (
-    <StoreContext.Provider value={{ loading, setLoading, storeMainNav, products, setProducts, mainCategories, subcategories, setSubcategories, getSubcategories }}>
+    <StoreContext.Provider value={{ loading, setLoading, storeMainNav, mainCategories, subcategories, setSubcategories, getSubcategories }}>
       {children}
     </StoreContext.Provider>
   );

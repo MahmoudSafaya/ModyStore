@@ -10,16 +10,14 @@ import { IoStorefrontOutline } from "react-icons/io5";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
 
-  const { auth } = useAuth();
+  const { auth, logout } = useAuth();
 
   const location = useLocation();
-
-  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/admin/login');
   };
 
   const adminNav = [
@@ -52,16 +50,20 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </button>
 
           <div className="">
-            {adminNav.map((item, index) => (
-              <nav key={index}>
-                <Link to={item.link} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 duration-500 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === item.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
-                  <div className={`w-[36px] h-[36px] text-xl flex justify-center items-center rounded-lg group-hover:bg-indigo-300 group-hover:shadow-md ${location.pathname === item.link ? 'bg-indigo-600 text-white shadow-md group-hover:bg-indigo-600' : ''}`}>{item.icon}</div>
-                  {isOpen && <span className="text-base">{item.label}</span>}
-                </Link>
-              </nav>
-            ))}
+            {adminNav.map((item, index) => {
+              if(item.link === '/admin' && auth?.role === 'user') return;
+              return (
+                <nav key={index}>
+                  <Link to={item.link} className={`group flex items-center flex-grow gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 duration-500 cursor-pointer ${isOpen ? 'px-6' : 'justify-center px-1'} ${location.pathname === item.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
+                    <div className={`w-[36px] h-[36px] text-xl flex justify-center items-center rounded-lg group-hover:bg-indigo-300 group-hover:shadow-md ${location.pathname === item.link ? 'bg-indigo-600 text-white shadow-md group-hover:bg-indigo-600' : ''}`}>{item.icon}</div>
+                    {isOpen && <span className="text-base">{item.label}</span>}
+                  </Link>
+                </nav>
+              )
+            })}
           </div>
-          <hr className="my-4 w-5/6 mx-auto" />
+          {auth?.role === 'admin' && <hr className="my-4 w-5/6 mx-auto" /> }
+          
           {auth?.role === 'admin' && (
             <div>
               {storeNav.map((item, index) => (

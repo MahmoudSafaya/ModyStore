@@ -1,13 +1,16 @@
 import React from 'react'
-import { A_Register, A_AddCategory } from '../components'
-import { A_AddressBlock } from '../components'
+import { A_Register, A_AddCategory, A_AddressBlock, A_UpdateShippingPrice, A_SenderAddress } from '../components'
 
 const Settings = () => {
   return (
     <div>
       <A_Register />
       <A_AddCategory />
-      <A_AddressBlock />
+      <div className='lg:grid grid-cols-2 gap-6'>
+        <A_AddressBlock />
+        <A_UpdateShippingPrice />
+      </div>
+      <A_SenderAddress />
     </div>
   )
 }

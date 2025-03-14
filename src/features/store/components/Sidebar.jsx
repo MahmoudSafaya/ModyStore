@@ -66,7 +66,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                         <Link to={`/products/?category=${category._id}`} className={`group flex items-center flex-grow py-4 hover:text-indigo-600 cursor-pointer duration-500 px-6 gap-4 ${location.pathname === category.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
                           <div className={`w-[34px] h-[34px] flex justify-center items-center rounded-lg`}>
                             <img
-                              src={`${baseUrl}/${category.icon.url.replace(/\\/g, '/')}`}
+                              src={encodeURI(`${baseUrl}/${category.icon.url.replace(/\\/g, '/')}`)}
                               alt={category.icon.alt}
                               className="w-8 h-8 rounded-lg"
                             />
@@ -96,7 +96,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                             <Link key={sub._id} to={`/products/?category=${sub._id}`} className={`group flex items-center gap-4 py-4 hover:bg-slate-100 hover:text-indigo-600 cursor-pointer px-6 pr-10 ${location.pathname === sub.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
                               <div className={`w-[34px] h-[34px] flex justify-center items-center rounded-lg opacity-75`}>
                                 <img
-                                  src={`${baseUrl}/${sub.icon.url.replace(/\\/g, '/')}`}
+                                  src={encodeURI(`${baseUrl}/${sub.icon.url.replace(/\\/g, '/')}`)}
                                   alt={sub.icon.alt}
                                   className="w-6 h-6 rounded-lg"
                                 />

@@ -21,7 +21,7 @@ const Login = () => {
       const response = await axios.post('/auth/login', { email: email, password: password });
       login(response.data.accessToken);
     } catch (err) {
-      setError('Invalid email or password');
+      setError('اسم المستخدم او الرقم السري غير صحيح!');
     } finally {
       setLoading(false);
     }

@@ -1,17 +1,44 @@
-import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import axios from "../../../api/axios";
-import { useStore } from "../../../context/StoreContext";
-import { useApp } from "../../../context/AppContext";
+import React, { useState, useEffect } from "react";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css"; // Default styles for the slider
 
-const ProductFilter = ({ showFilters }) => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const { setProducts } = useStore();
-    const { categories } = useApp();
 
+const ProductFilter = React.memo(({ showFilters, searchParams, setSearchParams }) => {
+    // State for the price range
+    const [priceRange, setPriceRange] = useState([10, 5000]); // [minPrice, maxPrice]
+
+    // Destructure minPrice and maxPrice for clarity
+    const [minPrice, maxPrice] = priceRange;
+
+    // Handle slider change
+    const handleSliderChange = (value) => {
+        setPriceRange(value);
+        updateURLParams(value[0], value[1]);
+    };
+
+    // Update URL with minPrice and maxPrice
+    const updateURLParams = (min, max) => {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("minPrice", min);
+        newParams.set("maxPrice", max);
+        newParams.delete("page"); // Reset page when filters change
+        setSearchParams(newParams);
+    };
+
+    // Read minPrice and maxPrice from URL on component mount
+    useEffect(() => {
+        const urlMinPrice = searchParams.get("minPrice");
+        const urlMaxPrice = searchParams.get("maxPrice");
+        if (urlMinPrice && urlMaxPrice) {
+            setPriceRange([Number(urlMinPrice), Number(urlMaxPrice)]);
+        }
+    }, [searchParams]);
+
+    // Handle filter changes (e.g., category, price range)
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         const newParams = new URLSearchParams(searchParams);
+        newParams.delete("page"); // Reset page when filters change
         if (value) {
             newParams.set(name, value);
         } else {
@@ -20,55 +47,31 @@ const ProductFilter = ({ showFilters }) => {
         setSearchParams(newParams);
     };
 
+    // Handle sorting (e.g., price, rating)
     const handleSort = (sortValue) => {
         const newParams = new URLSearchParams(searchParams);
         newParams.set("sort", sortValue);
         setSearchParams(newParams);
     };
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const params = Object.fromEntries(searchParams.entries());
-                console.log(params)
-                const response = await axios.get("/products", {
-                    params,
-                });
-                console.log(response)
-                setProducts(response.data.products);
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            }
-        };
-
-        fetchProducts();
-    }, [searchParams]);
-
     return (
         <div className="absolute top-0 left-0 z-100">
             {showFilters && (
                 <div className="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4 text-gray-700">
-                    {/* <div>
-                    <label>حدد قسم:</label>
-                    <select name="category" value={searchParams.get("category") || ""} onChange={handleFilterChange} className="custom-input-field">
-                        <option value="">الكل</option>
-                        {categories && categories.map(item => {
-                            return (
-                                <option key={item._id} value={item._id}>{item.name}</option>
-                            )
-                        })}
-                    </select>
-                </div> */}
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <label>من:</label>
-                            <input type="number" name="minPrice" value={searchParams.get("minPrice") || ""} onChange={handleFilterChange} className="custom-input-field" placeholder="EGP" />
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <label>إلى:</label>
-                            <input type="number" name="maxPrice" value={searchParams.get("maxPrice") || ""} onChange={handleFilterChange} className="custom-input-field" placeholder="EGP" />
+
+                    <div style={{ width: "300px", margin: "20px" }}>
+                        <Slider
+                            range
+                            min={10} // Minimum price
+                            max={5000} // Maximum price
+                            value={priceRange}
+                            onChange={handleSliderChange}
+                        />
+                        <div>
+                            النطاق المحدد: EGP{priceRange[0]} - EGP{priceRange[1]}
                         </div>
                     </div>
+
                     <div className="flex flex-col items-start gap-2">
                         <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("ratings")}> ترتيب حسب: التقيمات</button>
                         <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("price")}>ترتيب حسب: السعر</button>
@@ -81,6 +84,6 @@ const ProductFilter = ({ showFilters }) => {
             )}
         </div>
     );
-};
+});
 
 export default ProductFilter;
