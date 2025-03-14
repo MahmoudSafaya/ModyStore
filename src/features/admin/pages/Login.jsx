@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import axios from '../../../api/axios';
 import ParticlesBg from '../../../shared/components/ParticlesBg';
+import modyStoreLogo from '../../../assets/diva-store-logo.png'
 
 const Login = () => {
   const { login } = useAuth();
@@ -29,10 +30,13 @@ const Login = () => {
 
   return (
     <div className='w-screen h-screen'>
-        
+
       <div className="absolute top-0 left-0 z-100 w-full h-full flex items-center justify-center">
         <div className="w-5/6 md:w-1/2 lg:w-1/3 bg-[#ffffffb0] text-gray-700 py-14 p-8 rounded-xl shadow-md text-gray-800 flex flex-col items-center justify-center gap-8">
-          <h2 className='text-2xl text-center mx-auto font-bold'>تسجيل الدخول</h2>
+          <div>
+            <img src={modyStoreLogo} alt="Diva Store" className='w-24 block mx-auto' />
+            <h2 className='text-2xl text-center mx-auto font-bold'>تسجيل الدخول</h2>
+          </div>
           <form onSubmit={handleSubmit} className='w-full flex flex-col gap-8'>
             <div className='flex flex-col flex-grow'>
               <input
@@ -64,7 +68,7 @@ const Login = () => {
         </div>
       </div>
 
-      
+
       {MemoizedParticlesBg}
     </div>
   );

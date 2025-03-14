@@ -7,6 +7,8 @@ import DOMPurify from 'dompurify';
 import Loading from "../../../shared/components/Loading";
 import toast, { Toaster } from "react-hot-toast";
 import { FaStar } from "react-icons/fa";
+import { Helmet } from "react-helmet-async";
+
 
 const ProductDetails = ({ }) => {
     const { addToCart } = useCart();
@@ -176,6 +178,24 @@ const ProductDetails = ({ }) => {
         <div className="pt-12 px-6 md:px-12 text-gray-800">
             {product && (
                 <div>
+                    <Helmet>
+                        <title>{`${product.name} - Buy Now | Diva Store`}</title>
+                        <meta name="description" content={product.description} />
+                        <meta name="keywords" content={`buy ${product.name}, e-commerce, Diva Store`} />
+
+                        {/* Open Graph for social sharing */}
+                        <meta property="og:title" content={`${product.name} | Diva Store`} />
+                        <meta property="og:description" content={product.description} />
+                        <meta property="og:image" content={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} />
+                        <meta property="og:url" content={`https://divastore.com/products/${product._id}`} />
+                        <meta property="og:type" content="product" />
+
+                        {/* Twitter Card */}
+                        <meta name="twitter:card" content="summary_large_image" />
+                        <meta name="twitter:title" content={`${product.name} | Diva Store`} />
+                        <meta name="twitter:description" content={product.description} />
+                        <meta name="twitter:image" content={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} />
+                    </Helmet>
                     <div className="flex flex-col md:flex-row gap-8">
                         {/* Image Section */}
                         <div className="w-full md:w-3/5 flex flex-col-reverse justify-start items-center gap-2">
@@ -202,7 +222,7 @@ const ProductDetails = ({ }) => {
                                 </div>
 
                                 {/* Main Image Display */}
-                                <div className="flex-1 rounded-xl overflow-hidden">
+                                <div className="flex-1 rounded-xl overflow-hidden max-h-max">
                                     <img
                                         src={mainImgSrc}
                                         alt={product.mainImage.alt}

@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import { GiClothes } from "react-icons/gi";
 import { MdOutlineAddBusiness } from "react-icons/md";
 import { Menu, House, ChevronsRight, ChevronsLeft, Settings, PackagePlus, PackageOpen, LogOut, ScanBarcode } from "lucide-react";
-import modyStoreLogo from '../../../assets/mody-store-logo.png'
+import modyStoreLogo from '../../../assets/diva-store-logo.png'
 import { IoStorefrontOutline } from "react-icons/io5";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
