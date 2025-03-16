@@ -13,6 +13,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const baseUrl = import.meta.env.VITE_SERVER_URL;
   const [openDropdown, setOpenDropdown] = useState(null);
 
+  const handleDropDown = (cateId) => {
+    if (openDropdown === cateId) {
+      setOpenDropdown(null);
+    } else {
+      setOpenDropdown(cateId);
+    }
+  }
+
   return (
     <div className={`flex fixed top-0 right-0 z-40 transition-all duration-1000 overflow-hidden ${isOpen ? 'w-[250px] shadow-md lg:shadow-none' : 'w-0 lg:w-[50px]'}`}>
       <div className={`w-full bg-white text-gray-800 h-screen transition-all duration-1000 overflow-hidden flex flex-col justify-between items-center`}
@@ -79,9 +87,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                           </div>
                         </Link>
                         {subcategories[category._id]?.length > 0 && (
-                          <div className={`text-gray-700 h-full p-1 ml-6 cursor-pointer border border-gray-300 rounded-lg duration-500 hover:border-indigo-500 ${isOpen ? '' : 'lg:hidden'}`} onClick={() => {
-                            openDropdown ? setOpenDropdown(null) : setOpenDropdown(category._id)
-                          }}>
+                          <div className={`text-gray-700 h-full p-1 ml-6 cursor-pointer border border-gray-300 rounded-lg duration-500 hover:border-indigo-500 ${isOpen ? '' : 'lg:hidden'}`} onClick={() => handleDropDown(category._id)}>
                             <span>
                               <ChevronDown />
                             </span>

@@ -44,8 +44,8 @@ const HandleStorage = () => {
   }, [scanType]);
 
   return (
-    <div>
-      <h2 className="custom-header">فحص الباركود</h2>
+    <div className="text-center">
+      <h2 className="custom-header font-bold">فحص الباركود</h2>
       <p>اختر العملية المراد تنفيذها, ثم افحص الباركود.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div

@@ -93,7 +93,7 @@ const Register = () => {
 
     return (
         <div className='lg:grid grid-cols-2 gap-6'>
-            <div className='custom-bg-white max-h-max mt-8'>
+            <div className='custom-bg-white max-h-100 mt-8 overflow-y-auto scrollbar'>
                 <div className='relative max-w-max flex items-center justify-center gap-2 mb-8 mx-auto'>
                     <Users />
                     <h2 className='font-bold'>قائمة المستخدمين</h2>

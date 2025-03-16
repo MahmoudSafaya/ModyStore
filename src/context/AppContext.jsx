@@ -7,6 +7,8 @@ const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
+  const [mainCategories, setMainCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState({});
   const [loading, setLoading] = useState(false);
   const [shippingPrice, setShippingPrice] = useState(0);
   const [isDelete, setIsDelete] = useState({ purpose: '', itemId: '', itemName: '' });
@@ -24,15 +26,37 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     getAllCategories();
-  }, [])
+  }, []);
 
+  const getMainCategories = async () => {
+    try {
+      const response = await axios.get('/categories/main'); // Replace with your endpoint
+      setMainCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching main categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    getMainCategories();
+  }, []);
+
+  const getSubcategories = async (categoryId) => {
+    if (subcategories[categoryId]) return; // Avoid re-fetching if already loaded
+
+    try {
+      const response = await axios.get(`/categories/${categoryId}/subcategories`); // Replace with your endpoint
+      setSubcategories((prev) => ({ ...prev, [categoryId]: response.data }));
+    } catch (error) {
+      console.error(`Error fetching subcategories for ${categoryId}:`, error);
+    }
+  };
 
   const getCategoryById = (cateID) => {
     return (
       categories.map(item => item._id === cateID ? item.name : '')
     )
   }
-
 
   const fetchSenderAddress = async () => {
     try {
@@ -45,8 +69,6 @@ export const AppProvider = ({ children }) => {
       setLoading(false);
     }
   }
-
-
 
   const successNotify = (message) => {
     toast.success(message, {
@@ -86,7 +108,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider
-      value={{ categories, setCategories, getAllCategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById, isDelete, setIsDelete, senderAddress, setSenderAddress, fetchSenderAddress, successNotify, deleteNotify, errorNotify }}
+      value={{ categories, setCategories, getAllCategories, getMainCategories, getSubcategories, mainCategories, subcategories, loading, setLoading, shippingPrice, setShippingPrice, getCategoryById, isDelete, setIsDelete, senderAddress, setSenderAddress, fetchSenderAddress, successNotify, deleteNotify, errorNotify }}
     >
       {children}
     </AppContext.Provider>

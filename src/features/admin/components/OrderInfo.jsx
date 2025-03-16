@@ -94,7 +94,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
                 </div>
               )
             })}
-            <DetailBox itemName={'سعر الأوردر'} itemValue={itemsValue} />
+            <DetailBox itemName={'سعر الأوردر:'} itemValue={itemsValue} />
             <DetailBox itemName={'ملاحظات العميل:'} itemValue={remark} />
           </div>
         </div>

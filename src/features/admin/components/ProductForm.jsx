@@ -36,39 +36,39 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
       const newPrices = {};
       const newQuantities = {};
       let newRemark = values.remark || ""; // Keep the existing remark
-  
+
       values.items.forEach((item, index) => {
         newSelections[index] = item.englishName || "";
         newPrices[index] = item.itemValue || "";
         newQuantities[index] = item.number || 1; // Default to 1 if not provided
-  
+
         // Append new values to remark if not already included
         if (!newRemark.includes(item.englishName)) {
           newRemark += (newRemark ? ", " : "") + (item.englishName || "") + (item.number > 1 ? `(${item.number || ''} قطع)` : '');
         }
       });
-  
+
       setSelections(newSelections);
       setPrices(newPrices);
       setQuantities(newQuantities);
       values.remark = newRemark;
     }
   }, [values.items]);
-  
+
   // Add another useEffect to handle quantity changes and update the remark
   useEffect(() => {
     let updatedRemark = "";
-  
+
     Object.keys(selections).forEach((key) => {
       const itemName = selections[key];
       const itemQuantity = quantities[key] || 1; // Default to 1 if not provided
-  
+
       if (itemName) {
         updatedRemark += (updatedRemark ? ", " : "") + itemName + (itemQuantity > 1 ? `(${itemQuantity} قطع)` : '');
       }
     });
-  
-    values.remark = updatedRemark + '- ملحوظة العميل:' + clientNotes;
+    const fromStore = clientNotes ? ('- ملحوظة العميل:' + clientNotes) : '';
+    values.remark = updatedRemark + fromStore;
   }, [quantities, selections]);
 
 

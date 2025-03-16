@@ -109,7 +109,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                     </button>
                 </div>
 
-                <div className="overflow-x-auto overflow-y-hidden">
+                <div className="overflow-x-auto overflow-y-hidden scrollbar">
                     {orders?.length > 0 ? (
                         <table className="w-full bg-white">
                             <thead className="text-gray-700 border-b border-gray-300 font-bold text-center whitespace-nowrap">
