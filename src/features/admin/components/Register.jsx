@@ -101,7 +101,7 @@ const Register = () => {
     }, []);
 
 
-    if(loading) return <Loading />
+    if (loading) return <Loading />
 
     return (
         <div className='lg:grid grid-cols-2 gap-6'>
@@ -119,9 +119,9 @@ const Register = () => {
                                     <div className='flex gap-6'>
                                         <p className='text-center lg:min-w-30'>{user.userName}</p>
                                         <div>{user.userRole === 'admin' ? (
-                                            <p className='font-semibold text-indigo-400 text-center'>admin</p>
+                                            <p className='font-semibold text-indigo-400 text-center'>مسؤل</p>
                                         ) : (
-                                            <p className='text-gray-700 text-center'>user</p>
+                                            <p className='text-gray-700 text-center'>موظف</p>
                                         )}
                                         </div>
                                     </div>
@@ -138,7 +138,9 @@ const Register = () => {
                         })}
                     </div>
                 ) : (
-                    <div></div>
+                    <div className='text-center'>
+                        <p>القائمة فارغة, الرجاء إضافة مستخدمين.</p>
+                    </div>
                 )}
             </div>
 
@@ -175,12 +177,14 @@ const Register = () => {
                             <div className='grid grid-cols-1 items-end md:grid-cols-2 lg:grid-cols-2 gap-8 mb-8'>
                                 <div>
                                     <label htmlFor="userName" className='custom-label-field'>الاسم</label>
-                                    <Field type="text" name="userName" id="userName" placeholder="اكتب اسم المستخدم" className='custom-input-field' />
+                                    <Field type="text" name="userName" id="userName" placeholder="اكتب اسم المستخدم"
+                                        autoComplete="diff-password" className='custom-input-field' />
                                     <ErrorMessage name="userName" component="div" className="text-red-400" />
                                 </div>
                                 <div>
                                     <label htmlFor="password" className='custom-label-field'>الرقم سري</label>
-                                    <Field type="password" name="password" id="password" placeholder="اكنب رقم سري للمستخدم" className='custom-input-field' />
+                                    <Field type="password" name="password" id="password" placeholder="اكنب رقم سري للمستخدم"
+                                        autoComplete="diff-password" className='custom-input-field' />
                                     <ErrorMessage name="password" component="div" className="text-red-400" />
                                 </div>
                                 <div>

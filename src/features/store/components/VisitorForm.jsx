@@ -193,6 +193,7 @@ const OrderForm = () => {
                                 as="textarea"
                                 name="receiver.additionalInfo"
                                 className="custom-input-field resize-none"
+                                autoComplete="diff-password"
                                 placeholder="اكتب ملاحظاتك..."
                                 rows="4"
                             />

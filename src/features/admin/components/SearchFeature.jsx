@@ -80,6 +80,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
             onChange={(e) => setOrderNumber(e.target.value)}
             className="custom-input-field w-full"
             placeholder="ادخل رقم الأوردر"
+            autoComplete="diff-password"
           />
         </div>
 
@@ -91,6 +92,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
               onChange={(e) => setTrackingNumber(e.target.value)}
               className="custom-input-field w-full"
               placeholder="ادخل رقم البوليصة"
+              autoComplete="diff-password"
             />
           </div>
         )}
@@ -102,6 +104,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
             onChange={(e) => setReceiverPhone(e.target.value)}
             className="custom-input-field w-full"
             placeholder="ادخل رقم موبيل العميل"
+            autoComplete="diff-password"
           />
         </div>
       </div>

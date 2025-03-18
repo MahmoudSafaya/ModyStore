@@ -139,6 +139,7 @@ const AddressBlock = () => {
                                     name="Province"
                                     placeholder="اسم المحافطة"
                                     className="custom-input-field"
+                                    autoComplete="diff-password"
                                     value={firstSelection}
                                     onChange={(e) => {
                                         setFirstSelection(e.target.value);
@@ -185,6 +186,7 @@ const AddressBlock = () => {
                                     name="City"
                                     placeholder="اسم المدينة"
                                     className="custom-input-field"
+                                    autoComplete="diff-password"
                                     value={secondSelection}
                                     onChange={(e) => {
                                         setSecondSelection(e.target.value)
@@ -222,6 +224,7 @@ const AddressBlock = () => {
                                     name="Area"
                                     placeholder="اسم المنطقة"
                                     className="custom-input-field"
+                                    autoComplete="diff-password"
                                     value={thirdSelection}
                                     onChange={(e) => {
                                         setThirdSelection(e.target.value)

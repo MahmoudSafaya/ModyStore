@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { GrStatusGoodSmall } from "react-icons/gr";
 import ProductVariations from "./components/ProductVariations";
 import { Tag } from "lucide-react";
@@ -29,13 +29,13 @@ const AddProduct = () => {
 
     const { successNotify } = useApp();
 
-    const location = useLocation();
     const navigate = useNavigate();
+    const location = useLocation();
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
     // Extract the category ID from the query string
-    const queryParams = new URLSearchParams(location.search);
-    const paramID = queryParams.get('product');
+    const [searchParams] = useSearchParams();
+    const paramID = searchParams.get("product"); // Get the product ID from URL
 
     const getProductById = async () => {
         try {
@@ -60,6 +60,14 @@ const AddProduct = () => {
         }
     }, [paramID]);
 
+    
+    useEffect(() => {
+        if (paramID && paramID.length > 10) {
+          navigate(`${location.pathname}?product=${paramID}`, { replace: true });
+        }
+      }, [paramID]); // Ensure paramID is in the dependency array
+      
+
     const handleThumbnailUpload = (e) => {
         const file = e.currentTarget.files[0];
         if (file) {
@@ -83,7 +91,7 @@ const AddProduct = () => {
         isActive: true,
     };
 
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    const handleSubmit = async (values, actions) => {
         const formData = new FormData();
 
         if (selectedProduct) {
@@ -122,7 +130,7 @@ const AddProduct = () => {
                 });
                 successNotify('تهانينا!, تم تعديل المنتج بنجاح');
 
-                resetForm();
+                actions.resetForm();
                 setThumbnail('');
                 setProductImages([]);
                 setVariations([{ barCode: "", size: "", color: "", stock: "" }]);
@@ -130,9 +138,12 @@ const AddProduct = () => {
                 setSelectedProduct(null);
                 setTimeout(() => {
                     navigate('/admin/products');
-                }, 500);
+                }, 300);
             } catch (error) {
                 console.error("Error editing product:", error.response?.data || error.message);
+                setTimeout(() => {
+                    navigate(`/admin/add-product?product=${paramID}`);
+                }, 300);
             }
         } else {
             values.variants = values.variants
@@ -174,7 +185,7 @@ const AddProduct = () => {
                 });
                 successNotify('تهانينا!, تم إضافة المنتج بنجاح');
 
-                resetForm();
+                actions.resetForm();
                 setThumbnail('');
                 setProductImages([]);
                 setVariations([{ barCode: "", size: "", color: "", stock: "" }]);
@@ -185,7 +196,7 @@ const AddProduct = () => {
             }
         }
 
-        setSubmitting(false);
+        actions.setSubmitting(false);
     };
 
     if (loading) {

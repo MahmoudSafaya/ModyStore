@@ -81,7 +81,6 @@ export const AppProvider = ({ children }) => {
   const deleteNotify = (message) => {
     toast.success(message, {
       style: {
-        padding: '16px',
         color: '#485363',
         textAlign: 'center'
       },
@@ -95,7 +94,6 @@ export const AppProvider = ({ children }) => {
   const errorNotify = (message) => {
     toast(message, {
       style: {
-        padding: '16px',
         color: '#fb2c36',
         textAlign: 'center'
       },

@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import React, { useState, useEffect } from 'react'
-import {axiosAuth} from '../../../api/axios'
+import { axiosAuth } from '../../../api/axios'
 import * as Yup from 'yup';
 import { useApp } from '../../../context/AppContext';
 import { Toaster } from 'react-hot-toast';
@@ -117,7 +117,7 @@ const UpdateShippingPrice = () => {
                                 <Field
                                     type="text"
                                     name="shippingPrice"
-                                    autoComplete="off"
+                                    autoComplete="diff-password"
                                     className="custom-input-field"
                                     placeholder="اكتب الاسم"
                                 />

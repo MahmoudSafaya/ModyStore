@@ -42,6 +42,7 @@ const Login = () => {
               <input
                 type="text"
                 id='user-email'
+                name='user-email'
                 className='custom-input-field w-full'
                 placeholder='اسم المستخدم'
                 value={email}
@@ -53,6 +54,7 @@ const Login = () => {
               <input
                 type="Password"
                 id='password'
+                name='user-password'
                 className='custom-input-field w-full'
                 placeholder='كلمة السر'
                 value={password}

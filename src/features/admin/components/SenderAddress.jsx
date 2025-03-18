@@ -195,7 +195,9 @@ const SenderAddress = () => {
                             </tbody>
                         </table>
                     ) : (
-                        <div></div>
+                        <div className='text-center'>
+                            <p>القائمة فارغة, الرجاء إضافة عنوان وتعيينه أساسي.</p>
+                        </div>
                     )}
                 </div>
             </div>
@@ -249,7 +251,7 @@ const SenderAddress = () => {
                     onSubmit={handleSubmit}
                 >
                     {({ isSubmitting, setFieldValue, handleBlur }) => (
-                        <Form>
+                        <Form  autoComplete="off">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
                                 {/* Name */}
                                 <div>
@@ -270,7 +272,7 @@ const SenderAddress = () => {
                                     <Field
                                         type="text"
                                         name="mobile"
-                                        autoComplete="off"
+                                        autoComplete="new-password"
                                         className="custom-input-field"
                                         placeholder="ادخل رقم موبيل"
                                     />
@@ -283,7 +285,7 @@ const SenderAddress = () => {
                                     <Field
                                         type="text"
                                         name="phone"
-                                        autoComplete="off"
+                                        autoComplete="new-password"
                                         className="custom-input-field"
                                         placeholder="ادخل رقم موبيل"
                                     />
@@ -300,7 +302,7 @@ const SenderAddress = () => {
                                         name="prov"
                                         placeholder="اسم المحافظة"
                                         className="custom-input-field"
-                                        autoComplete="off"
+                                        autoComplete="new-password"
                                         value={firstSelection}
                                         onChange={(e) => {
                                             setFirstSelection(e.target.value);
@@ -346,7 +348,7 @@ const SenderAddress = () => {
                                         type="text"
                                         name="city"
                                         placeholder="اسم المدينة"
-                                        autoComplete="off"
+                                        autoComplete="new-password"
                                         className="custom-input-field"
                                         value={secondSelection}
                                         onChange={(e) => {
@@ -384,7 +386,7 @@ const SenderAddress = () => {
                                         type="text"
                                         name="area"
                                         placeholder="اسم المنظقة"
-                                        autoComplete="off"
+                                        autoComplete="new-password"
                                         className="custom-input-field"
                                         value={thirdSelection}
                                         onChange={(e) => {
@@ -420,7 +422,7 @@ const SenderAddress = () => {
                                     <Field
                                         type="text"
                                         name="street"
-                                        autoComplete="off"
+                                        autoComplete="new-password"
                                         className="custom-input-field"
                                         placeholder="العنوان بالكامل"
                                     />

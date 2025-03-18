@@ -34,6 +34,7 @@ const TotalOrderValueField = () => {
         id="itemsValue"
         name="itemsValue"
         className="custom-input-field"
+        autoComplete="diff-password"
         placeholder="إجمالي سعر الأوردر"
         value={totalOrderVal}
         onChange={(e) => {
@@ -136,7 +137,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
         onSubmit={handleOrderSubmit}
       >
         {({ values, isSubmitting, setFieldValue, handleBlur }) => (
-          <Form className="mt-8">
+          <Form className="mt-8" autoComplete="off">
             <div className="grid grid-cols-1 lg:flex gap-8">
               <div className="custom-bg-white lg:w-1/2">
                 <h2 className="font-bold mb-4 text-center ">بيانات المتجر</h2>

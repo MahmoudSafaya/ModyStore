@@ -22,15 +22,20 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
   const [loading, setLoading] = useState(false);
 
+  const [isEditable, setIsEditable] = useState({});
+
+  const handleFocus = (field) => {
+    setIsEditable((prev) => ({ ...prev, [field]: true })); // Enable field when focused
+  };
 
   useEffect(() => {
     axiosAuth.post("/addresses/seprated")
       .then(response => setFirstOptions(response.data.data.result))
       .catch(error => console.error("Error fetching first options:", error));
 
-      if(parent === 'sender') {
-        fetchSenderAddress();
-      }
+    if (parent === 'sender') {
+      fetchSenderAddress();
+    }
   }, []);
 
   useEffect(() => {
@@ -108,13 +113,16 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
       {/* Name */}
       <div>
         <label className="custom-label-field" htmlFor={`${parent}.name`}>الاسم: <span className="text-red-500">*</span></label>
+
         <Field
           type="text"
           id={`${parent}.name`}
           name={`${parent}.name`}
-          autoComplete="off"
           className="custom-input-field"
           placeholder="اكتب الاسم"
+          autoComplete="off"
+          readOnly={!isEditable[`${parent}.name`]}
+          onFocus={() => handleFocus(`${parent}.name`)}
         />
         <ErrorMessage name={`${parent}.name`} component="div" className="text-red-400 mt-1 text-sm" />
       </div>
@@ -126,7 +134,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           type="text"
           id={`${parent}.mobile`}
           name={`${parent}.mobile`}
-          autoComplete="off"
+          autoComplete="diff-password"
           className="custom-input-field"
           placeholder="ادخل رقم موبيل"
         />
@@ -140,7 +148,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           type="text"
           id={`${parent}.alternateReceiverPhoneNo`}
           name={`${parent}.alternateReceiverPhoneNo`}
-          autoComplete="off"
+          autoComplete="diff-password"
           className="custom-input-field"
           placeholder="ادخل رقم موبيل اخر"
         />
@@ -158,7 +166,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           name={`${parent}.prov`}
           placeholder="اسم المحافظة"
           className="custom-input-field"
-          autoComplete="off"
+          autoComplete="diff-password"
           value={firstSelection}
           onChange={(e) => {
             setFirstSelection(e.target.value);
@@ -205,7 +213,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           id={`${parent}.city`}
           name={`${parent}.city`}
           placeholder="اسم المدينة"
-          autoComplete="off"
+          autoComplete="diff-password"
           className="custom-input-field"
           value={secondSelection}
           onChange={(e) => {
@@ -244,7 +252,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           id={`${parent}.area`}
           name={`${parent}.area`}
           placeholder="اسم المنظقة"
-          autoComplete="off"
+          autoComplete="diff-password"
           className="custom-input-field"
           value={thirdSelection}
           onChange={(e) => {
@@ -281,7 +289,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           type="text"
           id={`${parent}.street`}
           name={`${parent}.street`}
-          autoComplete="off"
+          autoComplete="diff-password"
           className="custom-input-field"
           placeholder="العنوان بالكامل"
         />

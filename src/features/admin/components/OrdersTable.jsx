@@ -94,7 +94,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                         <button
                             type="button"
                             onClick={signAllSelected}
-                            className={`min-w-30 py-2 px-4 rounded-lg duration-500 shadow-sm bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                            className={`min-w-30 lg:whitespace-nowrap  py-2 px-4 rounded-lg duration-500 shadow-sm bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
                             disabled={!checkedOrders.length > 0}
                         >
                             تسجيل الكل
@@ -102,7 +102,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                     )}
                     <button
                         type="button"
-                        className={`min-w-30 py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                        className={`min-w-30 lg:whitespace-nowrap  py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
                         onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}
                     >
                         حذف الاختيارات

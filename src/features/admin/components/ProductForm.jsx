@@ -100,7 +100,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                     name={`items.${index}.englishName`}
                     placeholder="اسم المنتج"
                     className="custom-input-field"
-                    autoComplete="off"
+                    autoComplete="diff-password"
                     value={selections[index] || ""}
                     onChange={(e) => {
                       setSelections((prev) => ({ ...prev, [index]: e.target.value }));
@@ -150,6 +150,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                     type="text"
                     name={`items.${index}.itemValue`}
                     placeholder="سعر المنتج"
+                    autoComplete="diff-password"
                     className="custom-input-field text-gray-800"
                     value={prices[index] || ""}
                     onChange={(e) => {
@@ -166,6 +167,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                     type="text"
                     name={`items.${index}.number`}
                     placeholder="الكمية"
+                    autoComplete="diff-password"
                     className="custom-input-field text-gray-800"
                     value={quantities[index] || ""}
                     onChange={(e) => {
