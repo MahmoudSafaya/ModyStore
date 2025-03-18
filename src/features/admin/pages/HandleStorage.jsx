@@ -19,9 +19,9 @@ const HandleStorage = () => {
 
       const res = await axiosAuth.patch(endpoint);
       console.log(res);
-      setResult(res.data.variant);
+      setResult(res.data.responseVariant);
 
-      scanType === "withdraw" ? deleteNotify(res.data.message) : successNotify(res.data.message);
+      scanType === "withdraw" ? deleteNotify('تم سحب قطعة من المخزون') : successNotify('تم إضافة قطعة إلى المخزون');
     } catch (error) {
       console.error(error);
     }
@@ -32,7 +32,7 @@ const HandleStorage = () => {
 
     const handleKeyDown = (event) => {
       if (!scanType) return;
-    
+
       if (event.key === "Enter" && buffer) {
         handleScan(buffer);
         buffer = "";
@@ -40,7 +40,7 @@ const HandleStorage = () => {
         buffer += event.key;
       }
     };
-    
+
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -68,7 +68,7 @@ const HandleStorage = () => {
             : <p>إضافة إلى المخزون</p>}
         </div>
       </div>
-      <div className="flex items-center justify-center flex-wrap gap-4 md:gap-0 mt-8 text-gray-800">
+      {/* <div className="flex items-center justify-center flex-wrap gap-4 md:gap-0 mt-8 text-gray-800">
         {result && Object.keys(result).map((item, index) => {
           if (item === '_id') return null;
           return (
@@ -78,7 +78,37 @@ const HandleStorage = () => {
             </div>
           );
         })}
-      </div>
+      </div> */}
+      {
+        result && (
+          <div className="custom-bg-white mt-8">
+            <div className="bg-white rounded-xl overflow-x-auto overflow-y-hidden scrollbar">
+              <table className="w-full">
+                <thead className="text-gray-700 border-b border-gray-300 font-bold text-center whitespace-nowrap">
+                  <tr>
+                    <th className="p-3">الباركود</th>
+                    <th className="p-3">المخزون</th>
+                    <th className="p-3">الاسم</th>
+                    <th className="p-3">المقاس</th>
+                    <th className="p-3">اللون</th>
+                    <th className="p-3">السعر</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="duration-500 hover:bg-gray-50 text-center text-gray-600 whitespace-nowrap">
+                    <td className="p-3">{result.barCode || '-'}</td>
+                    <td className="p-3 text-indigo-500 font-bold">{result.stock || '0'}</td>
+                    <td className="p-3">{(result.name?.length > 25 ? result.name.slice(0, 25) + '...' : result.name) || '-'}</td>
+                    <td className="p-3">{result.size || '-'}</td>
+                    <td className="p-3">{result.color || '-'}</td>
+                    <td className="p-3">{result.price || '-'}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      }
 
       <Toaster toastOptions={{ duration: 3000 }} />
     </div>
