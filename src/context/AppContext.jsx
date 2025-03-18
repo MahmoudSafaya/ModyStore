@@ -64,13 +64,7 @@ export const AppProvider = ({ children }) => {
       const res = await axiosMain.get('/addresses/senders/default');
       setSenderAddress(res.data.sender);
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        toast.error('Default sender address not found. Redirecting to settings...');
-        navigate('/admin/settings');
-      } else {
-        console.error('Error fetching sender address:', error);
-        toast.error('Failed to fetch sender address.');
-      }
+      console.error('Error fetching sender address:', error);
     } finally {
       setLoading(false);
     }

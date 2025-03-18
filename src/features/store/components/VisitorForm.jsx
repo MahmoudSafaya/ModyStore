@@ -86,7 +86,27 @@ const OrderForm = () => {
                 floor: "",
                 flats: ""
             },
-            sender: senderAddress,
+            sender: senderAddress || {
+                area: "كفر الزيات",
+                street: "كفر الزيات",
+                address: "",
+                addressBak: "",
+                town: "",
+                city: "كفر الزيات",
+                mobile: "01011789966",
+                mailBox: "",
+                phone: "",
+                countryCode: "EGY",
+                name: "Diva Store",
+                alternateReceiverPhoneNo: "",
+                company: "JT",
+                postCode: "",
+                prov: "الغربية",
+                areaCode: "",
+                building: "",
+                floor: "",
+                flats: ""
+            },
             items: cart.map(item => {
                 return ({
                     englishName: item.selectedVariant,
