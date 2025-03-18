@@ -60,7 +60,6 @@ export const AuthProvider = ({ children }) => {
     }
 
     checkAuth();
-    console.log(auth)
   }, []);
 
   useEffect(() => {

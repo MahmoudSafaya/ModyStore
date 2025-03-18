@@ -1,27 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CircleUserRound } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-import { axiosAuth } from "../../../api/axios";
 
 const Header = ({ isOpen }) => {
   const { auth, logout } = useAuth();
   const [onProfile, setOnProfile] = useState(false);
-  const [userName, setUserName] = useState('');
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const res = await axiosAuth.get('/users');
-        const userData = res.data.find(item => item._id === auth.id);
-        setUserName(userData.userName);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    if (auth) {
-      getUserData();
-    }
-  }, [auth]);
 
   const handleLogout = () => {
     logout();
@@ -43,7 +26,7 @@ const Header = ({ isOpen }) => {
               setOnProfile(false)
             }, 400)}
           >
-            <p className="text-gray-800 font-semibold">{userName}</p>
+            <p className="text-gray-800 font-semibold">{auth?.name}</p>
             <p className="text-sm text-gray-500">{auth?.role}</p>
             <button className="mt-3 w-full bg-gray-600 text-white py-2 px-4 rounded duration-500 hover:bg-gray-700" onClick={handleLogout}>
               تسجيل الخروج
