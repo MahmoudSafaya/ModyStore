@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import axios from '../../../api/axios';
+import { axiosAuth } from '../../../api/axios';
 import { Toaster } from 'react-hot-toast';
 import { Trash } from 'lucide-react';
 import { BiCategory } from "react-icons/bi";
@@ -14,7 +14,7 @@ const AddCategory = () => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [parentCategory, setParentCategory] = useState('');
 
-    const { getAllCategories, getMainCategories, getSubcategories, categories, mainCategories, subcategories, isDelete, setIsDelete, successNotify, deleteNotify, errorNotify } = useApp();
+    const { getMainCategories, getSubcategories, mainCategories, subcategories, isDelete, setIsDelete, successNotify, deleteNotify, errorNotify } = useApp();
 
     const [iconFile, setIconFile] = useState(null);
     const [imageFile, setImageFile] = useState(null);
@@ -63,10 +63,16 @@ const AddCategory = () => {
             iconFile ? formData.append("icon", iconFile) : ''
             imageFile ? formData.append("image", imageFile) : ''
 
-            await axios.put(`/categories/${selectedCategory._id}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
+            await axiosAuth.put(`/categories/${selectedCategory._id}`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                },
             })
-            successNotify('تم تعديل القسم بنجاح.')
+            successNotify('تم تعديل القسم بنجاح.');
+            setTimeout(() => {
+                // getMainCategories();
+                window.location.reload();
+            }, 1000);
 
         } else {
             // Create a new Category
@@ -79,20 +85,26 @@ const AddCategory = () => {
             });
 
             try {
-                await axios.post('/categories', formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
+                await axiosAuth.post('/categories', formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    },
                 });
                 successNotify('تم إضافة قسم جديد بنجاح.');
+                setTimeout(() => {
+                    getMainCategories();
+                }, 300);
             } catch (error) {
                 errorNotify('حدث خطأ, الرجاء المحاولة مرة أخري.')
                 console.error(error);
             }
         }
-        window.location.reload();
-        setSelectedCategory(null);
         actions.resetForm();
-        setCateIcon('');
-        setCateImage('');
+        setIconFile(null);
+        setImageFile(null);
+        setImagePreview(null);
+        setIconPreview(null);
+        setSelectedCategory(null);
     };
 
     const handleEditCategory = (category) => {
@@ -108,19 +120,15 @@ const AddCategory = () => {
 
     const handleDeleteCategory = async (cateId) => {
         try {
-            await axios.delete(`/categories/${cateId}`);
+            await axiosAuth.delete(`/categories/${cateId}`);
             setIsDelete({ purpose: '', itemId: '', itemName: '' });
-            getAllCategories();
+            getMainCategories();
             deleteNotify('تم حذف القسم بنجاح.');
         } catch (error) {
             console.error(error);
             errorNotify('هذا القسم ما يزال به منتجات, لذا لا يمكن حذف.');
         }
     }
-
-    useEffect(() => {
-        getAllCategories();
-    }, []);
 
     const handleDropDown = (cateId) => {
         if (openDropdown === cateId) {

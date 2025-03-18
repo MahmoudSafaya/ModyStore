@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import axios from "../api/axios";
+import { axiosMain } from "../api/axios";
 import * as jwtDecode from "jwt-decode";
 import Loading from "../shared/components/Loading";
 
@@ -14,11 +14,12 @@ export const AuthProvider = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const token = Cookies.get("accessToken");
+
   // Load session from cookies or sessionStorage on initialization
   useEffect(() => {
     const checkAuth = async () => {
       setLoading(true); // Start loading
-      const token = Cookies.get("accessToken");
       if (!token) {
         setAuth(null);
         setLoading(false);
@@ -92,7 +93,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ auth, login, logout, loading, setLoading }}
+      value={{ auth, token, login, logout, loading, setLoading }}
     >
       {children}
     </AuthContext.Provider>

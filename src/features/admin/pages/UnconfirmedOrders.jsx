@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Toaster } from 'react-hot-toast';
 import { useOrders } from "../../../context/OrdersContext";
-import axios from "../../../api/axios";
+import { axiosAuth } from "../../../api/axios";
 import { useApp } from "../../../context/AppContext";
 import { A_OrdersTable, A_SearchFeature } from "../components";
 
@@ -15,7 +15,7 @@ const UnconfirmedOrders = () => {
 
     const handleDeleteOrder = async (orderID) => {
         try {
-            await axios.delete(`/visitors/orders/${orderID}`);
+            await axiosAuth.delete(`/visitors/orders/${orderID}`);
             deleteNotify('تم حذف الطلب بنجاح!');
             const newOrders = unconfirmedOrders.filter(item => item._id !== orderID)
             setUnconfirmedOrders(newOrders);

@@ -8,7 +8,7 @@ import { useOrders } from "../../../context/OrdersContext";
 import { Toaster } from 'react-hot-toast';
 import { A_DeleteConfirmModal } from "./";
 import { useApp } from "../../../context/AppContext";
-import axios from "../../../api/axios";
+import { axiosAuth } from "../../../api/axios";
 
 const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders }) => {
     const { orderPopup, setOrderPopup } = useOrders();
@@ -46,7 +46,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
             // Iterate over each product in the array
             for (const item of checkedOrders) {
                 // Send a DELETE request for each product using its _id
-                await axios.post(`/jnt/orders/${item._id}`);
+                await axiosAuth.post(`/jnt/orders/${item._id}`);
             }
             successNotify('تم تسجيل جميع الاوردرارت المحددة بنجاح.');
             fetchOrders();
@@ -62,7 +62,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                 // Iterate over each product in the array
                 for (const item of checkedOrders) {
                     // Send a DELETE request for each product using its _id
-                    await axios.delete(`/jnt/orders/${item._id}`);
+                    await axiosAuth.delete(`/jnt/orders/${item._id}`);
                 }
                 deleteNotify("تم حذف الطلبات المحددة بنجاح.");
                 fetchOrders();
@@ -74,7 +74,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                 // Iterate over each product in the array
                 for (const item of checkedOrders) {
                     // Send a DELETE request for each product using its _id
-                    await axios.delete(`/visitors/orders/${item._id}`);
+                    await axiosAuth.delete(`/visitors/orders/${item._id}`);
                 }
                 deleteNotify("تم حذف الطلبات المحددة بنجاح.");
                 fetchOrders();
@@ -105,7 +105,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                         className={`min-w-30 py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
                         onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}
                     >
-                        حذف الكل
+                        حذف الاختيارات
                     </button>
                 </div>
 
@@ -214,30 +214,6 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                         </div>
                     )}
                 </div>
-
-
-                {/* Pagination Controls */}
-                {/* {orders.length > 0 && (
-                    <div className="flex justify-center mt-4">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-                        >
-                            <ChevronRight />
-                        </button>
-                        <span className="px-4 py-2 mx-1">
-                            صفحة {currentPage} من {totalPages}
-                        </span>
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-                        >
-                            <ChevronLeft />
-                        </button>
-                    </div>
-                )} */}
 
                 {/* Pagination Controls */}
                 {orders.length > 0 && (

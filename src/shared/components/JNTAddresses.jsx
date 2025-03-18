@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../../api/axios";
+import { axiosAuth } from "../../api/axios";
 import { Field, ErrorMessage } from "formik";
 import { useApp } from "../../context/AppContext";
 import Loading from "./Loading";
@@ -24,15 +24,18 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
 
   useEffect(() => {
-    axios.post("/addresses/seprated")
+    axiosAuth.post("/addresses/seprated")
       .then(response => setFirstOptions(response.data.data.result))
       .catch(error => console.error("Error fetching first options:", error));
 
-    fetchSenderAddress();
+      if(parent === 'sender') {
+        fetchSenderAddress();
+      }
   }, []);
 
   useEffect(() => {
     if (parent === 'sender' && senderAddress && Object.keys(senderAddress).length > 0) {
+      values.sender = senderAddress;
       setFirstSelection(senderAddress.prov);
       setTimeout(() => {
         setSecondSelection(senderAddress.city);
@@ -62,7 +65,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
   useEffect(() => {
     if (firstSelection) {
-      axios.post("/addresses/seprated", { Province: firstSelection })
+      axiosAuth.post("/addresses/seprated", { Province: firstSelection })
         .then(response => {
           setSecondOptions(response.data.data.result);
           if (parent === 'receiver') {
@@ -80,7 +83,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
 
   useEffect(() => {
     if (secondSelection) {
-      axios.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
+      axiosAuth.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
         .then(response => setThirdOptions(response.data.data.result))
         .catch(error => console.error("Error fetching third options:", error));
     } else {
@@ -98,7 +101,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
     }
   }
 
-  if (loading || !senderAddress) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

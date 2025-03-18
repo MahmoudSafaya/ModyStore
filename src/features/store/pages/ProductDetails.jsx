@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../../context/CartContext";
 import { useEffect } from "react";
-import axios from "../../../api/axios";
+import { axiosMain } from "../../../api/axios";
 import DOMPurify from 'dompurify';
 import Loading from "../../../shared/components/Loading";
 import toast, { Toaster } from "react-hot-toast";
@@ -35,7 +35,7 @@ const ProductDetails = ({ }) => {
         const getProductById = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(`/products/${id}`);
+                const res = await axiosMain.get(`/products/${id}`);
                 const data = res.data;
                 setProduct(data)
                 setProVariants(data.variants);
@@ -165,8 +165,13 @@ const ProductDetails = ({ }) => {
     const submitReview = async (e, productId) => {
         e.preventDefault();
         if (newReview.name && newReview.rating > 0 && newReview.comment) {
-            await axios.post(`/products/${productId}/reviews`, newReview);
+            await axiosMain.post(`/products/${productId}/reviews`, newReview);
             setNewReview({ name: "", rating: 0, comment: "" });
+            toast.success('شكرًا جزيلاً لك على وقتك الثمين في كتابة مراجعتك القيّمة.', {
+                style: {
+                    textAlign: 'center'
+                }
+            })
         }
     };
 
@@ -261,9 +266,9 @@ const ProductDetails = ({ }) => {
                                     {hasMultipleSizes && (
                                         <div className="flex items-center gap-4">
                                             <label>المقاسات:</label>
-                                            {availableSizes.map((size) => (
+                                            {availableSizes.map((size, index) => (
                                                 <button
-                                                    key={size}
+                                                    key={index}
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedSize === size) && filteredSizes.includes(size) ? 'border-indigo-300' : ''} ${!filteredSizes.includes(size) ? 'line-through' : ''}`}
                                                     onClick={() => {
                                                         handleSelectVariant('size', size, product.name);
@@ -281,9 +286,9 @@ const ProductDetails = ({ }) => {
                                     {hasMultipleColors && (
                                         <div className="flex items-center gap-4">
                                             <label>الألوان:</label>
-                                            {availableColors.map((color) => (
+                                            {availableColors.map((color, index) => (
                                                 <button
-                                                    key={color}
+                                                    key={index}
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedColor === color) && filteredColors.includes(color) ? 'border-indigo-300' : ''} ${!filteredColors.includes(color) ? 'line-through' : ''}`}
                                                     onClick={() => {
                                                         handleSelectVariant('color', color, product.name);
@@ -367,7 +372,7 @@ const ProductDetails = ({ }) => {
                                         {/* <p className="font-semibold">{review.name}</p> */}
                                         <p>{new Date(review.createdAt).toISOString().split('T')[0]}</p>
                                         <p className="flex items-center gap-1">{
-                                            [1, 2, 3, 4, 5].map(num => <FaStar className={`${num <= review.rating ? 'text-yellow-500' : 'text-gray-300'}`} />)}</p>
+                                            [1, 2, 3, 4, 5].map(num => <FaStar key={num} className={`${num <= review.rating ? 'text-yellow-500' : 'text-gray-300'}`} />)}</p>
                                         <p className="text-gray-700">{review.comment}</p>
                                     </div>
                                 ))}
@@ -411,7 +416,7 @@ const ProductDetails = ({ }) => {
 
             )}
 
-            <Toaster />
+            <Toaster toastOptions={{ duration: 3000 }} />
         </div>
     );
 };

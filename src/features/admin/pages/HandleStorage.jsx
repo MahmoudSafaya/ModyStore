@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "../../../api/axios";
+import { axiosAuth } from "../../../api/axios";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
+import BarcodeScanner from "../components/BarcodeScanner";
 
 const HandleStorage = () => {
   const [scanType, setScanType] = useState("");
@@ -16,7 +17,8 @@ const HandleStorage = () => {
         ? `/products/variants/${barcode}/decrease-stock`
         : `/products/variants/${barcode}/add-stock`;
 
-      const res = await axios.patch(endpoint);
+      const res = await axiosAuth.patch(endpoint);
+      console.log(res);
       setResult(res.data.variant);
 
       scanType === "withdraw" ? deleteNotify(res.data.message) : successNotify(res.data.message);
@@ -29,15 +31,16 @@ const HandleStorage = () => {
     let buffer = "";
 
     const handleKeyDown = (event) => {
-      if (!scanType) return; // Prevent scanning if scanType isn't selected
-
+      if (!scanType) return;
+    
       if (event.key === "Enter" && buffer) {
         handleScan(buffer);
         buffer = "";
-      } else {
+      } else if (event.key.length === 1) { // Ensures only printable characters are recorded
         buffer += event.key;
       }
     };
+    
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -49,7 +52,7 @@ const HandleStorage = () => {
       <p>اختر العملية المراد تنفيذها, ثم افحص الباركود.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div
-          className={`min-h-60 flex items-center justify-center shadow-md rounded-xl cursor-pointer duration-500 hover:bg-gray-600 hover:text-white text-2xl ${scanType === 'withdraw' ? 'bg-gray-600 text-white animate-pulse' : 'bg-white text-gray-600'}`}
+          className={`min-h-40 flex items-center justify-center shadow-md rounded-xl cursor-pointer duration-500 hover:bg-gray-600 hover:text-white text-2xl ${scanType === 'withdraw' ? 'bg-gray-600 text-white animate-pulse' : 'bg-white text-gray-600'}`}
           onClick={() => setScanType('withdraw')}
         >
           {scanType === 'withdraw'
@@ -57,7 +60,7 @@ const HandleStorage = () => {
             : <p>سحب من المخزون</p>}
         </div>
         <div
-          className={`min-h-60 flex items-center justify-center shadow-md rounded-xl cursor-pointer duration-500 hover:bg-green-400 hover:text-white text-2xl ${scanType === 'deposit' ? 'bg-green-400 text-white animate-pulse' : 'bg-white text-green-400'}`}
+          className={`min-h-40 flex items-center justify-center shadow-md rounded-xl cursor-pointer duration-500 hover:bg-green-400 hover:text-white text-2xl ${scanType === 'deposit' ? 'bg-green-400 text-white animate-pulse' : 'bg-white text-green-400'}`}
           onClick={() => setScanType('deposit')}
         >
           {scanType === 'deposit'

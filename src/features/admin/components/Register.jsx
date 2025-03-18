@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import axios from '../../../api/axios';
+import { axiosAuth } from '../../../api/axios';
 import { Toaster } from 'react-hot-toast';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -8,9 +8,11 @@ import { FaRegEdit } from "react-icons/fa";
 import { Users, Trash } from 'lucide-react'
 import { useApp } from '../../../context/AppContext';
 import { A_DeleteConfirmModal } from '.';
+import Loading from '../../../shared/components/Loading';
 
 const Register = () => {
     const { isDelete, setIsDelete, successNotify, deleteNotify, errorNotify } = useApp();
+    const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const formRef = useRef(null); // Ref for scrolling
@@ -19,11 +21,10 @@ const Register = () => {
         if (selectedUser) {
             // Update an existing user
             try {
-                await axios.post('/helpers/checkemail', { email: values.userName });
-                
-                // If the request succeeds, the email does not exist, so we proceed
-                await axios.put(`/users/${selectedUser._id}`, values);
-                successNotify(`${values.userName} تم تعديل بيانات المستخدم:`)
+                // If the request succeeds, proceed with updating the user
+                await axiosAuth.put(`/users/${selectedUser._id}`, values);
+
+                successNotify(`${values.userName} تم تعديل بيانات المستخدم:`);
                 getAllUsers();
             } catch (error) {
                 if (error.response && error.response.status === 400) {
@@ -33,38 +34,46 @@ const Register = () => {
                 }
                 return; // Stop execution if email exists or other errors occur
             }
+
             setSelectedUser(null);
             actions.resetForm();
 
         } else {
             try {
-                await axios.post('/helpers/checkemail', { email: values.userName });
-                
+                await axiosAuth.post('/helpers/checkemail', { email: values.userName });
+
                 // If the request succeeds, the email does not exist, so we proceed
-                await axios.post('/users', values);
+                await axiosAuth.post('/users', values);
                 successNotify(`${values.userName} تم تسجيله كمستخدم جديد.`);
                 getAllUsers();
             } catch (error) {
-                if (error.response && error.response.status === 400) {
-                    errorNotify(`اسم المستخدم ${values.userName} موجود بالفعل.`);
+                if (error.response) {
+                    if (error.response.status === 400) {
+                        errorNotify(`اسم المستخدم ${values.userName} موجود بالفعل.`);
+                    } else if (error.response.status === 403) {
+                        errorNotify("ليس لديك صلاحية لإضافة مستخدم جديد.");
+                    }
                 } else {
                     console.error(error);
                 }
                 return; // Stop execution if email exists or other errors occur
             }
-        
+
             actions.resetForm();
         }
-        
-        
+
+
     }
 
     const getAllUsers = async () => {
+        setLoading(true);
         try {
-            const res = await axios.get('/users');
+            const res = await axiosAuth.get('/users');
             setUsers(res.data);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -77,7 +86,7 @@ const Register = () => {
 
     const handleDeleteUser = async (userID) => {
         try {
-            await axios.delete(`/users/${userID}`);
+            await axiosAuth.delete(`/users/${userID}`);
             setIsDelete({ purpose: '', itemId: '', itemName: '' });
             const remainUsers = users.filter(user => user._id !== userID);
             setUsers(remainUsers);
@@ -91,9 +100,12 @@ const Register = () => {
         getAllUsers();
     }, []);
 
+
+    if(loading) return <Loading />
+
     return (
         <div className='lg:grid grid-cols-2 gap-6'>
-            <div className='custom-bg-white max-h-100 mt-8 overflow-y-auto scrollbar'>
+            <div className='custom-bg-white max-h-84 mt-8 overflow-y-auto scrollbar'>
                 <div className='relative max-w-max flex items-center justify-center gap-2 mb-8 mx-auto'>
                     <Users />
                     <h2 className='font-bold'>قائمة المستخدمين</h2>
@@ -105,7 +117,7 @@ const Register = () => {
                             return (
                                 <div key={user._id} className='w-full flex items-center justify-between border-b border-gray-300 pb-6'>
                                     <div className='flex gap-6'>
-                                        <p className='text-center'>{user.userName}</p>
+                                        <p className='text-center lg:min-w-30'>{user.userName}</p>
                                         <div>{user.userRole === 'admin' ? (
                                             <p className='font-semibold text-indigo-400 text-center'>admin</p>
                                         ) : (
@@ -129,6 +141,7 @@ const Register = () => {
                     <div></div>
                 )}
             </div>
+
 
             {isDelete.purpose === 'one-user' && (
                 <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDeleteUser(isDelete.itemId)} setIsDelete={setIsDelete} />

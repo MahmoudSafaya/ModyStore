@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import axios from '../../../api/axios';
-import ReactEchart from '../../../shared/components/ReactEchart';
+import { axiosAuth } from '../../../api/axios';
 import { useEffect } from 'react';
 import Loading from '../../../shared/components/Loading';
 import { BiCategory } from "react-icons/bi";
@@ -38,9 +37,9 @@ const Home = () => {
       setLoading(true);
 
       const [ordersRes, categoriesRes, productsRes] = await Promise.all([
-        axios.get("/orders/counts"),
-        axios.get("/categories/counts"),
-        axios.get("/products/counts"),
+        axiosAuth.get("/orders/counts"),
+        axiosAuth.get("/categories/counts"),
+        axiosAuth.get("/products/counts"),
       ]);
 
       setDashCounts((prev) => ({
@@ -69,7 +68,7 @@ const Home = () => {
     setLoading(true);
     const todayDate = getTodayDateISO();
     try {
-      const response = await axios.post('/orders/search', {
+      const response = await axiosAuth.post('/orders/search', {
         confirmed: "0",
         startDate: `${todayDate}T00:00:00Z`,  // Start of the day
         endDate: `${todayDate}T23:59:59Z`    // End of the day
@@ -85,7 +84,7 @@ const Home = () => {
 
   const handleDeleteOrder = async (orderID) => {
     try {
-      await axios.delete(`/visitors/orders/${orderID}`);
+      await axiosAuth.delete(`/visitors/orders/${orderID}`);
       deleteNotify('تم حذف الطلب بنجاح!');
       getTodayOrders();
       orderPopup.display && setOrderPopup({ display: false, editing: false, info: {} })

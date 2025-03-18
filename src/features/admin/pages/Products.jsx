@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Trash, Search, X, ChevronRight, ChevronLeft, ChevronDown } from "lucide-react";
 import { FaCheck, FaRegEdit, FaStar } from "react-icons/fa";
-import axios from '../../../api/axios';
+import {axiosAuth} from '../../../api/axios';
 import Loading from '../../../shared/components/Loading';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
@@ -48,7 +48,7 @@ const Products = () => {
   const getAllProducts = async (page) => {
     setLoading(true);
     try {
-      const res = await axios.get(`/products?page=${page}`);
+      const res = await axiosAuth.get(`/products?page=${page}`);
       const data = res.data;
       setProducts(data.Products);
       setCurrentPage(data.currentPage);
@@ -70,9 +70,11 @@ const Products = () => {
 
   const handleDeleteProduct = async (itemID) => {
     try {
-      await axios.delete(`/products/${itemID}`);
+      await axiosAuth.delete(`/products/${itemID}`);
       deleteNotify('تم حذف المنتج بنجاح.');
-      getAllProducts();
+      setTimeout(() => {
+        getAllProducts();
+      }, 500);
     } catch (error) {
       console.error(error);
     }
@@ -83,9 +85,11 @@ const Products = () => {
       // Iterate over each product in the array
       for (const product of checkedOrders) {
         // Send a DELETE request for each product using its _id
-        await axios.delete(`/products/${product._id}`);
+        await axiosAuth.delete(`/products/${product._id}`);
         deleteNotify("تم حذف المنتجات المحددة بنجاح.");
-        getAllProducts();
+        setTimeout(() => {
+          getAllProducts();
+        }, 500);
       }
     } catch (error) {
       console.error('Error deleting products:', error);
@@ -103,8 +107,12 @@ const Products = () => {
 
   const deleteProductReview = async (productId, reviewId) => {
     try {
-      await axios.delete(`/products/${productId}/reviews/${reviewId}`);
-      deleteNotify('تم حذف التعليق بنجاح.')
+      await axiosAuth.delete(`/products/${productId}/reviews/${reviewId}`);
+      deleteNotify('تم حذف المراجعة بنجاح.');
+      setPopupPurpose('reviews');
+      setTimeout(() => {
+        getAllProducts();
+      }, 500);
     } catch (error) {
       console.error(error);
     }
@@ -117,6 +125,13 @@ const Products = () => {
       setCurrentPage(page);
     }
   };
+
+  const handleBarcodeChange = useCallback((e, barCode) => {
+    setBarcodeNums(prev => ({
+      ...prev,
+      [barCode]: Number(e.target.value)
+    }));
+  }, []);
 
   if (loading) return <Loading loading={loading} />;
 
@@ -132,12 +147,12 @@ const Products = () => {
           </div>
         </div>
         <button className={`min-w-30 py-3 px-5 rounded-lg shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`} onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}>
-          حذف الكل
+          حذف الاختيارات
         </button>
       </div>
 
       {/* Table */}
-      <div className="custom-bg-white mt-8 overflow-x-auto">
+      <div className="custom-bg-white mt-8 overflow-x-auto scrollbar">
         {products && products.length > 0 ? (
           <table className="w-full bg-white text-gray-800">
             <thead className="border-b border-gray-300 font-bold text-center whitespace-nowrap">
@@ -199,7 +214,7 @@ const Products = () => {
                     </div>
                   </td>
                   <td className="p-3 space-x-3">
-                    {product.name}
+                    {product.name.length > 20 ? product.name.slice(0, 20) + '...' : product.name}
                   </td>
                   <td className="p-3 text-gray-500">
                     {getCategory(product.category)}
@@ -328,10 +343,7 @@ const Products = () => {
                     </div>
                     <div className='w-full md:w-auto flex items-center gap-4'>
                       <label htmlFor="barcode-num">
-                        <input type="text" name='barcode-num' id='barcode-num' className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => setBarcodeNums(prev => ({
-                          ...prev,
-                          [variant.barCode]: Number(e.target.value)
-                        }))} />
+                        <input type="text" name='barcode-num' id='barcode-num' className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => handleBarcodeChange(e, variant.barCode)} />
                       </label>
                       <A_BillOfLading
                         variant={variant.barCode}
@@ -357,8 +369,11 @@ const Products = () => {
                       </p>
                       <p className="text-gray-700">{review.comment}</p>
                     </div>
+                    {/* <div className='w-7 h-7 p-1 bg-gray-100 rounded-full flex items-center justify-center'>
+                      <Trash className='w-full cursor-pointer duration-500 hover:rotate-45' onClick={() => deleteProductReview(selectedProduct._id, review._id)} />
+                    </div> */}
                     <div className='w-7 h-7 p-1 bg-gray-100 rounded-full flex items-center justify-center'>
-                      <Trash className='w-full cursor-pointer duration-500 hover:rotate-45' onClick={() => deleteProductReview(selectedProduct._d, review._id)} />
+                      <Trash className='w-full cursor-pointer duration-500 hover:rotate-45' onClick={() => setIsDelete({ purpose: 'one-review', itemName: 'هذه المراجعة', itemId: review._id })} />
                     </div>
                   </div>
                 ))}
@@ -373,6 +388,9 @@ const Products = () => {
       )}
       {isDelete.purpose === 'one-product' && (
         <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => handleDeleteProduct(isDelete.itemId)} setIsDelete={setIsDelete} />
+      )}
+      {isDelete.purpose === 'one-review' && (
+        <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={() => deleteProductReview(selectedProduct._id, isDelete.itemId)} setIsDelete={setIsDelete} />
       )}
 
     </div>

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GrStatusGoodSmall } from "react-icons/gr";
 import ProductVariations from "./components/ProductVariations";
-import { Tag, House } from "lucide-react";
+import { Tag } from "lucide-react";
 import ProductDetails from "./components/ProductDetails";
 import ProductPrice from "./components/ProductPrice";
 import ProductImages from "./components/ProductImages";
 import ProductCategory from "./components/ProductCategory";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { ProductSchema } from "../../../../schemas/productSchema";
-import axios from "../../../../api/axios";
+import { axiosAuth } from "../../../../api/axios";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../../context/AppContext";
 import Loading from "../../../../shared/components/Loading";
@@ -40,7 +40,7 @@ const AddProduct = () => {
     const getProductById = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`/products/${paramID}`);
+            const res = await axiosAuth.get(`/products/${paramID}`);
             setSelectedProduct(res.data);
             setThumbnail(`${baseUrl}/${res.data.mainImage.url.replace(/\\/g, '/')}`);
             setProductImages(res.data.images)
@@ -115,15 +115,22 @@ const AddProduct = () => {
             });
 
             try {
-                await axios.put(`/products/${paramID}`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
+                await axiosAuth.put(`/products/${paramID}`, formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    },
                 });
                 successNotify('تهانينا!, تم تعديل المنتج بنجاح');
 
                 resetForm();
-                // setThumbnail('');
-                // setProductImages([])
-                navigate('/admin/products');
+                setThumbnail('');
+                setProductImages([]);
+                setVariations([{ barCode: "", size: "", color: "", stock: "" }]);
+                setDiscount('none');
+                setSelectedProduct(null);
+                setTimeout(() => {
+                    navigate('/admin/products');
+                }, 500);
             } catch (error) {
                 console.error("Error editing product:", error.response?.data || error.message);
             }
@@ -160,17 +167,19 @@ const AddProduct = () => {
                 }
             });
             try {
-                await axios.post("/products", formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
+                await axiosAuth.post("/products", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    },
                 });
                 successNotify('تهانينا!, تم إضافة المنتج بنجاح');
 
                 resetForm();
-                // setThumbnail('');
-                // setProductImages([]);
-                // setVariations([{ barCode: "", size: "", color: "", stock: "" }]);
-                // setDiscount('none');
-                navigate('/admin/products');
+                setThumbnail('');
+                setProductImages([]);
+                setVariations([{ barCode: "", size: "", color: "", stock: "" }]);
+                setDiscount('none');
+                // navigate('/admin/products');
             } catch (error) {
                 console.error("Error uploading product:", error.response?.data || error.message);
             }

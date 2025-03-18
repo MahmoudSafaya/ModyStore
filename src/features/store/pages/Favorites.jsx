@@ -32,7 +32,7 @@ const Favorites = () => {
             <HeartOff className='w-26 h-26 text-gray-200 drop-shadow-xs' />
           </div>
           <p>لا توجد منتجات في قائمتك المفضلة.</p>
-          <Link to='/products' className='max-w-max py-2 px-4 bg-indigo-500 text-white rounded-full duration-500 hover:be-indigo-600'>العودة الى التسوق</Link>
+          <Link to='/' className='max-w-max py-2 px-4 bg-indigo-500 text-white rounded-full duration-500 hover:be-indigo-600'>العودة الى التسوق</Link>
         </div>
       ) : (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

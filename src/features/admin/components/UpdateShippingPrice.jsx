@@ -1,6 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import React, { useState, useEffect } from 'react'
-import axios from '../../../api/axios'
+import {axiosAuth} from '../../../api/axios'
 import * as Yup from 'yup';
 import { useApp } from '../../../context/AppContext';
 import { Toaster } from 'react-hot-toast';
@@ -15,7 +15,7 @@ const UpdateShippingPrice = () => {
     const { successNotify } = useApp();
 
     useEffect(() => {
-        axios.post("/addresses/seprated")
+        axiosAuth.post("/addresses/seprated")
             .then(response => setFirstOptions(response.data.data.result))
             .catch(error => console.error("Error fetching first options:", error));
     }, []);
@@ -31,7 +31,7 @@ const UpdateShippingPrice = () => {
 
     const handleSubmit = async (values, actions) => {
         try {
-            const res = await axios.put('/addresses/change_shipping_price', values);
+            const res = await axiosAuth.put('/addresses/change_shipping_price', values);
             actions.resetForm();
             setFirstSelection('');
             successNotify(res.data.message)

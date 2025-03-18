@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import axios from "../api/axios";
+import {axiosAuth} from "../api/axios";
 import toast from 'react-hot-toast';
 
 const OrdersContext = createContext();
@@ -21,7 +21,7 @@ export const OrdersProvider = ({ children }) => {
 
     const getUnconfirmedOrders = async (page) => {
         try {
-            const response = await axios.get(`/visitors/orders/?page=${page}`);
+            const response = await axiosAuth.get(`/visitors/orders/?page=${page}`);
             const data = response.data;
             setUnconfirmedOrders(data.orders);
             setCurrentPage(data.currentPage);
@@ -33,7 +33,7 @@ export const OrdersProvider = ({ children }) => {
 
     const getJNTOrders = async () => {
         try {
-            const response = await axios.get('/jnt/orders/');
+            const response = await axiosAuth.get('/jnt/orders/');
             setJNTOrders(response.data.orders);
         } catch (error) {
             console.error(error);
@@ -42,7 +42,7 @@ export const OrdersProvider = ({ children }) => {
 
     const confirmOrderToJNT = async (orderID) => {
         try {
-            await axios.post(`/jnt/orders/${orderID}`);
+            await axiosAuth.post(`/jnt/orders/${orderID}`);
             setOrderPopup({ display: false, editing: false, info: {} })
             getUnconfirmedOrders();
             toast.success('تم تسجيل الأوردر بنجاح علي J&T.', {
@@ -57,7 +57,7 @@ export const OrdersProvider = ({ children }) => {
 
     const printOrderPdf = async (orderID) => {
         try {
-            const response = await axios.post(
+            const response = await axiosAuth.post(
                 `/jnt/orders/print/${orderID}`,
                 {
                     printcod: 0,

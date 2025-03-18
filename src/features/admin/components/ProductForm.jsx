@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Field, FieldArray, ErrorMessage } from "formik";
-import axios from "../../../api/axios";
+import { axiosAuth } from "../../../api/axios";
 import Loading from "../../../shared/components/Loading";
 
 const ProductForm = ({ values, setFieldValue, handleBlur }) => {
@@ -18,7 +18,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
     const fetchProductsNames = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("/products/search");
+        const res = await axiosAuth.get("/products/search");
         setFirstOptions(res.data.products);
       } catch (error) {
         console.error(error);
@@ -121,7 +121,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                   />
                   {showFirstOptions[index] && (
                     <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
-                      {firstOptions
+                      {firstOptions && firstOptions
                         .filter((item) => item.product.includes(selections[index] || ""))
                         .map((option) => (
                           <li

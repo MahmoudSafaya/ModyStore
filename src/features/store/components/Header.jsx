@@ -1,22 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Menu, Heart, ShoppingCart } from "lucide-react";
+import { Search, Menu, Heart, ShoppingCart, UserRound } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { useStore } from "../../../context/StoreContext";
 import { useCart } from "../../../context/CartContext";
 import { useApp } from "../../../context/AppContext";
 import modyStoreLogo from '../../../assets/diva-store-logo.png'
+import { axiosMain } from "../../../api/axios";
 
 const EcommerceHeader = ({ toggleSidebar }) => {
-  const { storeMainNav, products } = useStore();
+  const { storeMainNav } = useStore();
   const { toggleCart, totalPrice } = useCart();
   const { getCategoryById } = useApp();
+  const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const location = useLocation();
   const baseUrl = import.meta.env.VITE_SERVER_URL;
+
+  useEffect(() => {
+    if (searchTerm) {
+      const fetchProducts = async () => {
+        try {
+          const response = await axiosMain.get(`/products?search=${searchTerm}`);
+          setProducts(response.data.Products);
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        }
+      };
+  
+      fetchProducts();
+    }
+  }, [searchTerm]);  
 
   const handleSearch = (event) => {
     const term = event.target.value;
@@ -45,7 +62,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
       <div className="w-full py-4 px-4 md:px-12 flex justify-between items-center gap-2 lg:gap-10">
         <div className="logo">
           <Link to="/" className="logo-link">
-            <img src={modyStoreLogo} className="w-14" />
+            <img src={modyStoreLogo} className="w-20" />
           </Link>
         </div>
 
@@ -57,7 +74,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
             {isDropdownOpen && searchResults.length > 0 && (
               <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
                 {searchResults.map((product, index) => {
-                  if(index > 9) return;
+                  if (index > 9) return;
                   return (
                     <Link
                       key={product._id}
@@ -105,6 +122,11 @@ const EcommerceHeader = ({ toggleSidebar }) => {
         </nav>
 
         <div className="flex items-center gap-4">
+          <div>
+            <Link to='/signed-orders'>
+              <UserRound className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer hover:bg-indigo-200" />
+            </Link>
+          </div>
           <div>
             <Link to='/favorites'>
               <Heart className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer hover:bg-indigo-200" />

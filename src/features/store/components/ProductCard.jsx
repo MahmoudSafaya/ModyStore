@@ -23,7 +23,7 @@ const ProductCard = ({ product }) => {
     const proCategory = categories.map(item => item._id === product.category ? item.name : '');
 
     return (
-        <div className="group bg-white p-4 rounded-xl shadow-md relative overflow-hidden">
+        <div className="group bg-white p-4 rounded-xl shadow-md relative overflow-hidden h-full flex flex-col justify-between">
             <div className="max-w-max absolute top-4 -right-14 z-20 opacity-0 duration-500 group-hover:right-4 group-hover:opacity-100 rounded-lg bg-white shadow-md flex flex-col">
                 <Link to={`/products/${product._id}`}>
                     <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-indigo-500 border-b border-gray-300">
@@ -45,25 +45,18 @@ const ProductCard = ({ product }) => {
                     {product.badge}
                 </span>
             )}
-            {/* <div className="relative w-full h-80 overflow-hidden rounded-lg">
-                <Link to={`/products/${product._id}`}>
-                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 hover:scale-110"
-                        style={{ backgroundImage: `url(${encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)})` }}
-                    ></div>
-                </Link>
-            </div> */}
             <div className="relative w-full h-80 overflow-hidden rounded-lg">
                 <Link to={`/products/${product._id}`} className='w-full h-full'>
                     <img
                         src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)}
                         alt={product.mainImage.alt}
-                        className='w-full h-full object-cover object-center'
+                        className='w-full h-full object-cover duration-500 transition-all hover:scale-110'
                     />
                 </Link>
             </div>
             <h3 className="text-lg font-medium my-2">
                 <Link to={`/products/${product._id}`} className="duration-500 hover:text-indigo-500">
-                    {product.name}
+                {product.name.length > 32 ? product.name.slice(0, 32) + '...' : product.name}
                 </Link>
             </h3>
             <p className="text-gray-500 text-sm">{proCategory}</p>
@@ -74,9 +67,6 @@ const ProductCard = ({ product }) => {
                         <span key={i} className="text-yellow-500">★</span>
                     ))}
             </div>
-            {/* <p className={`mb-2 ${product.storageAmount > 0 ? 'text-gray-400' : 'text-red-500'}`}>
-                            {product.storageAmount > 0 ? `متوفر: ${product.storageAmount} قطعة` : 'تم نفاذ المنتج'}
-                        </p> */}
             <div className="flex items-center gap-2">
                 <p className="text-indigo-500 text-lg font-semibold">
                     EGP {product.actualPrice}

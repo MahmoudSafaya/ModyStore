@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { CircleUserRound } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-import axios from "../../../api/axios";
-import { useNavigate } from "react-router-dom";
+import { axiosAuth } from "../../../api/axios";
 
 const Header = ({ isOpen }) => {
   const { auth, logout } = useAuth();
   const [onProfile, setOnProfile] = useState(false);
   const [userName, setUserName] = useState('');
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const res = await axios.get('/users');
+        const res = await axiosAuth.get('/users');
         const userData = res.data.find(item => item._id === auth.id);
         setUserName(userData.userName);
       } catch (error) {

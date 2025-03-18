@@ -1,13 +1,10 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext } from "react";
 import { useContext } from "react";
-import axios from "../api/axios";
+
 
 export const StoreContext = createContext();
 
 export const StoreProvider = ({ children }) => {
-  const [loading, setLoading] = useState(false);
-  const [mainCategories, setMainCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState({});
 
   const storeMainNav = [
     { label: "الرئيسية", link: '/' },
@@ -16,33 +13,8 @@ export const StoreProvider = ({ children }) => {
     // { label: "الشحن والاسترجاع", link: '/shippment' },
   ];
 
-  const getMainCategories = async () => {
-    try {
-      const response = await axios.get('/categories/main'); // Replace with your endpoint
-      setMainCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching main categories:", error);
-    }
-  };
-
-  useEffect(() => {
-    getMainCategories();
-  }, []);
-
-  const getSubcategories = async (categoryId) => {
-    if (subcategories[categoryId]) return; // Avoid re-fetching if already loaded
-
-    try {
-      const response = await axios.get(`/categories/${categoryId}/subcategories`); // Replace with your endpoint
-      setSubcategories((prev) => ({ ...prev, [categoryId]: response.data }));
-    } catch (error) {
-      console.error(`Error fetching subcategories for ${categoryId}:`, error);
-    }
-  };
-
-
   return (
-    <StoreContext.Provider value={{ loading, setLoading, storeMainNav, mainCategories, subcategories, setSubcategories, getSubcategories }}>
+    <StoreContext.Provider value={{ storeMainNav }}>
       {children}
     </StoreContext.Provider>
   );

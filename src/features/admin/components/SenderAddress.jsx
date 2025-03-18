@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { Trash, MapPinHouse } from 'lucide-react';
 import { FaRegEdit, FaCheckSquare } from "react-icons/fa";
 import { Toaster } from 'react-hot-toast';
-import axios from '../../../api/axios'
+import { axiosAuth } from '../../../api/axios'
 import * as Yup from 'yup';
 import { A_DeleteConfirmModal } from '.';
 import { useMemo } from 'react';
@@ -32,7 +32,7 @@ const SenderAddress = () => {
 
     const fetchSenderAddresses = async () => {
         try {
-            const res = await axios.get('/addresses/senders/');
+            const res = await axiosAuth.get('/addresses/senders/');
             setSenderAddresses(res.data.senders);
         } catch (error) {
             console.error(error);
@@ -40,7 +40,7 @@ const SenderAddress = () => {
     }
 
     useEffect(() => {
-        axios.post("/addresses/seprated")
+        axiosAuth.post("/addresses/seprated")
             .then(response => setFirstOptions(response.data.data.result))
             .catch(error => console.error("Error fetching first options:", error));
 
@@ -49,7 +49,7 @@ const SenderAddress = () => {
 
     useEffect(() => {
         if (firstSelection) {
-            axios.post("/addresses/seprated", { Province: firstSelection })
+            axiosAuth.post("/addresses/seprated", { Province: firstSelection })
                 .then(response => {
                     setSecondOptions(response.data.data.result);
                     if (parent === 'receiver') {
@@ -67,7 +67,7 @@ const SenderAddress = () => {
 
     useEffect(() => {
         if (secondSelection) {
-            axios.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
+            axiosAuth.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
                 .then(response => setThirdOptions(response.data.data.result))
                 .catch(error => console.error("Error fetching third options:", error));
         } else {
@@ -93,7 +93,7 @@ const SenderAddress = () => {
 
         if (selectedAddress) {
             try {
-                await axios.put(`/addresses/senders/${selectedAddress._id}`, values);
+                await axiosAuth.put(`/addresses/senders/${selectedAddress._id}`, values);
                 successNotify('تم تعديل العنوان بنجاح.');
                 resetForm();
                 setFirstSelection('');
@@ -104,7 +104,7 @@ const SenderAddress = () => {
             }
         } else {
             try {
-                await axios.post('/addresses/senders', values);
+                await axiosAuth.post('/addresses/senders', values);
                 successNotify('تم إضافة العنوان بنجاح.');
                 resetForm();
                 setFirstSelection('');
@@ -131,7 +131,7 @@ const SenderAddress = () => {
 
     const handleDeleteAddress = async (addressId) => {
         try {
-            await axios.delete(`/addresses/senders/${addressId}`);
+            await axiosAuth.delete(`/addresses/senders/${addressId}`);
             setIsDelete({ purpose: '', itemId: '', itemName: '' });
             deleteNotify('تم حذف العنوان بنجاح.');
             fetchSenderAddresses();
@@ -156,6 +156,7 @@ const SenderAddress = () => {
                                 <tr>
                                     <th className="p-3">الاسم</th>
                                     <th className="p-3">رقم الهاتف</th>
+                                    <th className="p-3">رقم الهاتف 2</th>
                                     <th className="p-3">المحافظة</th>
                                     <th className="p-3">المدينة</th>
                                     <th className="p-3">المنطقة</th>
@@ -170,6 +171,7 @@ const SenderAddress = () => {
                                         <tr key={item._id} className="border-b border-gray-200 hover:bg-gray-50 text-center  whitespace-nowrap text-gray-600">
                                             <td className='p-3'>{item.name}</td>
                                             <td className='p-3'>{item.mobile}</td>
+                                            <td className='p-3'>{item.phone ? item.phone : '-'}</td>
                                             <td className='p-3'>{item.prov}</td>
                                             <td className='p-3'>{item.city}</td>
                                             <td className='p-3'>{item.area}</td>
@@ -235,8 +237,10 @@ const SenderAddress = () => {
                     validationSchema={Yup.object().shape({
                         name: Yup.string().required("هذا الحقل مطلوب"),
                         mobile: Yup.string()
-                            .matches(/^\d{10,15}$/, "رقم هاتف غير صالح")
+                            .matches(/^\d{10,11}$/, "رقم هاتف غير صالح")
                             .required("هذا الحقل مطلوب"),
+                        phone: Yup.string()
+                            .matches(/^\d{10,11}$/, "رقم هاتف غير صالح"),
                         prov: Yup.string().required("هذا الحقل مطلوب"),
                         city: Yup.string().required("هذا الحقل مطلوب"),
                         area: Yup.string().required("هذا الحقل مطلوب"),
@@ -271,6 +275,19 @@ const SenderAddress = () => {
                                         placeholder="ادخل رقم موبيل"
                                     />
                                     <ErrorMessage name="mobile" component="div" className="text-red-400 mt-1 text-sm" />
+                                </div>
+
+                                {/* Mobile 2 */}
+                                <div>
+                                    <label className="custom-label-field">رقم الهاتف 2:</label>
+                                    <Field
+                                        type="text"
+                                        name="phone"
+                                        autoComplete="off"
+                                        className="custom-input-field"
+                                        placeholder="ادخل رقم موبيل"
+                                    />
+                                    <ErrorMessage name="phone" component="div" className="text-red-400 mt-1 text-sm" />
                                 </div>
 
                                 {/* Province */}

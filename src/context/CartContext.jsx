@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import axios from '../api/axios';
+import {axiosMain} from '../api/axios';
 
 // Secret key for hashing (keep this secure)
 const SECRET_KEY = import.meta.env.VITE_CART_SECRET_KEY;
@@ -63,7 +63,7 @@ export const CartProvider = ({ children }) => {
 
     const fetchProductsNames = async () => {
         try {
-            const res = await axios.get("/products/search");
+            const res = await axiosMain.get("/products/search");
             setVariantsProducts(res.data.products);
         } catch (error) {
             console.error(error);
@@ -77,6 +77,8 @@ export const CartProvider = ({ children }) => {
         //     cartItem._id === item._id &&
         //     cartItem.selectedVariant === selectedVariant
         // );
+        fetchProductsNames();
+        
         const existingItem = cart.find(cartItem => cartItem._id === item._id  );
 
         if (existingItem) {
@@ -129,19 +131,35 @@ export const CartProvider = ({ children }) => {
 
 
     // Increase item quantity
-    const increaseQuantity = (itemId) => {
-        let newCart = cart.map((item) =>
-            item._id === itemId ? { ...item, quantity: item.quantity + 1, quantityPrice: item.quantityPrice + item.price } : item
-        )
-
+    const increaseQuantity = (product) => {
+        const totalStock = product.variants.reduce((total, item) => total + item.stock, 0);
+    
+        let newCart = cart.map((item) => {
+            if (item._id === product._id) {
+                if (item.quantity < totalStock) {
+                    return {
+                        ...item,
+                        quantity: item.quantity + 1,
+                        quantityPrice: item.quantityPrice + item.price
+                    };
+                } else {
+                    toast('عفوا, الكمية المطلوبة ليست متوفرة في الوقت الحالي.', {
+                        style: { textAlign: 'center' }
+                    });
+                }
+            }
+            return item;
+        });
+    
         setCart(newCart);
         setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
         saveCartItems(newCart);
     };
+    
     // Decrease item quantity (or remove if it reaches 0)
-    const decreaseQuantity = (itemId) => {
+    const decreaseQuantity = (product) => {
         let newCart = cart.map((item) =>
-            item._id === itemId ? { ...item, quantity: item.quantity - 1, quantityPrice: item.quantityPrice - item.price } : item
+            item._id === product._id ? { ...item, quantity: item.quantity - 1, quantityPrice: item.quantityPrice - item.price } : item
         ).filter((item) => item.quantity > 0); // remove item if quantity reach 0
 
         setCart(newCart);
@@ -159,7 +177,7 @@ export const CartProvider = ({ children }) => {
     // Load cart when component mounts
     useEffect(() => {
         loadCartItems();
-        fetchProductsNames();
+        // fetchProductsNames();
     }, []);
 
     return (

@@ -35,8 +35,9 @@ const styles = {
   },
   pageText: {
     fontFamily: 'rubik',
-    fontSize: 12,
+    fontSize: 10,
     marginBottom: 2,
+    textAlign: 'center',
   }
 };
 
@@ -56,7 +57,7 @@ const BarcodePDF = ({ variant, stock, billName }) => {
         const barcodeDataURL = canvas.toDataURL("image/png");
 
         return (
-          <Page key={index} style={styles.page} size={{ width: 216, height: 120 }}>
+          <Page key={index} style={styles.page} size={{ width: 216, height: 100 }}>
             <View style={styles.pageView}>
               <Text style={styles.pageText}>{billName}</Text>
               <Image

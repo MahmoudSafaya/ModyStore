@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import axios from '../../../api/axios';
+import { axiosMain } from '../../../api/axios';
 import ParticlesBg from '../../../shared/components/ParticlesBg';
 import modyStoreLogo from '../../../assets/diva-store-logo.png'
 
@@ -19,7 +19,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post('/auth/login', { email: email, password: password });
+      const response = await axiosMain.post('/auth/login', { email: email, password: password });
       login(response.data.accessToken);
     } catch (err) {
       setError('اسم المستخدم او الرقم السري غير صحيح!');

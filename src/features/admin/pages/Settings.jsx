@@ -1,5 +1,6 @@
 import React from 'react'
 import { A_Register, A_AddCategory, A_AddressBlock, A_UpdateShippingPrice, A_SenderAddress } from '../components'
+import { Toaster } from 'react-hot-toast'
 
 const Settings = () => {
   return (
@@ -11,6 +12,8 @@ const Settings = () => {
         <A_UpdateShippingPrice />
       </div>
       <A_SenderAddress />
+
+      <Toaster toastOptions={{ duration: 3000 }} />
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 import { useApp } from '../../../context/AppContext';
 
 const Checkout = () => {
-    const { cart, totalPrice } = useCart();
+    const { isCartOpen, cart, totalPrice } = useCart();
     const { shippingPrice } = useApp();
 
     return (
@@ -20,7 +20,9 @@ const Checkout = () => {
                     {
                         (cart.length > 0) ? (
                             <div>
-                                <S_CartItems />
+                                <div className={`${isCartOpen ? 'hidden md:block' : ''}`}>
+                                    <S_CartItems />
+                                </div>
 
                                 {/* Total Price */}
                                 <div className='mt-3'>
@@ -50,7 +52,7 @@ const Checkout = () => {
                                     <MdOutlineRemoveShoppingCart className='w-26 h-26 text-gray-200 drop-shadow-xs' />
                                 </div>
                                 <p>لا توجد منتجات في سلة المشتريات.</p>
-                                <Link to='/products' className='max-w-max py-2 px-4 bg-indigo-500 text-white rounded-full duration-500 hover:be-indigo-600'>العودة الى التسوق</Link>
+                                <Link to='/' className='max-w-max py-2 px-4 bg-indigo-500 text-white rounded-full duration-500 hover:be-indigo-600'>العودة الى التسوق</Link>
                             </div>
                         )
                     }

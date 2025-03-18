@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from "../../../api/axios";
+import { axiosAuth } from "../../../api/axios";
 import { Search } from "lucide-react";
 import { Toaster } from "react-hot-toast";
-import { useApp } from "../../../context/AppContext";
 
 const CustomDatePicker = ({ startDate, endDate, onChange }) => {
   return (
@@ -36,7 +35,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
 
   const handleQuery = async () => {
     try {
-      const res = await axios.post('/orders/search', {
+      const res = await axiosAuth.post('/orders/search', {
         receiverphone: receiverPhone,
         billCode: trackingNumber,
         txlogisticId: orderNumber,

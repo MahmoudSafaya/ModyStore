@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useParams, Link } from "react-router-dom";
 import { Filter } from "lucide-react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { S_ProductCard, S_ProductFilter } from "../components";
-import axios from "../../../api/axios";
+import { axiosMain } from "../../../api/axios";
 import Loading from "../../../shared/components/Loading";
+import { IoStorefrontOutline } from "react-icons/io5";
 
 const Products = () => {
 
@@ -20,8 +21,7 @@ const Products = () => {
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
     // Extract the category ID from the query string
-    // const categoryId = searchParams.get("category");
-    const {categoryId} = useParams();
+    const { categoryId } = useParams();
 
     // Fetch products with debouncing
     useEffect(() => {
@@ -32,7 +32,7 @@ const Products = () => {
                 if (categoryId) {
                     params.category = categoryId; // Add categoryId to the query params
                 }
-                const response = await axios.get('/products', {
+                const response = await axiosMain.get('/products', {
                     params,
                 });
                 setProducts(response.data.Products);
@@ -61,7 +61,7 @@ const Products = () => {
     useEffect(() => {
         const fetchSubCategories = async () => {
             try {
-                const response = await axios.get(`/categories/${categoryId}/subcategories`);
+                const response = await axiosMain.get(`/categories/${categoryId}/subcategories`);
                 setSubCategories(response.data);
             } catch (error) {
                 console.error(`Error fetching subcategories for ${categoryId}:`, error);
@@ -138,16 +138,28 @@ const Products = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row items-start gap-8">
-                <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {products && products.filter(product => product.isActive).map((product, index) => {
-                        return (
-                            <div key={index}>
-                                <S_ProductCard product={product} />
+            <div className="w-full">
+                    {products && products.length > 0 ? (
+                        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {
+                                products.filter(product => product.isActive).map((product, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <S_ProductCard product={product} />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center gap-6 w-full">
+                            <div>
+                                <IoStorefrontOutline className="w-20 h-20 opacity-25" />
                             </div>
-                        )
-                    })}
-                </div>
+                            <p className="text-2xl font-medium text-center">لا يوجد منتجات هنا في الوقت الحالي</p>
+                            <Link to='/' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">الصفحة الرئيسية</Link>
+                        </div>
+                    )}
             </div>
 
 

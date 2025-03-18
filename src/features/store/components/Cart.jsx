@@ -9,7 +9,7 @@ const Cart = () => {
 
   return (
     <div className={`${isCartOpen ? 'fixed' : 'hidden'} z-100`}>
-      <div className='w-full lg:w-1/4 h-screen fixed top-0 left-0 z-50 bg-white shadow-md flex flex-col'>
+      <div className='w-full md:w-1/2 lg:w-1/4 h-screen fixed top-0 left-0 z-50 bg-white shadow-md flex flex-col'>
         <div className='flex items-center justify-between text-gray-700 p-2 md:p-4 lg:p-6 border-b border-gray-300'>
           <h2 className='font-bold text-xl'>قائمة التسوق</h2>
           <div className='flex items-center gap-1 cursor-pointer duration-500 hover:text-gray-800 hover:bg-indigo-100 py-2 px-4 rounded-full' onClick={toggleCart}>

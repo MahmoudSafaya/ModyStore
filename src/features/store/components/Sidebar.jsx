@@ -4,10 +4,12 @@ import { useLocation } from "react-router-dom";
 import { useStore } from "../../../context/StoreContext";
 import { Menu, X, ChevronsRight, ChevronsLeft, ChevronDown } from "lucide-react";
 import modyStoreLogo from '../../../assets/diva-store-logo.png'
+import { useApp } from '../../../context/AppContext';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
-  const { storeMainNav, mainCategories, subcategories, getSubcategories } = useStore();
+  const { storeMainNav } = useStore();
+  const { mainCategories, subcategories, getSubcategories } = useApp();
   const [isMain, setIsMain] = useState(false);
 
   const baseUrl = import.meta.env.VITE_SERVER_URL;
@@ -64,14 +66,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                   <div key={category._id} className="relative">
                     {/* Main Category */}
                     <div
-                      // onMouseEnter={() => {
-                      //   isOpen && setOpenDropdown(category._id);
-                      // }}
                       onLoad={() => getSubcategories(category._id)}
-                    // onMouseLeave={() => setOpenDropdown(null)}
                     >
                       <div className='flex items-center justify-between lg:justify-center flex-grow duration-500 hover:bg-slate-100'>
-                        <Link to={`/products/?category=${category._id}`} className={`group flex items-center flex-grow py-4 hover:text-indigo-600 cursor-pointer duration-500 px-6 gap-4 ${location.pathname === category.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
+                        <Link to={`/products/category/${category._id}`} className={`group flex items-center flex-grow py-4 hover:text-indigo-600 cursor-pointer duration-500 px-6 gap-4 ${location.pathname === category.link ? 'text-indigo-600 bg-slate-100' : ''}`}>
                           <div className={`w-[34px] h-[34px] flex justify-center items-center rounded-lg`}>
                             <img
                               src={encodeURI(`${baseUrl}/${category.icon.url.replace(/\\/g, '/')}`)}
@@ -79,9 +77,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                               className="w-8 h-8 rounded-lg"
                             />
                           </div>
-                          {/* {isOpen && (<div className="text-gray-700">
-                            <p className="text-base font-semibold">{category.name}</p>
-                          </div>)} */}
                           <div className={`text-gray-700 ${isOpen ? '' : 'lg:hidden'}`}>
                             <p className="text-base font-semibold">{category.name}</p>
                           </div>

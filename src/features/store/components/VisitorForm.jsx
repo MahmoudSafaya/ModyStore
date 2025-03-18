@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { visitorOrderSchema } from "../../../schemas/addressesSchema";
-import axios from "../../../api/axios";
+import { axiosMain } from "../../../api/axios";
 import { useCart } from "../../../context/CartContext";
 import toast, { Toaster } from 'react-hot-toast';
 import JNTAddresses from "../../../shared/components/JNTAddresses";
 import { useApp } from "../../../context/AppContext";
+import CryptoJS from 'crypto-js';
 
 const OrderForm = () => {
     const { cart, setCart, totalPrice, setTotalPrice } = useCart();
-    const { shippingPrice, senderAddress } = useApp();
+    const { shippingPrice, fetchSenderAddress, senderAddress } = useApp();
 
     const navigate = useNavigate();
 
@@ -19,6 +20,10 @@ const OrderForm = () => {
         setCart([]);
         setTotalPrice(0);
     }
+
+    useEffect(() => {
+        fetchSenderAddress();
+    }, []);
 
     // Initial Order Data (including receiver object)
     const initialValues = {
@@ -37,7 +42,7 @@ const OrderForm = () => {
     // Handle Form Submission
     const submitViritorOrder = async (values, { setSubmitting, resetForm }) => {
 
-        if(cart.length < 1) {
+        if (cart.length < 1) {
             toast('من فضلك, اختر منتج أولآ قبل تسجيل طلبك.', {
                 icon: 'ⓘ'
             });
@@ -96,10 +101,10 @@ const OrderForm = () => {
                 })
             }),
         };
-
-
         try {
-            const response = await axios.post('/visitors/orders/', visitorOrderData);
+            console.log(senderAddress);
+            console.log(visitorOrderData);
+            const response = await axiosMain.post('/visitors/orders/', visitorOrderData);
             if (response.status === 201) {
                 toast.success('تم تسجيل طلبك بنجاح!');
                 emptyCart();
@@ -107,8 +112,46 @@ const OrderForm = () => {
             setSubmitting(false);
             resetForm();
             values.receiver.prov = '';
+            addToFavorites(visitorOrderData);
         } catch (error) {
             console.error(error);
+        }
+    };
+
+    // Secret key for hashing (keep this secure)
+    const SECRET_KEY = import.meta.env.VITE_FAVS_SECRET_KEY;
+
+    // Function to encrypt data
+    const encryptData = (data) => {
+        return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
+    };
+
+    // Function to decrypt data
+    const decryptData = (ciphertext) => {
+        const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+        return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    };
+
+    // Function to save favorites to local storage
+    const saveUserOrders = (orderItems) => {
+        const encryptedFAVs = encryptData(orderItems);
+        localStorage.setItem('signed-orders', encryptedFAVs);
+    };
+
+    // Add item to favorites
+    const addToFavorites = (orderItem) => {
+        const encryptedFAVs = localStorage.getItem('signed-orders');
+        if (!encryptedFAVs) {
+            saveUserOrders([orderItem]);
+            return;
+        }
+        try {
+            const existingOrders = decryptData(encryptedFAVs);
+            const newSignedOrders = [...existingOrders, orderItem];
+            saveUserOrders(newSignedOrders);
+        } catch (error) {
+            console.error('Failed to decrypt data:', error);
+            return null;
         }
     };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../../../api/axios';
+import { axiosAuth } from '../../../api/axios';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { blockedAddress } from '../../../schemas/addressesSchema';
 import { Toaster } from 'react-hot-toast';
@@ -24,11 +24,11 @@ const AddressBlock = () => {
 
     useEffect(() => {
         if (!unBlocking) {
-            axios.post("/addresses/seprated")
+            axiosAuth.post("/addresses/seprated")
                 .then(response => setFirstOptions(response.data.data.result))
                 .catch(error => console.error("Error fetching first options:", error));
         } else {
-            axios.post("/addresses/seprated", { "enabled": "0" })
+            axiosAuth.post("/addresses/seprated", { "enabled": "0" })
                 .then(response => setFirstOptions(response.data.data.result))
                 .catch(error => console.error("Error fetching first options:", error));
         }
@@ -37,11 +37,11 @@ const AddressBlock = () => {
     useEffect(() => {
         if (firstSelection) {
             if (!unBlocking) {
-                axios.post("/addresses/seprated", { Province: firstSelection })
+                axiosAuth.post("/addresses/seprated", { Province: firstSelection })
                     .then(response => setSecondOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching second options:", error));
             } else {
-                axios.post("/addresses/seprated", { Province: firstSelection, "enabled": "0" })
+                axiosAuth.post("/addresses/seprated", { Province: firstSelection, "enabled": "0" })
                     .then(response => setSecondOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching second options:", error));
             }
@@ -56,11 +56,11 @@ const AddressBlock = () => {
     useEffect(() => {
         if (secondSelection) {
             if (!unBlocking) {
-                axios.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
+                axiosAuth.post("/addresses/seprated", { Province: firstSelection, City: secondSelection })
                     .then(response => setThirdOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching third options:", error));
             } else {
-                axios.post("/addresses/seprated", { Province: firstSelection, City: secondSelection, "enabled": "0" })
+                axiosAuth.post("/addresses/seprated", { Province: firstSelection, City: secondSelection, "enabled": "0" })
                     .then(response => setThirdOptions(response.data.data.result))
                     .catch(error => console.error("Error fetching third options:", error));
             }
@@ -83,7 +83,7 @@ const AddressBlock = () => {
     const handleBlockAddress = async (values, actions) => {
         if (!unBlocking) {
             try {
-                await axios.post('/addresses/changestatus', values);
+                await axiosAuth.post('/addresses/changestatus', values);
                 deleteNotify('تم حظر المنطقة بنجاح!');
             } catch (error) {
                 console.error(error);
@@ -93,8 +93,9 @@ const AddressBlock = () => {
             }
         } else {
             try {
-                await axios.post('/addresses/changestatus', { ...values, enabled: '1' });
+                await axiosAuth.post('/addresses/changestatus', { ...values, enabled: '1' });
                 successNotify('تم فك الحظر عن المنظقة بنجاح.!');
+                setUnBlocking(false);
             } catch (error) {
                 console.error(error);
             }
