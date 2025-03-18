@@ -68,13 +68,13 @@ const HandleStorage = () => {
             : <p>إضافة إلى المخزون</p>}
         </div>
       </div>
-      <div className="flex items-center justify-center mt-8 text-gray-800">
+      <div className="flex items-center justify-center flex-wrap gap-4 md:gap-0 mt-8 text-gray-800">
         {result && Object.keys(result).map((item, index) => {
           if (item === '_id') return null;
           return (
             <div key={index} className="flex flex-col gap-2">
               <p className="font-semibold border-b border-gray-300 pb-2 text-center px-8">{item}</p>
-              <p className="text-center px-8">{result[item] || '-'}</p>
+              <p className="text-center px-8">{result[item] || (item === 'stock' ? '0' : '-')}</p>
             </div>
           );
         })}
