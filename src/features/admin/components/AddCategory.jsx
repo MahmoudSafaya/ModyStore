@@ -64,6 +64,7 @@ const AddCategory = () => {
             setImagePreview(null);
             setIconPreview(null);
             setSelectedCategory(null);
+            setOpenDropdown(null);
         } else {
             // Create a new Category
             Object.keys(values).forEach((key) => {
