@@ -27,24 +27,24 @@ const ProductPrice = ({ values, setFieldValue, discount, setDiscount, cutPrice, 
     return (
         <div className="custom-bg-white mt-8">
             <div className="custom-header">تسعير المنتج</div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 relative">
                 <label htmlFor="product-price" className="custom-label-field">السعر الرسمي</label>
                 <Field name="price" type="number" id='product-price' className="custom-input-field" placeholder='اكتب السعر الأساسي للمنتج' />
-                <ErrorMessage name="price" component="div" className="text-red-500" />
+                <ErrorMessage name="price" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
             </div>
 
             <div className="flex flex-col gap-2 my-8">
                 <p className="custom-label-field"> نوع الخصم</p>
                 <div className="flex justify-between items-center gap-4 flex-wrap">
-                    <button type='button' className="flex grow justify-center items-center gap-2 border border-gray-300 rounded-lg p-4" onClick={() => setDiscount('none')}>
+                    <button type='button' name='no-discount-btn' className="flex grow justify-center items-center gap-2 border border-gray-300 rounded-lg p-4" onClick={() => setDiscount('none')}>
                         <span className={`w-5 h-5 rounded-full duration-500 ${discount === 'none' ? 'border-6 border-indigo-500' : 'border border-gray-300'}`}></span>
                         <span>بدون خصم</span>
                     </button>
-                    <button type='button' className="flex grow justify-center items-center gap-2 border border-gray-300 rounded-lg p-4" onClick={() => setDiscount('percentage')}>
+                    <button type='button' name='percentage-btn' className="flex grow justify-center items-center gap-2 border border-gray-300 rounded-lg p-4" onClick={() => setDiscount('percentage')}>
                         <span className={`w-5 h-5 rounded-full duration-500 ${discount === 'percentage' ? 'border-6 border-indigo-500' : 'border border-gray-300'}`}></span>
                         <span>نسبة محددة %</span>
                     </button>
-                    <button type='button' className="flex grow justify-center items-center gap-2 border border-gray-300 rounded-lg p-4" onClick={() => setDiscount('fixed-price')}>
+                    <button type='button' name='fixed-price-btn' className="flex grow justify-center items-center gap-2 border border-gray-300 rounded-lg p-4" onClick={() => setDiscount('fixed-price')}>
                         <span className={`w-5 h-5 rounded-full duration-500 ${discount === 'fixed-price' ? 'border-6 border-indigo-500' : 'border border-gray-300'}`}></span>
                         <span>سعر محدد $</span>
                     </button>

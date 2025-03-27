@@ -3,6 +3,9 @@ import { axiosAuth } from "../../../api/axios";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
 import { ImBoxAdd, ImBoxRemove } from "react-icons/im";
+import { MdOutlinePrint } from "react-icons/md";
+import { BarcodePDF } from "../components/BillOfLading";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const HandleStorage = () => {
   const [scanType, setScanType] = useState("");
@@ -30,7 +33,7 @@ const HandleStorage = () => {
       // setBarcodeInput("");
     } catch (error) {
       console.error(error);
-      errorNotify("حدث خطأ أثناء تحديث المخزون!");
+      errorNotify("الباركود خطأ, تأكد منه وحاول مرة أخري.");
     }
   };
 
@@ -39,7 +42,7 @@ const HandleStorage = () => {
     if (barcodeInput.trim()) {
       handleScan(barcodeInput, type);
     } else {
-      errorNotify("اكتب الباركود أولًا!");
+      errorNotify("اكتب / افحص الباركود أولًا!");
     }
   };
 
@@ -66,7 +69,7 @@ const HandleStorage = () => {
       <p>اختر العملية المراد تنفيذها, ثم افحص الباركود.</p>
 
       <div className="custom-bg-white mt-8">
-        <form className="flex items-center justify-between flex-col md:flex-row gap-4">
+        <form className="flex items-center justify-between flex-col md:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
           <div className="flex-grow flex items-center gap-2">
             <label>الباركود:</label>
             <input
@@ -82,6 +85,7 @@ const HandleStorage = () => {
           <div className="flex items-center gap-4">
             <button
               type="button"
+              name="withdraw-btn"
               className="min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-gray-600 text-white duration-500 hover:bg-gray-700"
               onClick={() => handleAction("withdraw")}
             >
@@ -89,6 +93,7 @@ const HandleStorage = () => {
             </button>
             <button
               type="button"
+              name="deposit-btn"
               className="min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-green-400 text-white duration-500 hover:bg-green-500"
               onClick={() => handleAction("deposit")}
             >
@@ -133,6 +138,7 @@ const HandleStorage = () => {
                   {["الباركود", "المخزون", "الاسم", "المقاس", "اللون", "السعر"].map((header) => (
                     <th key={header} className="p-3">{header}</th>
                   ))}
+                  <th>الإجراءات</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,6 +149,18 @@ const HandleStorage = () => {
                   <td className="p-3">{result.size || "-"}</td>
                   <td className="p-3">{result.color || "-"}</td>
                   <td className="p-3">{result.price || "-"}</td>
+                  <td className="p-3">
+                    <PDFDownloadLink
+                      document={<BarcodePDF
+                        variant={result.barCode}
+                        stock={result.stock}
+                        billName={`${result.name.slice(0, 20)} ${result.size} (${result.color})`}
+                      />}
+                      fileName="barcode.pdf"
+                    >
+                      <MdOutlinePrint className="w-6 h-6 mx-auto cursor-pointer duration-500 hover:text-green-400 hover:scale-110" />
+                    </PDFDownloadLink>
+                  </td>
                 </tr>
               </tbody>
             </table>

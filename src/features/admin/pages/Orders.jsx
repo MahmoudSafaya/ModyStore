@@ -17,8 +17,10 @@ const Orders = () => {
       const response = await axiosAuth.get(`/jnt/orders/?page=${page}`);
       const data = response.data;
       setOrders(data.orders);
-      setCurrentPage(data.currentPage);
-      setTotalPages(data.totalPages);
+      if (data.length > 0) {
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+      }
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -51,7 +53,7 @@ const Orders = () => {
       <A_OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} />
 
       {/* Toaster notify*/}
-      <Toaster />
+      <Toaster toastOptions={{ duration: 3000 }} />
     </div>
   );
 };

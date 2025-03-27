@@ -7,7 +7,7 @@ import { A_OrdersTable, A_SearchFeature } from "../components";
 
 const UnconfirmedOrders = () => {
     const { setOrderPopup, getUnconfirmedOrders, unconfirmedOrders, setUnconfirmedOrders, currentPage, setCurrentPage, totalPages } = useOrders();
-    const { deleteNotify } = useApp();
+    const { deleteNotify, errorNotify } = useApp();
 
     useEffect(() => {
         getUnconfirmedOrders(currentPage);
@@ -22,6 +22,7 @@ const UnconfirmedOrders = () => {
             setOrderPopup({ display: false, editing: false, info: {} })
         } catch (error) {
             console.error(error);
+            errorNotify('حدث خطأأثناء الحذف, حاول مرة اخري!')
         }
     }
 
@@ -36,7 +37,7 @@ const UnconfirmedOrders = () => {
             <A_OrdersTable orders={unconfirmedOrders} setOrders={setUnconfirmedOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={getUnconfirmedOrders} />
 
             {/* Toaster notify*/}
-            <Toaster />
+            <Toaster toastOptions={{ duration: 3000 }} />
         </div>
 
     );

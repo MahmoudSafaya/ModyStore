@@ -17,12 +17,12 @@ const ProductDetails = ({values, setFieldValue}) => {
     return (
         <div className="custom-bg-white">
             <h2 className='custom-header'>معلومات المنتج</h2>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 relative">
                 <label className="custom-label-field" htmlFor="name">اسم المنتج:</label>
                 <Field id="name" name="name" type="text" className="custom-input-field" />
-                <ErrorMessage name="name" component="div" className="text-red-400" />
+                <ErrorMessage name="name" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
             </div>
-            <div className="flex flex-col gap-2 mt-6">
+            <div className="flex flex-col gap-2 mt-6 relative">
                 <label htmlFor="description" className="mb-1 custom-label-field">وصف المنتج</label>
                 <ReactQuill
                     id='description'
@@ -31,7 +31,7 @@ const ProductDetails = ({values, setFieldValue}) => {
                     modules={modules}
                     placeholder="اكتب وصف مميز للمنتج..."
                 />
-                <ErrorMessage name="description" component="div" className="text-red-400" />
+                <ErrorMessage name="description" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
             </div>
         </div>
     )

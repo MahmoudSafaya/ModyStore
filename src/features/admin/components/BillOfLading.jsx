@@ -42,10 +42,10 @@ const styles = {
 };
 
 // Component to create PDF with the barcode
-const BarcodePDF = ({ variant, stock, billName }) => {
+export const BarcodePDF = ({ variant, stock, billName }) => {
   return (
     <Document>
-      {Array.from({ length: stock }, (_, index) => {
+      {Array.from({ length: stock > 0 ? stock : 1 }, (_, index) => {
         const canvas = document.createElement("canvas");
         JsBarcode(canvas, variant, {
           format: "CODE128",
@@ -79,11 +79,9 @@ const BillOfLading = ({ variant, stock, billName }) => {
       <PDFDownloadLink
         document={<BarcodePDF variant={variant} stock={stock} billName={billName} />}
         fileName="barcode.pdf"
-        className="w-full md:w-auto inline-block bg-green-500 text-slate-100 font-bold p-2 px-4 rounded-lg shabdow-md duration-500 hover:bg-green-600 cursor-pointer"
+        className="w-full md:w-auto inline-block bg-green-500 text-slate-100 font-bold p-2 px-4 rounded-lg shadow-md duration-500 hover:bg-green-600 cursor-pointer"
       >
-        {({ blob, url, loading, error }) =>
-          loading ? "جار إنشاء الملف..." : "طباعة كود شحن"
-        }
+        {({ loading }) => (loading ? "جار إنشاء الملف..." : "طباعة كود شحن")}
       </PDFDownloadLink>
     </div>
   );

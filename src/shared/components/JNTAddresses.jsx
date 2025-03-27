@@ -109,9 +109,9 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
   if (loading) return <Loading />;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Name */}
-      <div>
+      <div className="relative">
         <label className="custom-label-field" htmlFor={`${parent}.name`}>الاسم: <span className="text-red-500">*</span></label>
 
         <Field
@@ -124,35 +124,35 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           readOnly={!isEditable[`${parent}.name`]}
           onFocus={() => handleFocus(`${parent}.name`)}
         />
-        <ErrorMessage name={`${parent}.name`} component="div" className="text-red-400 mt-1 text-sm" />
+        <ErrorMessage name={`${parent}.name`} component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
       </div>
 
       {/* Mobile */}
-      <div>
+      <div className="relative">
         <label className="custom-label-field" htmlFor={`${parent}.mobile`}>رقم الهاتف: <span className="text-red-500">*</span></label>
         <Field
           type="text"
           id={`${parent}.mobile`}
           name={`${parent}.mobile`}
-          autoComplete="diff-password"
+          autoComplete="new-password"
           className="custom-input-field"
           placeholder="ادخل رقم موبيل"
         />
-        <ErrorMessage name={`${parent}.mobile`} component="div" className="text-red-400 mt-1 text-sm" />
+        <ErrorMessage name={`${parent}.mobile`} component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
       </div>
 
       {/* Mobile */}
-      <div>
+      <div className="relative">
         <label className="custom-label-field" htmlFor={`${parent}.alternateReceiverPhoneNo`}>رقم الهاتف 2: </label>
         <Field
           type="text"
           id={`${parent}.alternateReceiverPhoneNo`}
           name={`${parent}.alternateReceiverPhoneNo`}
-          autoComplete="diff-password"
+          autoComplete="new-password"
           className="custom-input-field"
           placeholder="ادخل رقم موبيل اخر"
         />
-        <ErrorMessage name={`${parent}.alternateReceiverPhoneNo`} component="div" className="text-red-400 mt-1 text-sm" />
+        <ErrorMessage name={`${parent}.alternateReceiverPhoneNo`} component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
       </div>
 
       {/* Province */}
@@ -166,7 +166,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           name={`${parent}.prov`}
           placeholder="اسم المحافظة"
           className="custom-input-field"
-          autoComplete="diff-password"
+          autoComplete="new-password"
           value={firstSelection}
           onChange={(e) => {
             setFirstSelection(e.target.value);
@@ -182,7 +182,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
         <ErrorMessage
           name={`${parent}.prov`}
           component="div"
-          className="text-red-400 mt-1 text-sm"
+          className="text-red-400 text-xs absolute -bottom-5 right-1"
         />
         {showFirstOptions && (
           <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
@@ -213,7 +213,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           id={`${parent}.city`}
           name={`${parent}.city`}
           placeholder="اسم المدينة"
-          autoComplete="diff-password"
+          autoComplete="new-password"
           className="custom-input-field"
           value={secondSelection}
           onChange={(e) => {
@@ -228,7 +228,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           }}
           disabled={!firstSelection}
         />
-        <ErrorMessage name={`${parent}.city`} component="div" className="text-red-400 mt-1 text-sm" />
+        <ErrorMessage name={`${parent}.city`} component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
         {showSecondOptions && (
           <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
             {secondOptions.filter(item => item.includes(secondSelection)).map(option => (
@@ -252,7 +252,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           id={`${parent}.area`}
           name={`${parent}.area`}
           placeholder="اسم المنظقة"
-          autoComplete="diff-password"
+          autoComplete="new-password"
           className="custom-input-field"
           value={thirdSelection}
           onChange={(e) => {
@@ -266,7 +266,7 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
           }}
           disabled={!secondSelection}
         />
-        <ErrorMessage name={`${parent}.area`} component="div" className="text-red-400 mt-1 text-sm" />
+        <ErrorMessage name={`${parent}.area`} component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
         {showThirdOptions && (
           <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
             {thirdOptions.filter(item => item.includes(thirdSelection)).map(option => (
@@ -283,17 +283,17 @@ const JNTAddresses = ({ values, isSubmitting, parent, setFieldValue, handleBlur 
       </div>
 
       {/* Street */}
-      <div>
+      <div className="relative">
         <label className="custom-label-field" htmlFor={`${parent}.street`}>العنوان: <span className="text-red-500">*</span></label>
         <Field
           type="text"
           id={`${parent}.street`}
           name={`${parent}.street`}
-          autoComplete="diff-password"
+          autoComplete="new-password"
           className="custom-input-field"
           placeholder="العنوان بالكامل"
         />
-        <ErrorMessage name={`${parent}.street`} component="div" className="text-red-400 mt-1 text-sm" />
+        <ErrorMessage name={`${parent}.street`} component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
       </div>
     </div>
   )

@@ -41,7 +41,7 @@ const Checkout = () => {
                                     <div className='flex items-center justify-between py-3'>
                                         <h4 className='font-bold'>الإجمالي</h4>
                                         <p className='text-indigo-500 font-bold'>
-                                            {totalPrice + shippingPrice} <span className='text-sm'>EGP</span>
+                                            {shippingPrice ? (totalPrice + shippingPrice) : '...'} <span className='text-sm'>EGP</span>
                                         </p>
                                     </div>
                                 </div>

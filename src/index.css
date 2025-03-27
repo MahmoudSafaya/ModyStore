@@ -62,9 +62,20 @@ button {
     @apply block text-gray-700 font-medium mb-2
 }
 
-.admin-home-echarts {
-    min-width: 200px;
-    max-width: 400px;
+.spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(farthest-side, #474bff 94%, #0000) top/9px 9px no-repeat,
+        conic-gradient(#0000 30%, #474bff);
+    -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 9px), #000 0);
+    animation: spinner-c7wet2 1s infinite linear;
+}
+
+@keyframes spinner-c7wet2 {
+    100% {
+        transform: rotate(1turn);
+    }
 }
 
 .requird-tag {
@@ -72,7 +83,7 @@ button {
     margin-right: 5px;
 }
 
-.ql-editor.ql-blank {
+.ql-editor {
     min-height: 300px;
     text-align: right !important;
 }
@@ -117,26 +128,27 @@ button {
 }
 
 @layer utilities {
+
     /* Custom scrollbar styles */
     .scrollbar::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+        width: 8px;
+        height: 8px;
     }
-  
+
     .scrollbar::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 4px;
+        background: #f1f1f1;
+        border-radius: 4px;
     }
-  
+
     .scrollbar::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 4px;
+        background: #888;
+        border-radius: 4px;
     }
-  
+
     .scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #555;
+        background: #555;
     }
-  }
+}
 
 @keyframes scanTypeAnime {
     0% {

@@ -74,8 +74,16 @@ const ProductFilter = React.memo(({ showFilters, searchParams, setSearchParams }
                     </div>
 
                     <div className="flex flex-col items-start gap-2">
-                        <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("ratings")}> ترتيب حسب: التقيمات</button>
-                        <button className="whitespace-nowrap duration-300 hover:text-indigo-400" onClick={() => handleSort("price")}>ترتيب حسب: السعر</button>
+                        <button
+                            type='button'
+                            name='filter-sort-btn'
+                            className="whitespace-nowrap duration-300 hover:text-indigo-400"
+                            onClick={() => handleSort("ratings")}> ترتيب حسب: التقيمات</button>
+                        <button
+                            type='button'
+                            name='filter-price-btn'
+                            className="whitespace-nowrap duration-300 hover:text-indigo-400"
+                            onClick={() => handleSort("price")}>ترتيب حسب: السعر</button>
                     </div>
                     <div className="flex items-center gap-2">
                         <label className=" whitespace-nowrap">عدد المنتجات:</label>

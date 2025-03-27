@@ -11,7 +11,7 @@ import CryptoJS from 'crypto-js';
 
 const OrderForm = () => {
     const { cart, setCart, totalPrice, setTotalPrice } = useCart();
-    const { shippingPrice, fetchSenderAddress, senderAddress } = useApp();
+    const { shippingPrice, fetchSenderAddress, senderAddress, errorNotify } = useApp();
 
     const navigate = useNavigate();
 
@@ -182,34 +182,43 @@ const OrderForm = () => {
                 validationSchema={visitorOrderSchema}
                 onSubmit={submitViritorOrder}
             >
-                {({ values, setFieldValue, handleBlur, isSubmitting }) => (
-                    <Form className="space-y-4">
-                        <JNTAddresses values={values} isSubmitting={isSubmitting} parent='receiver' setFieldValue={setFieldValue} handleBlur={handleBlur} />
+                {({ values, setFieldValue, handleBlur, isSubmitting, errors }) => {
+                    useEffect(() => {
+                        if (isSubmitting && Object.keys(errors).length > 0) {
+                            errorNotify('من فضلك, املآ الخانات المطلوبة اولآ!')
+                        }
+                    }, [isSubmitting, errors]);
 
-                        {/* Additional Info */}
-                        <div>
-                            <label className="custom-label-field">ملاحظات عامة</label>
-                            <Field
-                                as="textarea"
-                                name="receiver.additionalInfo"
-                                className="custom-input-field resize-none"
-                                autoComplete="diff-password"
-                                placeholder="اكتب ملاحظاتك..."
-                                rows="4"
-                            />
-                            <ErrorMessage name="receiver.additionalInfo" component="div" className="text-red-400 mt-1 text-sm" />
-                        </div>
+                    return (
+                        <Form className="space-y-6">
+                            <JNTAddresses values={values} isSubmitting={isSubmitting} parent='receiver' setFieldValue={setFieldValue} handleBlur={handleBlur} />
 
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            className="w-full bg-indigo-500 text-white py-2 px-4 rounded-full hover:bg-indigo-600 disabled:bg-gray-400"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? "تسجيل الاوردر..." : "تسجيل"}
-                        </button>
-                    </Form>
-                )}
+                            {/* Additional Info */}
+                            <div>
+                                <label className="custom-label-field">ملاحظات عامة</label>
+                                <Field
+                                    as="textarea"
+                                    name="receiver.additionalInfo"
+                                    className="custom-input-field resize-none"
+                                    autoComplete="new-password"
+                                    placeholder="اكتب ملاحظاتك..."
+                                    rows="4"
+                                />
+                                <ErrorMessage name="receiver.additionalInfo" component="div" className="text-red-400 mt-1 text-sm" />
+                            </div>
+
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                name="visitor-sign-btn"
+                                className="w-full bg-indigo-500 text-white py-2 px-4 rounded-full hover:bg-indigo-600 disabled:bg-gray-400"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "تسجيل الاوردر..." : "تسجيل"}
+                            </button>
+                        </Form>
+                    );
+                }}
             </Formik>
 
             {/* Success notify*/}

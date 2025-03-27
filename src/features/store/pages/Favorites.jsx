@@ -41,6 +41,8 @@ const Favorites = () => {
               <div key={product._id}>
                 <div className="mb-4">
                   <button
+                    type='button'
+                    name='favs-delete-btn'
                     onClick={() => removeFromFavorites(product._id)}
                     className="flex items-center gap-1 text-gray-500 duration-500 hover:text-gray-700 text-lg"
                   >
@@ -48,7 +50,7 @@ const Favorites = () => {
                     <span>حذف من القائمة</span>
                   </button>
                 </div>
-                
+
                 <ProductCard product={product} />
               </div>
             )

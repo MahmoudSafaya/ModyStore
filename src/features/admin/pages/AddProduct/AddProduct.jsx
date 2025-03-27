@@ -27,7 +27,7 @@ const AddProduct = () => {
     const [loading, setLoading] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState();
 
-    const { successNotify } = useApp();
+    const { successNotify, errorNotify } = useApp();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -60,13 +60,13 @@ const AddProduct = () => {
         }
     }, [paramID]);
 
-    
+
     useEffect(() => {
         if (paramID && paramID.length > 10) {
-          navigate(`${location.pathname}?product=${paramID}`, { replace: true });
+            navigate(`${location.pathname}?product=${paramID}`, { replace: true });
         }
-      }, [paramID]); // Ensure paramID is in the dependency array
-      
+    }, [paramID]); // Ensure paramID is in the dependency array
+
 
     const handleThumbnailUpload = (e) => {
         const file = e.currentTarget.files[0];
@@ -114,7 +114,7 @@ const AddProduct = () => {
             });
 
             variations.forEach((variant, index) => {
-                if (variant.stock) { // Ensure stock exists before adding variant
+                if (variant.stock >= 0) { // Ensure stock exists before adding variant
                     if (variant.barCode) formData.append(`variants[${index}][barCode]`, variant.barCode);
                     if (variant.color) formData.append(`variants[${index}][color]`, variant.color);
                     if (variant.size) formData.append(`variants[${index}][size]`, variant.size);
@@ -211,90 +211,97 @@ const AddProduct = () => {
                 validationSchema={ProductSchema}
                 onSubmit={handleSubmit}
             >
-                {({ values, setFieldValue, isSubmitting }) => (
-                    <Form>
-                        <div className="flex items-between flex-col md:flex-row gap-4 md:gap-8 mb-8">
-                            <div className="w-full md:w-2/3">
-                                {/* Product name and description */}
-                                <ProductDetails values={values} setFieldValue={setFieldValue} />
+                {({ values, setFieldValue, isSubmitting, errors }) => {
+                    useEffect(() => {
+                        if (isSubmitting && Object.keys(errors).length > 0) {
+                            errorNotify('من فضلك, املآ الخانات المطلوبة اولآ!')
+                        }
+                    }, [isSubmitting, errors]);
+                    return (
+                        <Form>
+                            <div className="flex items-between flex-col md:flex-row gap-4 md:gap-8 mb-8">
+                                <div className="w-full md:w-2/3">
+                                    {/* Product name and description */}
+                                    <ProductDetails values={values} setFieldValue={setFieldValue} />
 
-                                {/* product images */}
-                                <ProductImages setFieldValue={setFieldValue} isSubmitting={isSubmitting} productImages={productImages} setProductImages={setProductImages} removedImages={removedImages} setRemovedImages={setRemovedImages} updatedImages={updatedImages} setUpdatedImages={setUpdatedImages} />
+                                    {/* product images */}
+                                    <ProductImages setFieldValue={setFieldValue} isSubmitting={isSubmitting} productImages={productImages} setProductImages={setProductImages} removedImages={removedImages} setRemovedImages={setRemovedImages} updatedImages={updatedImages} setUpdatedImages={setUpdatedImages} />
 
-                                {/* Pricing the product */}
-                                <ProductPrice values={values} setFieldValue={setFieldValue} discount={discount} setDiscount={setDiscount} cutPrice={cutPrice} setCutPrice={setCutPrice} />
+                                    {/* Pricing the product */}
+                                    <ProductPrice values={values} setFieldValue={setFieldValue} discount={discount} setDiscount={setDiscount} cutPrice={cutPrice} setCutPrice={setCutPrice} />
 
-                                {/* Variations */}
-                                <ProductVariations setFieldValue={setFieldValue} isSubmitting={isSubmitting} variations={variations} setVariations={setVariations} />
+                                    {/* Variations */}
+                                    <ProductVariations setFieldValue={setFieldValue} isSubmitting={isSubmitting} variations={variations} setVariations={setVariations} />
+                                </div>
+
+                                <div className="w-full md:w-1/3">
+                                    {/* Thumbnail Upload */}
+                                    <div className="max-w-md mx-auto custom-bg-white space-y-6">
+                                        <h2 className="custom-header">صوره المنتج الرئيسية</h2>
+                                        <div
+                                            className="relative flex items-center justify-center w-full h-32 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer bg-purple-100"
+                                        >
+                                            <input
+                                                type="file"
+                                                id="mainImage"
+                                                accept="image/*"
+                                                className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                                                onChange={(e) => {
+                                                    handleThumbnailUpload(e);
+                                                    setFieldValue('mainImage', e.currentTarget.files[0])
+                                                }}
+                                            />
+                                            {thumbnail ? (
+                                                <img src={thumbnail} alt="Thumbnail" className="h-full object-cover rounded-md" />
+                                            ) : (
+                                                <span className="text-purple-600 text-center">اضغط لتحميل صوره المنتج الرئيسية </span>
+                                            )}
+                                        <ErrorMessage name="mainImage" component="div" className="text-red-400 text-xs absolute -bottom-5 right-2" />
+                                        </div>
+                                    </div>
+
+                                    {/* Status Dropdown */}
+                                    <div className="mt-8 max-w-md mx-auto custom-bg-white space-y-6">
+                                        <div className="flex justify-between items-center">
+                                            <h2 className="custom-header">الحاله</h2>
+                                            <GrStatusGoodSmall className="text-[#36C76C]" />
+                                        </div>
+                                        <div className="relative">
+                                            <Field as="select" name='isActive' className="w-full custom-input-field" >
+                                                <option value="true">نشط</option>
+                                                <option value="false">غير نشط</option>
+                                            </Field>
+                                            <ErrorMessage name="isActive" component="div" className="text-red-400 text-xs absolute -bottom-5 right-2" />
+                                        </div>
+                                    </div>
+
+                                    {/* Category Details */}
+                                    <ProductCategory setFieldValue={setFieldValue} />
+
+                                    {/* Tag Badge*/}
+                                    <div className="custom-bg-white mt-8">
+                                        <h2 className="custom-header">العلامة</h2>
+                                        <div className="relative">
+                                            <Field type="text" name="badge" id="badge" className="custom-input-field w-full" placeholder="اكتب علامة مميزة للمنتج ..." />
+                                            <Tag className="w-10 lg:w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="w-full md:w-1/3">
-                                {/* Thumbnail Upload */}
-                                <div className="max-w-md mx-auto custom-bg-white space-y-6">
-                                    <h2 className="custom-header">صوره المنتج الرئيسية</h2>
-                                    <div
-                                        className="relative flex items-center justify-center w-full h-32 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer bg-purple-100"
-                                    >
-                                        <input
-                                            type="file"
-                                            id="mainImage"
-                                            accept="image/*"
-                                            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-                                            onChange={(e) => {
-                                                handleThumbnailUpload(e);
-                                                setFieldValue('mainImage', e.currentTarget.files[0])
-                                            }}
-                                        />
-                                        {thumbnail ? (
-                                            <img src={thumbnail} alt="Thumbnail" className="h-full object-cover rounded-md" />
-                                        ) : (
-                                            <span className="text-purple-600 text-center">اضغط لتحميل صوره المنتج الرئيسية </span>
-                                        )}
-                                    </div>
-                                    <ErrorMessage name="mainImage" component="div" className="text-red-400" />
-                                </div>
-
-                                {/* Status Dropdown */}
-                                <div className="mt-8 max-w-md mx-auto custom-bg-white space-y-6">
-                                    <div className="flex justify-between items-center">
-                                        <h2 className="custom-header">الحاله</h2>
-                                        <GrStatusGoodSmall className="text-[#36C76C]" />
-                                    </div>
-                                    <div className="relative">
-                                        <Field as="select" name='isActive' className="w-full custom-input-field" >
-                                            <option value="true">نشط</option>
-                                            <option value="false">غير نشط</option>
-                                        </Field>
-                                        <ErrorMessage name="isActive" component="div" className="text-red-400" />
-                                    </div>
-                                </div>
-
-                                {/* Category Details */}
-                                <ProductCategory setFieldValue={setFieldValue} />
-
-                                {/* Tag Badge*/}
-                                <div className="custom-bg-white mt-8">
-                                    <h2 className="custom-header">العلامة</h2>
-                                    <div className="relative">
-                                        <Field type="text" name="badge" id="badge" className="custom-input-field w-full" placeholder="اكتب علامة مميزة للمنتج ..." />
-                                        <Tag className="w-10 lg:w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
-                                        <ErrorMessage name="badge" component="div" className="text-red-500" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="block w-full md:w-auto md:min-w-60 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-lg hover:be-indigo-600"
-                        >
-                            {selectedProduct ?
-                                (isSubmitting ? "يتم تعديل المنتج..." : "تعديل المنتج") :
-                                (isSubmitting ? "يتم إضافة المنتج..." : "إضافة المنتج")}
-                        </button>
-                    </Form>
-                )}
+                            <button
+                                type="submit"
+                                name="add-product-new-btn"
+                                disabled={isSubmitting}
+                                className="block w-full md:w-auto md:min-w-60 bg-indigo-500 text-white py-2 px-4 mx-auto duration-500 rounded-lg hover:be-indigo-600"
+                            >
+                                {selectedProduct ?
+                                    (isSubmitting ? "يتم تعديل المنتج..." : "تعديل المنتج") :
+                                    (isSubmitting ? "يتم إضافة المنتج..." : "إضافة المنتج")}
+                            </button>
+                        </Form>
+                    );
+                }}
             </Formik>
 
             <Toaster toastOptions={{ duration: 3000 }} />

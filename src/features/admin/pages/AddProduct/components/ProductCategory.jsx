@@ -25,7 +25,7 @@ const ProductCategory = () => {
     return (
         <div className="mt-8 custom-bg-white">
             <h2 className="custom-header">قسم المنتج</h2>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 relative">
                 <Field as="select" name='category' className='custom-input-field max-h-40 text-gray-800' >
                     <option value="">اختر قسم المنتج</option>
                     {categories && categories.map(item => {
@@ -34,7 +34,7 @@ const ProductCategory = () => {
                         )
                     })}
                 </Field>
-                <ErrorMessage name="category" component="div" className="text-red-500" />
+                <ErrorMessage name="category" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
             </div>
         </div>
     )

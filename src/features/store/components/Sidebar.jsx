@@ -28,14 +28,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       <div className={`w-full bg-white text-gray-800 h-screen transition-all duration-1000 overflow-hidden flex flex-col justify-between items-center`}
       >
         <div className="w-full">
-          <button onClick={() => {
+          <button 
+          type='button'
+          name='store-menu-btn'
+           onClick={() => {
             toggleSidebar();
             setOpenDropdown(null);
           }} className="w-full">
             <div className={`flex items-center text-indigo-600 gap-4 px-6 py-6 h-20 hover:bg-gray-100 justify-between duration-1000 ${isOpen ? '' : 'lg:px-0 lg:justify-center lg:gap-0'}`}>
               {/* {isOpen && <span className="text-base">جميع الأقسام</span>} */}
               <div>
-                <img src={modyStoreLogo} alt="mody store logo" className={`w-14 object-cover duration-1000 ${isOpen ? '' : 'lg:hidden'}`} />
+                <img src={modyStoreLogo} alt="diva store" className={`w-14 h-auto object-cover duration-1000 object-cover ${isOpen ? '' : 'lg:hidden'}`} />
               </div>
               <div className="hidden lg:block text-xl">{isOpen ? <ChevronsRight /> : <ChevronsLeft />}</div>
               <div className="lg:hidden text-xl"><X /></div>
@@ -74,7 +77,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                             <img
                               src={encodeURI(`${baseUrl}/${category.icon.url.replace(/\\/g, '/')}`)}
                               alt={category.icon.alt}
-                              className="w-8 h-8 rounded-lg"
+                              className="w-8 h-8 rounded-lg object-cover"
                             />
                           </div>
                           <div className={`text-gray-700 ${isOpen ? '' : 'lg:hidden'}`}>
@@ -99,7 +102,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                 <img
                                   src={encodeURI(`${baseUrl}/${sub.icon.url.replace(/\\/g, '/')}`)}
                                   alt={sub.icon.alt}
-                                  className="w-6 h-6 rounded-lg"
+                                  className="w-6 h-6 rounded-lg object-cover"
                                 />
                               </div>
                               <span className="text-sm text-gray-500">{sub.name}</span>

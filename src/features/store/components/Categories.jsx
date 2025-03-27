@@ -20,7 +20,7 @@ const Categories = () => {
                     const fullImageUrl = encodeURI(`${baseUrl}/${correctedPath}`);
                     return (
                         <div key={item._id} onClick={() => handleCategoryClick(item._id)} className="group bg-white p-4 rounded-xl shadow-md flex flex-col items-center cursor-pointer">
-                            <img src={fullImageUrl} alt={item.image.alt} className="w-32 h-32 object-cover mb-4 duration-500 rounded-lg group-hover:scale-110" />
+                            <img src={fullImageUrl} alt={item.image.alt} loading="lazy" className="w-32 h-32 object-cover mb-4 duration-500 rounded-lg group-hover:scale-110" />
                             <h3 className="text-lg font-medium">{item.name}</h3>
                             {/* <p className="text-gray-500">{item.products} products</p> */}
                         </div>

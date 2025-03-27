@@ -113,7 +113,7 @@ const AddressBlock = () => {
                     <h2 className='font-bold'>حظر منطقة معينة</h2>
                     <span className='absolute -bottom-1 right-0 w-[60%] h-[2px] bg-indigo-200 rounded-sm'></span>
                 </div>
-                <button type='button' className={`max-w-max py-2 px-4 rounded-lg border border-gray-300 duration-500 ${unBlocking ? 'bg-indigo-500 text-white hover:bg-indigo-600' : 'bg-white hover:bg-gray-600 hover:text-white'}`} onClick={() => setUnBlocking(!unBlocking)}>{unBlocking ? 'وضع الإلغاء مفعل' : 'إلغاء حظر منظقة'}</button>
+                <button type='button' name='address-block-btn' className={`max-w-max py-2 px-4 rounded-lg border border-gray-300 duration-500 ${unBlocking ? 'bg-indigo-500 text-white hover:bg-indigo-600' : 'bg-white hover:bg-gray-600 hover:text-white'}`} onClick={() => setUnBlocking(!unBlocking)}>{unBlocking ? 'وضع الإلغاء مفعل' : 'إلغاء حظر منظقة'}</button>
             </div>
             <Formik
                 initialValues={{
@@ -139,7 +139,7 @@ const AddressBlock = () => {
                                     name="Province"
                                     placeholder="اسم المحافطة"
                                     className="custom-input-field"
-                                    autoComplete="diff-password"
+                                    autoComplete="new-password"
                                     value={firstSelection}
                                     onChange={(e) => {
                                         setFirstSelection(e.target.value);
@@ -155,7 +155,7 @@ const AddressBlock = () => {
                                 <ErrorMessage
                                     name="Province"
                                     component="div"
-                                    className="text-red-400 mt-1 text-sm"
+                                    className="text-red-400 text-xs absolute -bottom-5 right-1"
                                 />
                                 {showFirstOptions && (
                                     <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
@@ -186,7 +186,7 @@ const AddressBlock = () => {
                                     name="City"
                                     placeholder="اسم المدينة"
                                     className="custom-input-field"
-                                    autoComplete="diff-password"
+                                    autoComplete="new-password"
                                     value={secondSelection}
                                     onChange={(e) => {
                                         setSecondSelection(e.target.value)
@@ -200,7 +200,7 @@ const AddressBlock = () => {
                                     }}
                                     disabled={!firstSelection}
                                 />
-                                <ErrorMessage name="City" component="div" className="text-red-400 mt-1 text-sm" />
+                                <ErrorMessage name="City" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                                 {showSecondOptions && (
                                     <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
                                         {secondOptions.filter(item => item.includes(secondSelection)).map(option => (
@@ -224,7 +224,7 @@ const AddressBlock = () => {
                                     name="Area"
                                     placeholder="اسم المنطقة"
                                     className="custom-input-field"
-                                    autoComplete="diff-password"
+                                    autoComplete="new-password"
                                     value={thirdSelection}
                                     onChange={(e) => {
                                         setThirdSelection(e.target.value)
@@ -237,7 +237,7 @@ const AddressBlock = () => {
                                     }}
                                     disabled={!secondSelection}
                                 />
-                                <ErrorMessage name="Area" component="div" className="text-red-400 mt-1 text-sm" />
+                                <ErrorMessage name="Area" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                                 {showThirdOptions && (
                                     <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
                                         {thirdOptions.filter(item => item.includes(thirdSelection)).map(option => (
@@ -255,7 +255,7 @@ const AddressBlock = () => {
 
                         </div>
 
-                        <button type='submit' className={`block mt-8 w-full md:w-auto md:min-w-60 p-3 text-white text-center font-bold hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto ${unBlocking ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-gray-600 hover:bg-gray-700'}`}>
+                        <button type='submit' name='address-block-btn-submit' className={`block mt-8 w-full md:w-auto md:min-w-60 p-3 text-white text-center font-bold hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto ${unBlocking ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-gray-600 hover:bg-gray-700'}`}>
                             {unBlocking ? 'إلغاء الحظر' : 'حظر المنطقة'}
                         </button>
                     </Form>

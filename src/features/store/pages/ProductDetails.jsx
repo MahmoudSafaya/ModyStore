@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCart } from "../../../context/CartContext";
 import { useEffect } from "react";
@@ -8,15 +8,13 @@ import Loading from "../../../shared/components/Loading";
 import toast, { Toaster } from "react-hot-toast";
 import { FaStar } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
-
+import ImageGallery from "../components/ImageGallery";
 
 const ProductDetails = ({ }) => {
     const { addToCart } = useCart();
     const [product, setProduct] = useState();
     const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
-    const [mainImgSrc, setMainImgSrc] = useState('');
-    const scrollContainerRef = useRef(null);
 
     const [proVariants, setProVariants] = useState([]);
     const [selectedSize, setSelectedSize] = useState("");
@@ -52,23 +50,28 @@ const ProductDetails = ({ }) => {
         getProductById();
     }, [id]);
 
-    useEffect(() => {
-        if (product?.mainImage) {
-            setMainImgSrc(encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`));
-        }
-    }, [product])
-
     const handleSelectVariant = (key, value, proName) => {
+        if (availableSizes.length === 1) {
+            setSelectedVariant(prev => ({
+                ...prev,
+                size: availableSizes[0]
+            }))
+        } else if (availableColors.length === 1) {
+            setSelectedVariant(prev => ({
+                ...prev,
+                color: availableColors[0]
+            }))
+        }
         setSelectedVariant(prev => ({
             ...prev,
             productName: proName,
             [key]: prev[key] && prev[key] === value ? '' : value, // Toggle selection
         }));
+
     };
 
     useEffect(() => {
         if (selectedVariant.size && selectedVariant.color) {
-            console.log('reute')
             setFinalVariant(`${selectedVariant.productName} ${selectedVariant.color} (${selectedVariant.size})`)
         }
     }, [selectedVariant])
@@ -83,7 +86,6 @@ const ProductDetails = ({ }) => {
         .filter((v) => v.stock > 0 && v.color) // Ensure color exists and stock is available
         .map((v) => v.color); // Extract color values
     const availableColors = variantColors[0] !== 'undefined' ? [...new Set(variantColors)] : []; // Get unique colors
-
 
     // Determine visibility logic
     // Set 1 to 0 to display the single variant
@@ -117,16 +119,16 @@ const ProductDetails = ({ }) => {
         : availableSizes;
 
     const increaseQty = () => {
-        const totalStock = proVariants.reduce((total, item) => total + item.stock, 0);
-        if (quantity < totalStock) {
-            setQuantity(quantity + 1)
-        } else {
-            toast('عفوا, الكمية المطلوبة لست متوفرة في الوقت الحالي.', {
-                style: {
-                    textAlign: 'center'
-                }
-            })
-        }
+        // const totalStock = proVariants.reduce((total, item) => total + item.stock, 0);
+        // if (quantity < totalStock) {
+        setQuantity(quantity + 1)
+        // } else {
+        //     toast('عفوا, الكمية المطلوبة لست متوفرة في الوقت الحالي.', {
+        //         style: {
+        //             textAlign: 'center'
+        //         }
+        //     })
+        // }
     };
     const decreaseQty = () => setQuantity(quantity > 1 ? quantity - 1 : 1);
 
@@ -134,7 +136,7 @@ const ProductDetails = ({ }) => {
         if (product.variants.length <= 1) {
             addToCart(product, quantity);
             navigate('/checkout');
-        } else if (selectedColor || selectedSize) {
+        } else if (finalVariant) {
             addToCart(product, quantity, finalVariant);
             navigate('/checkout');
         } else {
@@ -151,7 +153,6 @@ const ProductDetails = ({ }) => {
         }
     }
 
-
     // Reviews Section
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -167,7 +168,7 @@ const ProductDetails = ({ }) => {
         if (newReview.name && newReview.rating > 0 && newReview.comment) {
             await axiosMain.post(`/products/${productId}/reviews`, newReview);
             setNewReview({ name: "", rating: 0, comment: "" });
-            toast.success('شكرًا جزيلاً لك على وقتك الثمين في كتابة مراجعتك القيّمة.', {
+            toast.success('شكرًا جزيلاً لك على مراجعتك القيّمة.', {
                 style: {
                     textAlign: 'center'
                 }
@@ -201,45 +202,17 @@ const ProductDetails = ({ }) => {
                         <meta name="twitter:description" content={product.description} />
                         <meta name="twitter:image" content={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} />
                     </Helmet>
-                    <div className="flex flex-col md:flex-row gap-8">
+
+                    <div className="flex flex-col md:flex-row items-start gap-8">
                         {/* Image Section */}
-                        <div className="w-full md:w-3/5 flex flex-col-reverse justify-start items-center gap-2">
+                        <div className="w-full md:w-3/5 lg:w-1/2 2xl:w-1/3">
 
-                            <div className="flex flex-col-reverse md:flex-row w-full gap-4">
-                                {/* Thumbnail Container */}
-                                <div
-                                    ref={scrollContainerRef}
-                                    className="relative w-full md:w-20 h-20 md:h-[350px] my-auto overflow-x-auto md:overflow-y-auto flex justify-start items-center md:flex-col gap-2 scrollbar-hide"
-                                >
-                                    {product.images.map((image, index) => {
-                                        const imgSrc = encodeURI(`${baseUrl}/${image.url.replace(/\\/g, '/')}`);
-                                        return (
-                                            <img
-                                                key={image._id}
-                                                src={imgSrc}
-                                                alt={image.alt}
-                                                className={`w-24 object-cover cursor-pointer rounded-lg border-3 ${mainImgSrc === imgSrc ? "border-indigo-400" : "border-gray-100"
-                                                    }`}
-                                                onClick={() => setMainImgSrc(imgSrc)}
-                                            />
-                                        )
-                                    })}
-                                </div>
-
-                                {/* Main Image Display */}
-                                <div className="flex-1 rounded-xl overflow-hidden max-h-max">
-                                    <img
-                                        src={mainImgSrc}
-                                        alt={product.mainImage.alt}
-                                        className="w-full object-cover rounded-xl duration-500 hover:scale-130"
-                                    />
-                                </div>
-                            </div>
+                            <ImageGallery product={product}  />
 
                         </div>
 
                         {/* Product Details */}
-                        <div className="w-full md:w-2/5 flex flex-col justify-center gap-6">
+                        <div className="w-full md:w-2/5 lg:w-1/2 2xl:w-2/3 flex flex-col justify-center gap-6">
                             <h1 className="text-2xl font-semibold">{product.name}</h1>
 
                             <div className="flex items-center gap-4">
@@ -264,11 +237,13 @@ const ProductDetails = ({ }) => {
                                 <div className="flex flex-col gap-4">
                                     {/* Size Dropdown */}
                                     {hasMultipleSizes && (
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center flex-wrap gap-4">
                                             <label>المقاسات:</label>
                                             {availableSizes.map((size, index) => (
                                                 <button
                                                     key={index}
+                                                    type='button'
+                                                    name='product-size-btn'
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedSize === size) && filteredSizes.includes(size) ? 'border-indigo-300' : ''} ${!filteredSizes.includes(size) ? 'line-through' : ''}`}
                                                     onClick={() => {
                                                         handleSelectVariant('size', size, product.name);
@@ -284,11 +259,13 @@ const ProductDetails = ({ }) => {
 
                                     {/* Color Dropdown */}
                                     {hasMultipleColors && (
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center flex-wrap gap-4">
                                             <label>الألوان:</label>
                                             {availableColors.map((color, index) => (
                                                 <button
                                                     key={index}
+                                                    type='button'
+                                                    name='product-color-btn'
                                                     className={`min-w-16 max-w-max flex items-center justify-center shadow-sm py-2 px-2 border-2 border-gray-100 rounded cursor-pointer duration-500 hover:border-indigo-300 ${(selectedColor === color) && filteredColors.includes(color) ? 'border-indigo-300' : ''} ${!filteredColors.includes(color) ? 'line-through' : ''}`}
                                                     onClick={() => {
                                                         handleSelectVariant('color', color, product.name);
@@ -309,6 +286,8 @@ const ProductDetails = ({ }) => {
                                 <h3 className="text-lg font-semibold">الكمية:</h3>
                                 <div className="flex items-center border border-gray-300 w-28 rounded-lg">
                                     <button
+                                        type='button'
+                                        name='pro-inc-quantity-btn'
                                         className="px-3 py-1 text-black rounded-r-md border-l border-gray-300"
                                         onClick={increaseQty}
                                     >
@@ -316,6 +295,8 @@ const ProductDetails = ({ }) => {
                                     </button>
                                     <span className="px-4 py-1">{quantity}</span>
                                     <button
+                                        type='button'
+                                        name='pro-dec-quantity-btn'
                                         className="px-3 py-1 text-black rounded-l-md border-r border-gray-300"
                                         onClick={decreaseQty}
                                     >
@@ -326,21 +307,34 @@ const ProductDetails = ({ }) => {
 
                             {/* Buttons */}
                             <div className="flex md:flex-col lg:flex-row gap-6">
-                                <button className="w-full lg:min-w-40 lg:w-auto bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => handleBuyNow(product, quantity)}>
+                                <button
+                                    type='button'
+                                    name='pro-buynow-btn'
+                                    className="w-full lg:min-w-40 lg:w-auto bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => handleBuyNow(product, quantity)}>
                                     اشتري الان
                                 </button>
-                                <button className="w-full lg:min-w-40 lg:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product, quantity, finalVariant)}>
+                                <button
+                                    type='button'
+                                    name='pro-cartitem-btn'
+                                    className="w-full lg:min-w-40 lg:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product, quantity, finalVariant)}>
                                     أضف إلى السلة
                                 </button>
                             </div>
 
                             {/* Shipping Info */}
                             {/* <p className="text-gray-500 mt-4">يتم التوصيل خلال 2 إلى 5 أيام عمل</p> */}
+
+
+                            {/* Product Description */}
+                            <div className="mt-12 hidden lg:block">
+                                <h2 className="font-bold text-2xl mb-6">مواصفات المنتج</h2>
+                                <div className="text-gray-500 mt-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }} ></div>
+                            </div>
                         </div>
                     </div>
 
                     {/* Product Description */}
-                    <div className="mt-12">
+                    <div className="mt-12 lg:hidden">
                         <h2 className="font-bold text-2xl mb-6">مواصفات المنتج</h2>
                         <div className="text-gray-500 mt-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }} ></div>
                     </div>
@@ -408,7 +402,7 @@ const ProductDetails = ({ }) => {
                                     <label className="custom-label-field">مراجعتك</label>
                                     <textarea name="comment" value={newReview.comment} onChange={handleInputChange} className="custom-input-field resize-none" required></textarea>
                                 </div>
-                                <button type="submit" className="w-full bg-indigo-500 text-white py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600">إرسال التقييم</button>
+                                <button type="submit" name="review-submit-btn" className="w-full bg-indigo-500 text-white py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600">إرسال التقييم</button>
                             </form>
                         </div>
                     </div>

@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
 import { A_DeleteConfirmModal } from ".";
+import { format } from 'date-fns';
+
 
 const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
   const naviagte = useNavigate();
@@ -36,12 +38,15 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-center md:items-start gap-2">
               <p>
                 <span className="ml-2 font-bold">بيانات أوردر:-</span>
                 <span onClick={() => handleCopy(inConfirmed ? info.billCode : info.txlogisticId)} className="cursor-pointer duration-300 hover:text-indigo-400 hover:underline">
                   {inConfirmed ? info.billCode : info.txlogisticId}
                 </span>
+              </p>
+              <p className="text-sm text-gray-500">
+                {format(new Date(info.createdAt), "PPpp")}
               </p>
             </div>
 
@@ -52,7 +57,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
               </p>
 
               {inConfirmed && (
-                <button onClick={() => printOrderPdf(_id)} className="max-w-max py-2 px-4 bg-green-500 text-white rounded-lg duration-500 hover:bg-green-600">طباعة البوليصة</button>
+                <button type="button" name="waybill-btn" onClick={() => printOrderPdf(_id)} className="max-w-max py-2 px-4 bg-green-500 text-white rounded-lg duration-500 hover:bg-green-600">طباعة البوليصة</button>
               )}
             </div>
           </div>
@@ -92,7 +97,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
             <div className="flex flex-wrap justify-center gap-4">
               {items && items.map(product => {
                 return (
-                  <div key={product._id} className="text-gray-500 min-w-full sm:min-w-auto flex items-center gap-4">
+                  <div key={product._id} className="text-gray-500 min-w-full sm:min-w-auto flex flex-col md:flex-row items-center gap-4">
                     <DetailBox itemName={'اسم المنتج:'} itemValue={product.englishName} />
                     <DetailBox itemName={'الكمية:'} itemValue={product.number} />
                   </div>
@@ -107,16 +112,16 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
           <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
             <div className="w-full md:w-auto">
               {!inConfirmed && (
-                <button className="w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => {
+                <button type="button" name="order-sign-btn" className="w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => {
                   confirmOrderToJNT(info._id)
                 }}>تسجيل</button>
               )}
             </div>
             <div className="w-full md:w-auto flex items-center justify-between gap-6">
               {!inConfirmed && (
-                <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-600 text-white duration-500 hover:bg-gray-700" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>تعديل</button>
+                <button type="button" name="order-edit-btn" className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-gray-600 text-white duration-500 hover:bg-gray-700" onClick={() => setOrderPopup({ display: false, editing: true, info: info })}>تعديل</button>
               )}
-              <button className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-400 text-white duration-500 hover:bg-red-500" onClick={() => setIsDelete({ purpose: 'one-order-info', itemId: info._id, itemName: inConfirmed ? info.billCode : info.txlogisticId })}>حذف</button>
+              <button type="button" name="order-delete-btn" className="w-full min-w-30 py-3 px-5 rounded-lg shadow-sm bg-red-400 text-white duration-500 hover:bg-red-500" onClick={() => setIsDelete({ purpose: 'one-order-info', itemId: info._id, itemName: inConfirmed ? info.billCode : info.txlogisticId })}>حذف</button>
             </div>
           </div>
         </div>

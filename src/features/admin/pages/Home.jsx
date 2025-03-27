@@ -127,9 +127,6 @@ const Home = () => {
 
         </div>
       </div>
-      {/* <div className="admin-home-echarts">
-        <ReactEchart />
-      </div> */}
 
       {/* Table With Search */}
       <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} fetchOrders={getTodayOrders} />

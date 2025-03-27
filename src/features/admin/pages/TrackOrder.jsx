@@ -41,7 +41,7 @@ const TrackOrder = () => {
                     <TbDatabaseExclamation className="w-20 h-20 opacity-25" />
                 </div>
                 <p className="text-2xl font-medium"> لا يوجد معلومات متاحة في الوقت الحالي.</p>
-                <Link to='/admin/orders' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">صفحة الطلبات</Link>
+                <Link to='/admin/orders' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600" aria-label="Orders page">صفحة الطلبات</Link>
             </div>
         )
     }

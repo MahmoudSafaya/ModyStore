@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { axiosAuth } from "../../../api/axios";
 import { Search } from "lucide-react";
-import { Toaster } from "react-hot-toast";
+import { useApp } from "../../../context/AppContext";
 
 const CustomDatePicker = ({ startDate, endDate, onChange }) => {
   return (
@@ -28,23 +28,32 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
   const [orderNumber, setOrderNumber] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
+  const { deleteNotify, errorNotify } = useApp();
 
+  const date = new Date();
+  const monthEarlier = date.setMonth(date.getMonth() - 1)
   // Date Range Picker
-  const [dateRange, setDateRange] = useState([new Date(), new Date()]);
+  const [dateRange, setDateRange] = useState([monthEarlier, new Date()]);
   const [startDate, endDate] = dateRange;
 
   const handleQuery = async () => {
     try {
       const res = await axiosAuth.post('/orders/search', {
+        confirmed: inConfirmed ? '1' : '0',
         receiverphone: receiverPhone,
         billCode: trackingNumber,
         txlogisticId: orderNumber,
         startDate: dateRange[0],
         endDate: dateRange[1]
       });
-      setOrders(res.data);
+      const activeData = res.data.filter(item => item.deleted !== '1').sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setOrders(activeData);
+      if (activeData.length === 0) {
+        deleteNotify('لم يتم العثور علي اي بيانات!')
+      }
     } catch (error) {
       console.error(error);
+      errorNotify('حدث خطأ, الرجاء المحاول مرة أخري!');
     }
   };
 
@@ -55,7 +64,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
     setDateRange([new Date(), new Date()]);
     fetchOrders();
   };
-
+  
 
   return (
     <div>
@@ -80,7 +89,18 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
             onChange={(e) => setOrderNumber(e.target.value)}
             className="custom-input-field w-full"
             placeholder="ادخل رقم الأوردر"
-            autoComplete="diff-password"
+            autoComplete="new-password"
+          />
+        </div>
+
+        <div>
+          <input
+            type="text"
+            value={receiverPhone}
+            onChange={(e) => setReceiverPhone(e.target.value)}
+            className="custom-input-field w-full"
+            placeholder="ادخل رقم موبيل العميل"
+            autoComplete="new-password"
           />
         </div>
 
@@ -92,25 +112,15 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
               onChange={(e) => setTrackingNumber(e.target.value)}
               className="custom-input-field w-full"
               placeholder="ادخل رقم البوليصة"
-              autoComplete="diff-password"
+              autoComplete="new-password"
             />
           </div>
         )}
-
-        <div>
-          <input
-            type="text"
-            value={receiverPhone}
-            onChange={(e) => setReceiverPhone(e.target.value)}
-            className="custom-input-field w-full"
-            placeholder="ادخل رقم موبيل العميل"
-            autoComplete="diff-password"
-          />
-        </div>
       </div>
       <div className="flex items-center justify-center gap-4 mt-8">
         <button
           type="button"
+          name="search-query-btn"
           onClick={handleQuery}
           className="min-w-30 bg-indigo-500 text-slate-100 py-2 px-4 rounded-lg duration-500 shadow-sm hover:bg-indigo-600"
         >
@@ -118,14 +128,13 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
         </button>
         <button
           type="button"
+          name="clear-query-btn"
           onClick={handleClear}
           className="min-w-30 bg-gray-600 text-slate-100 py-2 px-4 rounded-lg duration-500 shadow-sm hover:bg-gray-700"
         >
           مسح
         </button>
       </div>
-
-      <Toaster toastOptions={{ duration: 3000 }} />
 
     </div>
   );

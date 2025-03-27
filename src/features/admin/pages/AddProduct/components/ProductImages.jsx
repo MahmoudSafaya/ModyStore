@@ -41,7 +41,7 @@ const ProductImages = ({ setFieldValue, productImages, setProductImages, removed
 
     return (
         <div className="custom-bg-white mt-8">
-            <label className="p-6 w-full flex flex-col items-center justify-center border-2 border-dashed border-purple-300 rounded-lg cursor-pointer bg-purple-100">
+            <label className="relative p-6 w-full flex flex-col items-center justify-center border-2 border-dashed border-purple-300 rounded-lg cursor-pointer bg-purple-100">
                 <input
                     name="images"
                     type="file"
@@ -53,8 +53,8 @@ const ProductImages = ({ setFieldValue, productImages, setProductImages, removed
                     }}
                 />
                 <span className="text-gray-600">اضغط لتحميل صور للمنتج</span>
+            <ErrorMessage name="images" component="div" className="text-red-400 text-xs absolute -bottom-5 right-2" />
             </label>
-            <ErrorMessage name="images" component="div" className="text-red-500" />
 
             {productImages?.length > 0 && (
                 <div className="mt-4 p-4 bg-purple-100 rounded-lg flex gap-4 overflow-x-auto">

@@ -28,7 +28,7 @@ const Cart = () => {
                 <p className='text-lg text-indigo-400'>EGP {totalPrice}</p>
               </div>
               <div className='bg-indigo-500 text-white text-center rounded-full mx-4 mb-4 duration-500 hover:bg-indigo-600'>
-                <Link to='/checkout' className='block w-full py-2' onClick={toggleCart}>
+                <Link to='/checkout' className='block w-full py-2' onClick={toggleCart} aria-label="Signing order button">
                   تسجيل الطلب
                 </Link>
               </div>
@@ -40,7 +40,7 @@ const Cart = () => {
               <MdOutlineRemoveShoppingCart className='w-26 h-26 text-gray-200 drop-shadow-xs' />
             </div>
             <p>لا توجد منتجات في سلة المشتريات.</p>
-            <Link to='/products' className='max-w-max py-2 px-4 bg-indigo-500 text-white rounded-full duration-500 hover:be-indigo-600' onClick={toggleCart}>العودة الى التسوق</Link>
+            <Link to='/' className='max-w-max py-2 px-4 bg-indigo-500 text-white rounded-full duration-500 hover:be-indigo-600' onClick={toggleCart} aria-label="Go to the home page">العودة الى التسوق</Link>
           </div>
         )}
       </div>

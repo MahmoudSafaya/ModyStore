@@ -54,8 +54,8 @@ const UpdateShippingPrice = () => {
                     shippingPrice: ""
                 }}
                 validationSchema={Yup.object().shape({
-                    Province: Yup.string().required("المحافظة مطلوبه"),
-                    shippingPrice: Yup.string().required("سعر الشحن مطلوب"),
+                    Province: Yup.string().required("هذا الحقل مطلوب"),
+                    shippingPrice: Yup.string().required("هذا الحقل مطلوب"),
                 })}
                 onSubmit={handleSubmit}
             >
@@ -88,7 +88,7 @@ const UpdateShippingPrice = () => {
                                 <ErrorMessage
                                     name="Province"
                                     component="div"
-                                    className="text-red-400 mt-1 text-sm"
+                                    className="text-red-400 text-xs absolute -bottom-5 right-1"
                                 />
                                 {showFirstOptions && (
                                     <ul className="absolute bg-white z-40 border border-gray-300 rounded-lg w-full mt-1 max-h-60 overflow-auto">
@@ -112,20 +112,20 @@ const UpdateShippingPrice = () => {
                             </div>
 
                             {/* ShippingPrice */}
-                            <div className='w-full'>
+                            <div className='w-full relative'>
                                 <label className="custom-label-field">السعر الجديد: <span className="text-red-500">*</span></label>
                                 <Field
                                     type="text"
                                     name="shippingPrice"
-                                    autoComplete="diff-password"
+                                    autoComplete="new-password"
                                     className="custom-input-field"
                                     placeholder="اكتب الاسم"
                                 />
-                                <ErrorMessage name="shippingPrice" component="div" className="text-red-400 mt-1 text-sm" />
+                                <ErrorMessage name="shippingPrice" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                             </div>
                         </div>
 
-                        <button type='submit' className='w-full md:w-auto md:min-w-60 block mx-auto mt-6 bg-indigo-500 text-white rounded-lg shadow-sm py-2 px-4 duration-500 hover:bg-indigo-600'>
+                        <button type='submit' name='shipping-price-btn' className='w-full md:w-auto md:min-w-60 block mx-auto mt-8 bg-indigo-500 text-white rounded-lg shadow-sm py-2 px-4 duration-500 hover:bg-indigo-600'>
                             {isSubmitting ? 'جار تعديل السعر...' : 'تعديل السعر'}
                         </button>
                     </Form>

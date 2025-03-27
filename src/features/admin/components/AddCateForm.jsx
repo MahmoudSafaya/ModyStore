@@ -42,7 +42,7 @@ const AddCateForm = ({ selectedCategory, handleAddCategory, iconPreview, setIcon
                     <Form>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8'>
                             {/* Name Field */}
-                            <div>
+                            <div className='relative'>
                                 <label htmlFor="name" className="custom-label-field">
                                     اسم القسم
                                 </label>
@@ -52,13 +52,13 @@ const AddCateForm = ({ selectedCategory, handleAddCategory, iconPreview, setIcon
                                     name="name"
                                     placeholder="اسم القسم"
                                     className="custom-input-field"
-                                    autoComplete="diff-password"
+                                    autoComplete="new-password"
                                 />
-                                <ErrorMessage name="name" component="div" className="text-red-400 text-sm" />
+                                <ErrorMessage name="name" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                             </div>
 
                             {/* category Field */}
-                            <div>
+                            <div className='relative'>
                                 <label htmlFor="category" className="custom-label-field">
                                     قسم الأب
                                 </label>
@@ -88,11 +88,11 @@ const AddCateForm = ({ selectedCategory, handleAddCategory, iconPreview, setIcon
                                         )
                                     })}
                                 </Field>
-                                {/* <ErrorMessage name="category" component="div" className="text-red-400 text-sm" /> */}
+                                {/* <ErrorMessage name="category" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" /> */}
                             </div>
 
                             {/* Icon Image Field */}
-                            <div>
+                            <div className='relative'>
                                 <label htmlFor="icon" className="custom-label-field">
                                     أيقونة القسم
                                 </label>
@@ -117,11 +117,11 @@ const AddCateForm = ({ selectedCategory, handleAddCategory, iconPreview, setIcon
                                         <span className="text-purple-600 text-center">اضغط لتحميل صوره الأيقونة  </span>
                                     )}
                                 </div>
-                                <ErrorMessage name="icon" component="div" className="text-red-400 text-sm" />
+                                <ErrorMessage name="icon" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                             </div>
 
                             {/* Category Image Field */}
-                            <div>
+                            <div className='relative'>
                                 <label htmlFor="image" className="custom-label-field">
                                     صورة القسم
                                 </label>
@@ -146,7 +146,7 @@ const AddCateForm = ({ selectedCategory, handleAddCategory, iconPreview, setIcon
                                         <span className="text-purple-600 text-center">اضغط لتحميل صوره القسم الرئيسية </span>
                                     )}
                                 </div>
-                                <ErrorMessage name="image" component="div" className="text-red-400 text-sm" />
+                                <ErrorMessage name="image" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                             </div>
                         </div>
 
@@ -154,6 +154,7 @@ const AddCateForm = ({ selectedCategory, handleAddCategory, iconPreview, setIcon
                         <div className='mt-8 mx-auto text-center'>
                             <button
                                 type="submit"
+                                name='cate-btn-submit'
                                 className={`w-full md:w-auto md:min-w-60 px-4 py-2 text-white rounded-lg duration-500 transition-all ${selectedCategory ? 'bg-gray-600 hover:bg-gray-700' : 'bg-indigo-500 hover:bg-indigo-600'}`}
                             >
                                 {selectedCategory ? (isSubmitting ? 'جار التحديث...' : 'تحديث البيانات') : (isSubmitting ? 'جار الإضافة...' : 'إضافة')}

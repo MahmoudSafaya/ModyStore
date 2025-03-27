@@ -50,34 +50,39 @@ const ProductCard = ({ product }) => {
                     <img
                         src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)}
                         alt={product.mainImage.alt}
+                        loading="lazy"
                         className='w-full h-full object-cover duration-500 transition-all hover:scale-110'
                     />
                 </Link>
             </div>
             <h3 className="text-lg font-medium my-2">
                 <Link to={`/products/${product._id}`} className="duration-500 hover:text-indigo-500">
-                {product.name.length > 32 ? product.name.slice(0, 32) + '...' : product.name}
+                    {product.name.length > 32 ? product.name.slice(0, 32) + '...' : product.name}
                 </Link>
             </h3>
-            <p className="text-gray-500 text-sm">{proCategory}</p>
-            <div className="flex items-center mb-2">
-                {Array(product.ratings.count)
-                    .fill()
-                    .map((_, i) => (
-                        <span key={i} className="text-yellow-500">★</span>
-                    ))}
+            <div className='flex flex-col gap-2'>
+                <p className="text-gray-500 text-sm">{proCategory}</p>
+
+                {/* {product.ratings?.average > 0 ? (
+                    <div className="flex items-center mb-2">
+                        <p>{product.ratings?.average} <span className="text-yellow-500">★</span></p>
+                    </div>
+                ) : ''} */}
+
+                <div className="flex items-center gap-2">
+                    <p className="text-indigo-500 text-lg font-semibold">
+                        EGP {product.actualPrice}
+                    </p>
+                    {product.discount > 0 && (
+                        <p className="text-gray-500 line-through text-sm">EGP {product.price}</p>
+                    )}
+                </div>
+                <button
+                    type='button'
+                    name='add-to-cart-btn' className="bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product, 1, selectedVariant)}>
+                    أضف إلى السلة
+                </button>
             </div>
-            <div className="flex items-center gap-2">
-                <p className="text-indigo-500 text-lg font-semibold">
-                    EGP {product.actualPrice}
-                </p>
-                {product.discount > 0 && (
-                    <p className="text-gray-500 line-through text-sm">EGP {product.price}</p>
-                )}
-            </div>
-            <button className="mt-4 bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product, 1, selectedVariant)}>
-                أضف إلى السلة
-            </button>
 
             <Toaster />
         </div>

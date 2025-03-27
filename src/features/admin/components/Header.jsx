@@ -28,7 +28,7 @@ const Header = ({ isOpen }) => {
           >
             <p className="text-gray-800 font-semibold">{auth?.name}</p>
             <p className="text-sm text-gray-500">{auth?.role}</p>
-            <button className="mt-3 w-full bg-gray-600 text-white py-2 px-4 rounded duration-500 hover:bg-gray-700" onClick={handleLogout}>
+            <button type="button" name="header-logout-btn" className="mt-3 w-full bg-gray-600 text-white py-2 px-4 rounded duration-500 hover:bg-gray-700" onClick={handleLogout}>
               تسجيل الخروج
             </button>
           </div>

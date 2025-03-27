@@ -7,7 +7,7 @@ const DeleteConfirmModal = ({itemName, deleteFun, setIsDelete}) => {
                 <p className='text-center w-full text-gray-900'>هل انت متأكد من حذف: <span className='font-semibold'>
                     {itemName}</span> ؟</p>
                 <div className='flex justify-center gap-4'>
-                    <button type='button' className='w-20 bg-red-500 text-white rounded-lg py-2 px-4 duration-500 hover:bg-red-600'
+                    <button type='button' name='popup-yes-btn' className='w-20 bg-red-500 text-white rounded-lg py-2 px-4 duration-500 hover:bg-red-600'
                         onClick={() => {
                             deleteFun();
                             setIsDelete({});
@@ -15,6 +15,7 @@ const DeleteConfirmModal = ({itemName, deleteFun, setIsDelete}) => {
 
                     <button
                         type='button'
+                        name='popup-no-btn'
                         className='w-20 bg-gray-200 text-gray-900 rounded-lg py-2 px-4 duration-500 hover:bg-gray-300' onClick={() => setIsDelete({})}>لا</button>
                 </div>
             </div>

@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import heroSliderImg01 from '../../../assets/images/diva-store-01.webp'
+import heroSliderImg02 from '../../../assets/images/diva-store-02.webp'
+import heroSliderImg03 from '../../../assets/images/diva-store-03.webp'
 
 const slides = [
   {
     id: 1,
-    image: 'images/mody-store-01.jpg',
+    image: heroSliderImg01,
     title: 'عروض خاصة على أحدث المنتجات!',
     description: 'اكتشف أحدث الإصدارات بأفضل الأسعار، تسوق الآن واستمتع بخصومات مميزة.',
   },
   {
     id: 2,
-    image: 'images/mody-store-05.jpg',
+    image: heroSliderImg02,
     title: 'توصيل سريع لجميع الطلبات!',
     description: 'نوفر لك خدمة توصيل سريعة وآمنة إلى باب منزلك، أينما كنت.',
   },
   {
     id: 3,
-    image: 'images/mody-store-02.jpg',
+    image: heroSliderImg03,
     title: 'تسوق بأمان وراحة!',
     description: 'نضمن لك تجربة شراء آمنة مع خيارات دفع مرنة وسهلة.',
   },
@@ -58,24 +61,10 @@ const HeroSlider = () => {
         </div>
       ))}
 
-      {/* Navigation Arrows */}
-      {/* <button
-        onClick={prevSlide}
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-r"
-      >
-        &#10094;
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-l"
-      >
-        &#10095;
-      </button> */}
-
       {/* Dots */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         {slides.map((_, index) => (
-          <button
+          <label
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full ${

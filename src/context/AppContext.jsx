@@ -59,14 +59,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const fetchSenderAddress = async () => {
-    setLoading(true);
     try {
       const res = await axiosMain.get('/addresses/senders/default');
       setSenderAddress(res.data.sender);
     } catch (error) {
       console.error('Error fetching sender address:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

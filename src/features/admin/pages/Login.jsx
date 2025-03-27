@@ -63,7 +63,7 @@ const Login = () => {
               />
             </div>
             {error && <div className='text-red-400'>{error}</div>}
-            <button type="submit" className='w-full bg-indigo-500 text-white py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600' disabled={loading}>
+            <button type="submit" name='login-btn' className='w-full bg-indigo-500 text-white py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600' disabled={loading}>
               {loading ? 'جار التسجيل...' : 'تسجيل'}
             </button>
           </form>

@@ -175,27 +175,27 @@ const Register = () => {
                     {({ values, isSubmitting }) => (
                         <Form>
                             <div className='grid grid-cols-1 items-end md:grid-cols-2 lg:grid-cols-2 gap-8 mb-8'>
-                                <div>
+                            <div className='relative'>
                                     <label htmlFor="userName" className='custom-label-field'>الاسم</label>
                                     <Field type="text" name="userName" id="userName" placeholder="اكتب اسم المستخدم"
-                                        autoComplete="diff-password" className='custom-input-field' />
-                                    <ErrorMessage name="userName" component="div" className="text-red-400" />
+                                        autoComplete="new-password" className='custom-input-field' />
+                                    <ErrorMessage name="userName" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                                 </div>
-                                <div>
+                                <div className='relative'>
                                     <label htmlFor="password" className='custom-label-field'>الرقم سري</label>
                                     <Field type="password" name="password" id="password" placeholder="اكنب رقم سري للمستخدم"
-                                        autoComplete="diff-password" className='custom-input-field' />
-                                    <ErrorMessage name="password" component="div" className="text-red-400" />
+                                        autoComplete="new-password" className='custom-input-field' />
+                                    <ErrorMessage name="password" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                                 </div>
-                                <div>
+                                <div className='relative'>
                                     <Field as="select" name='role' className='custom-input-field' >
                                         <option value="user">موظف</option>
                                         <option value="admin">مسؤل</option>
                                     </Field>
-                                    <ErrorMessage name="role" component="div" className="text-red-400" />
+                                    <ErrorMessage name="role" component="div" className="text-red-400 text-xs absolute -bottom-5 right-1" />
                                 </div>
                             </div>
-                            <button type="submit" className={`w-full md:w-auto md:min-w-60 py-2 px-6 text-white rounded-lg shadow-sm duration-500 mx-auto block ${selectedUser ? 'bg-gray-600 hover:bg-gray-700' : 'bg-indigo-500 hover:bg-indigo-600'}`}>
+                            <button type="submit" name='add-user-btn' className={`w-full md:w-auto md:min-w-60 py-2 px-6 text-white rounded-lg shadow-sm duration-500 mx-auto block ${selectedUser ? 'bg-gray-600 hover:bg-gray-700' : 'bg-indigo-500 hover:bg-indigo-600'}`}>
                                 {selectedUser ? "تحديث البيانات" : "تسجيل جديد"}
                             </button>
                         </Form>

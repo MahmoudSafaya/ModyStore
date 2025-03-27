@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Trash, Search, X, ChevronRight, ChevronLeft, ChevronDown } from "lucide-react";
 import { FaCheck, FaRegEdit, FaStar } from "react-icons/fa";
-import {axiosAuth} from '../../../api/axios';
+import { axiosAuth } from '../../../api/axios';
 import Loading from '../../../shared/components/Loading';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
@@ -44,6 +44,14 @@ const Products = () => {
       setCheckedOrders([]);
     }
   }
+
+  useEffect(() => {
+    if (checkedOrders.length > 0 && checkedOrders.length === products.length) {
+      setCheckedAll(true);
+    } else {
+      setCheckedAll(false);
+    }
+  }, [checkedOrders]);
 
   const getAllProducts = async (page) => {
     setLoading(true);
@@ -118,12 +126,12 @@ const Products = () => {
     }
   }
 
-
   // Handle page change
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
+    setCheckedAll(false);
   };
 
   const handleBarcodeChange = useCallback((e, barCode) => {
@@ -139,14 +147,14 @@ const Products = () => {
   return (
     <div>
       {/* Search Feature */}
-      <div className="custom-bg-white flex flex-col md:flex-row items-end gap-4">
-        <div className='w-full flex-grow'>
+      <div className="custom-bg-white flex flex-col md:flex-row items-center gap-4">
+        <div className='w-full md:w-auto flex-grow'>
           <div className="relative w-full">
             <input type="text" name="product-search" id="product-search" className="custom-input-field w-full" placeholder="بحث عن منتج..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
             <Search className="w-20 h-[calc(100%-2px)] my-[1px] ml-[1px] text-2xl p-2 rounded-l-lg bg-gray-100 text-gray-400 absolute top-0 left-0 border border-gray-200" />
           </div>
         </div>
-        <button className={`min-w-30 lg:whitespace-nowrap py-3 px-5 rounded-lg shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`} onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}>
+        <button type='button' name='products-all-delete-btn' className={`min-w-30 w-full md:w-auto lg:whitespace-nowrap py-3 px-2 text-center rounded-lg shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`} onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}>
           حذف الاختيارات
         </button>
       </div>
@@ -210,7 +218,7 @@ const Products = () => {
                   </td>
                   <td className='p-3'>
                     <div className="w-15 h-15 p-2 mx-auto">
-                      <img src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} alt={product.mainImage.alt} className='w-full h-full object-cover rounded-lg' />
+                      <img src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} alt={product.mainImage.alt} loading="lazy" className='w-full h-full object-cover rounded-lg' />
                     </div>
                   </td>
                   <td className="p-3 space-x-3">
@@ -238,7 +246,7 @@ const Products = () => {
                     setSelectedProduct(product);
                     setPopupPurpose('variants');
                   }}>
-                    <p className='inline-block ml-2'>
+                    <p className={`inline-block ml-2 ${calculateTotalStock(product.variants) > 0 ? '' : 'text-red-400'}`}>
                       {calculateTotalStock(product.variants) > 0 ? calculateTotalStock(product.variants) : 'تم النفاذ'}
                     </p>
                     <ChevronDown className='mx-auto duration-500 inline-block group-hover:rotate-45 group-hover:text-indigo-500' />
@@ -277,7 +285,7 @@ const Products = () => {
             </div>
             <p className="text-2xl font-medium">لا يوجد منتجات في الوقت الحالي</p>
 
-            <Link to='/admin/add-product' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">إضافة منتج جديد</Link>
+            <Link to='/admin/add-product' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600" aria-label="Add a new product">إضافة منتج جديد</Link>
 
           </div>
         )}
@@ -288,6 +296,8 @@ const Products = () => {
       {products.length > 0 && (
         <div className="flex justify-center mt-4">
           <button
+            type='button'
+            name='products-nxt-btn'
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
@@ -299,6 +309,8 @@ const Products = () => {
           {Array.from({ length: totalPages }, (_, index) => (
             <button
               key={index + 1}
+              type='button'
+              name='products-page-btn'
               onClick={() => handlePageChange(index + 1)}
               className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
                 }`}
@@ -308,6 +320,8 @@ const Products = () => {
           ))}
 
           <button
+            type='button'
+            name='products-prev-btn'
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
@@ -322,7 +336,7 @@ const Products = () => {
       {/* Product Info Popup */}
       {selectedProduct && (
         <div className='fixed inset-0 flex items-center justify-center z-100 bg-[#00000035] overflow-y-auto'>
-          <div className='w-5/6 lg:w-1/2 custom-bg-white my-12'>
+          <div className='w-5/6 lg:w-3/5 xl:w-1/2 custom-bg-white my-12'>
             <div className="relative flex items-center justify-between mb-8">
               <p className='flex-grow text-center font-semibold'>{selectedProduct.name}</p>
               <div className='w-7 h-7 p-1 absolute top-0 left-0 bg-gray-100 rounded-full flex items-center justify-center'>
@@ -342,13 +356,13 @@ const Products = () => {
                       {variant.stock && (<p>الكمية: {variant.stock}</p>)}
                     </div>
                     <div className='w-full md:w-auto flex items-center gap-4'>
-                      <label htmlFor="barcode-num">
-                        <input type="text" name='barcode-num' id='barcode-num' className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => handleBarcodeChange(e, variant.barCode)} />
+                      <label htmlFor={`${variant.size}-${variant.color}`}>
+                        <input type="text" name={`${variant.size}-${variant.color}`} id={`${variant.size}-${variant.color}`} className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => handleBarcodeChange(e, variant.barCode)} />
                       </label>
                       <A_BillOfLading
                         variant={variant.barCode}
                         stock={barcodeNums ? barcodeNums[variant.barCode] : Number(variant.stock)}
-                        billName={`${selectedProduct.name} ${variant.size} (${variant.color})`}
+                        billName={`${selectedProduct.name.slice(0, 20)} ${variant.size} (${variant.color})`}
                       />
                     </div>
                   </div>

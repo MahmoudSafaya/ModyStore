@@ -4,8 +4,8 @@ import { Filter } from "lucide-react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { S_ProductCard, S_ProductFilter } from "../components";
 import { axiosMain } from "../../../api/axios";
-import Loading from "../../../shared/components/Loading";
 import { IoStorefrontOutline } from "react-icons/io5";
+import { Helmet } from "react-helmet-async";
 
 const Products = () => {
 
@@ -100,12 +100,30 @@ const Products = () => {
     }, []); // Empty dependency array ensures this runs only on mount
 
 
-    if (loading) {
-        return <Loading />
-    }
+    // if (loading) {
+    //     return <Loading />
+    // }
 
     return (
         <div className="px-4 md:px-12">
+            <Helmet>
+                <title>Diva Store</title>
+                <meta name="description" content="Discover the latest releases at the best prices, shop now and enjoy special discounts." />
+                <meta name="keywords" content={`Diva Store, shop now, e-commerce`} />
+
+                {/* Open Graph for social sharing */}
+                <meta property="og:title" content={`Diva Store`} />
+                <meta property="og:description" content="Discover the latest releases at the best prices, shop now and enjoy special discounts." />
+                <meta property="og:image" content="https://divastoree.com/preview-image.jpg" />
+                <meta property="og:url" content="https://divastoree.com/preview-image.jpg" />
+                <meta property="og:type" content="product" />
+
+                {/* Twitter Card */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`Diva Store`} />
+                <meta name="twitter:description" content="Discover the latest releases at the best prices, shop now and enjoy special discounts." />
+                <meta name="twitter:image" content="https://divastoree.com/preview-image.jpg" />
+            </Helmet>
 
             <div className="flex flex-row flex-wrap items-center justify-center gap-6 py-12">
                 {subCategories && subCategories.map(item => {
@@ -121,79 +139,93 @@ const Products = () => {
                 })}
             </div>
 
-            <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-semibold">أحدث المنتجات</h2>
-                <div className="flex flex-col gap-2">
-                    <button type="button" className={`group flex items-center gap-2 text-gray-700 ${showFilters && 'text-indigo-400'}`} onClick={() => setShowFilters(!showFilters)}>
-                        <span className="text-xl duration-500 group-hover:text-indigo-400">فلتر</span>
-                        <Filter className="w-5 h-5 duration-500 group-hover:rotate-45 group-hover:text-indigo-400" />
-                    </button>
-                    <div className="relative">
-                        <S_ProductFilter
-                            showFilters={showFilters}
-                            searchParams={searchParams}
-                            setSearchParams={setSearchParams}
-                        />
-                    </div>
+            {loading ? (
+                <div className="w-full min-h-50 flex items-center justify-center">
+                    <div className="spinner"></div>
                 </div>
-            </div>
-
-            <div className="w-full">
-                    {products && products.length > 0 ? (
-                        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {
-                                products.filter(product => product.isActive).map((product, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <S_ProductCard product={product} />
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center gap-6 w-full">
-                            <div>
-                                <IoStorefrontOutline className="w-20 h-20 opacity-25" />
+            ) : (
+                <>
+                    <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-2xl font-semibold">أحدث المنتجات</h2>
+                        <div className="flex flex-col gap-2">
+                            <button type="button" name="filter-icon-btn" className={`group flex items-center gap-2 text-gray-700 ${showFilters && 'text-indigo-400'}`} onClick={() => setShowFilters(!showFilters)}>
+                                <span className="text-xl duration-500 group-hover:text-indigo-400">فلتر</span>
+                                <Filter className="w-5 h-5 duration-500 group-hover:rotate-45 group-hover:text-indigo-400" />
+                            </button>
+                            <div className="relative">
+                                <S_ProductFilter
+                                    showFilters={showFilters}
+                                    searchParams={searchParams}
+                                    setSearchParams={setSearchParams}
+                                />
                             </div>
-                            <p className="text-2xl font-medium text-center">لا يوجد منتجات هنا في الوقت الحالي</p>
-                            <Link to='/' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">الصفحة الرئيسية</Link>
+                        </div>
+                    </div>
+
+                    <div className="w-full">
+                        {products && products.length > 0 ? (
+                            <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {
+                                    products.filter(product => product.isActive).map((product, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <S_ProductCard product={product} />
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center gap-6 w-full">
+                                <div>
+                                    <IoStorefrontOutline className="w-20 h-20 opacity-25" />
+                                </div>
+                                <p className="text-2xl font-medium text-center">لا يوجد منتجات هنا في الوقت الحالي</p>
+                                <Link to='/' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">الصفحة الرئيسية</Link>
+                            </div>
+                        )}
+                    </div>
+
+
+                    {/* Pagination Controls */}
+                    {products.length > 0 && (
+                        <div className="flex justify-center mt-12">
+                            <button
+                                type='button'
+                                name='pros-nxt-btn'
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                            >
+                                <ChevronRight />
+                            </button>
+
+                            {/* Page Numbers */}
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index + 1}
+                                    type='button'
+                                    name='pros-page-btn'
+                                    onClick={() => handlePageChange(index + 1)}
+                                    className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
+                                        }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+
+                            <button
+                                type='button'
+                                name='pros-prv-btn'
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                            >
+                                <ChevronLeft />
+                            </button>
                         </div>
                     )}
-            </div>
-
-
-            {/* Pagination Controls */}
-            {products.length > 0 && (
-                <div className="flex justify-center mt-12">
-                    <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-                    >
-                        <ChevronRight />
-                    </button>
-
-                    {/* Page Numbers */}
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <button
-                            key={index + 1}
-                            onClick={() => handlePageChange(index + 1)}
-                            className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
-                                }`}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-
-                    <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
-                    >
-                        <ChevronLeft />
-                    </button>
-                </div>
+                </>
             )}
 
         </div>

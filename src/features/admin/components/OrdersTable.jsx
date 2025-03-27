@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Trash, ChevronRight, ChevronLeft } from "lucide-react";
 import { FaCheck, FaRegEdit } from "react-icons/fa";
@@ -10,12 +10,12 @@ import { A_DeleteConfirmModal } from "./";
 import { useApp } from "../../../context/AppContext";
 import { axiosAuth } from "../../../api/axios";
 
-const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders }) => {
+const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders }) => {
     const { orderPopup, setOrderPopup } = useOrders();
     const [checkedAll, setCheckedAll] = useState(false);
     const [checkedOrders, setCheckedOrders] = useState([]);
-    const { isDelete, setIsDelete, successNotify, deleteNotify } = useApp();
-
+    const { isDelete, setIsDelete, successNotify, deleteNotify, errorNotify } = useApp();
+    
     const handleCheckOrder = (orderID) => {
         if (checkedOrders.some(item => item._id === orderID)) {
             const newOrders = checkedOrders.filter(item => item._id !== orderID);
@@ -34,11 +34,20 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
         }
     }
 
+    useEffect(() => {
+        if(checkedOrders.length > 0 && checkedOrders.length === orders.length) {
+            setCheckedAll(true);
+        } else {
+            setCheckedAll(false);
+        }
+    }, [checkedOrders]);
+    
     // Handle page change
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
         }
+        setCheckedAll(false);
     };
 
     const signAllSelected = async () => {
@@ -55,6 +64,45 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
         }
     };
 
+    const printAllSelected = async () => {
+        try {
+            const orderIds = checkedOrders?.map(item => item._id);
+            const res = await axiosAuth.post('/jnt/orders/print/all', {
+                printCod: 0,
+                printSize: 0,
+                showCustomerOrderId: 0,
+                ids: orderIds,
+            },
+                {
+                    responseType: 'blob', // Important for handling binary data like PDFs
+                }
+            );
+            // Create a Blob from the PDF Stream
+            const file = new Blob([res.data], { type: 'application/pdf' });
+
+            // Create a link element
+            const fileURL = URL.createObjectURL(file);
+
+            // Create a temporary anchor element to trigger the download
+            const link = document.createElement('a');
+            link.href = fileURL;
+            link.setAttribute('download', 'waybill.pdf'); // Name of the file to be downloaded
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            document.body.removeChild(link);
+            URL.revokeObjectURL(fileURL);
+            successNotify('تم طباعة الاوردرارت المحددة بنجاح.');
+            // fetchOrders();
+        } catch (error) {
+            console.error('Error deleting products:', error);
+            if(error.status == 404) {
+                errorNotify('عفوا, لم يتم العثور علي اي طلبات!')
+            }
+        }
+    };
+
 
     const deleteAllSelected = async () => {
         if (inConfirmed) {
@@ -68,6 +116,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                 fetchOrders();
             } catch (error) {
                 console.error('Error deleting products:', error);
+                errorNotify('حدثت مشكلة أثناء الحذف, الرجاء المحاولة مرة اخري.');
             }
         } else {
             try {
@@ -80,6 +129,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                 fetchOrders();
             } catch (error) {
                 console.error('Error deleting products:', error);
+                errorNotify('حدثت مشكلة أثناء الحذف, الرجاء المحاولة مرة اخري.');
             }
         }
         setCheckedOrders([]);
@@ -93,16 +143,29 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                     {!inConfirmed && (
                         <button
                             type="button"
+                            name="all-sign-btn"
                             onClick={signAllSelected}
-                            className={`min-w-30 lg:whitespace-nowrap  py-2 px-4 rounded-lg duration-500 shadow-sm bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                            className={`min-w-30 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
                             disabled={!checkedOrders.length > 0}
                         >
-                            تسجيل الكل
+                            تسجيل الاختيارات
+                        </button>
+                    )}
+                    {inConfirmed && (
+                        <button
+                            type="button"
+                            name="jt-all-print-btn"
+                            onClick={printAllSelected}
+                            className={`min-w-30 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-green-100 text-green-500 hover:bg-green-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                        disabled={!checkedOrders.length > 0}
+                        >
+                            طباعة الاختيارات
                         </button>
                     )}
                     <button
                         type="button"
-                        className={`min-w-30 lg:whitespace-nowrap  py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                        name="all-delete-btn"
+                        className={`min-w-30 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
                         onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}
                     >
                         حذف الاختيارات
@@ -209,7 +272,7 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                             </div>
                             <p className="text-2xl font-medium text-center">لا يوجد طلبات في الوقت الحالي</p>
                             {!inConfirmed && (
-                                <Link to='/admin/orders' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600">الطلبات المسجلة</Link>
+                                <Link to='/admin/orders' className="max-w-max bg-indigo-500 text-white py-2 px-6 rounded-lg shadow-sm duration-500 hover:bg-indigo-600" aria-label="Signed Orders">الطلبات المسجلة</Link>
                             )}
                         </div>
                     )}
@@ -219,6 +282,8 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                 {orders.length > 0 && (
                     <div className="flex justify-center mt-4">
                         <button
+                        type="button"
+                        name="next-arrow"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
                             className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
@@ -229,6 +294,8 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                         {/* Page Numbers */}
                         {Array.from({ length: totalPages }, (_, index) => (
                             <button
+                            type="button"
+                            name="page-nav-btn"
                                 key={index + 1}
                                 onClick={() => handlePageChange(index + 1)}
                                 className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
@@ -239,6 +306,8 @@ const OrdersTable = ({ inConfirmed, orders, setOrders, handleDelete, currentPage
                         ))}
 
                         <button
+                        type="button"
+                        name="prev-btn"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
                             className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"

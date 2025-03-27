@@ -100,7 +100,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                     name={`items.${index}.englishName`}
                     placeholder="اسم المنتج"
                     className="custom-input-field"
-                    autoComplete="diff-password"
+                    autoComplete="new-password"
                     value={selections[index] || ""}
                     onChange={(e) => {
                       setSelections((prev) => ({ ...prev, [index]: e.target.value }));
@@ -150,7 +150,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                     type="text"
                     name={`items.${index}.itemValue`}
                     placeholder="سعر المنتج"
-                    autoComplete="diff-password"
+                    autoComplete="new-password"
                     className="custom-input-field text-gray-800"
                     value={prices[index] || ""}
                     onChange={(e) => {
@@ -158,7 +158,6 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                       setFieldValue(`items.${index}.itemValue`, e.target.value);
                     }}
                   />
-                  <ErrorMessage name={`items.${index}.itemValue`} component="div" className="text-red-400" />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -167,21 +166,22 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                     type="text"
                     name={`items.${index}.number`}
                     placeholder="الكمية"
-                    autoComplete="diff-password"
+                    autoComplete="new-password"
                     className="custom-input-field text-gray-800"
                     value={quantities[index] || ""}
                     onChange={(e) => {
                       setQuantities((prev) => ({ ...prev, [index]: e.target.value }));
                       setFieldValue(`items.${index}.number`, e.target.value);
                     }}
+                    onFocus={(e) => e.target.select()}
                   />
-                  <ErrorMessage name={`items.${index}.number`} component="div" className="text-red-400" />
                 </div>
               </div>
             ))}
 
             <button
               type="button"
+              name="add-product-btn"
               className="w-full md:w-auto md:min-w-60 mt-4 px-4 py-2 bg-indigo-500 text-white rounded-lg duration-500 hover:bg-indigo-600"
               onClick={() => {
                 const newIndex = values.items.length;

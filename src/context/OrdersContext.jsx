@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import {axiosAuth} from "../api/axios";
+import { axiosAuth } from "../api/axios";
 import toast from 'react-hot-toast';
 
 const OrdersContext = createContext();
@@ -23,7 +23,8 @@ export const OrdersProvider = ({ children }) => {
         try {
             const response = await axiosAuth.get(`/visitors/orders/?page=${page}`);
             const data = response.data;
-            setUnconfirmedOrders(data.orders);
+            const resData = data.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setUnconfirmedOrders(resData);
             setCurrentPage(data.currentPage);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -34,7 +35,8 @@ export const OrdersProvider = ({ children }) => {
     const getJNTOrders = async () => {
         try {
             const response = await axiosAuth.get('/jnt/orders/');
-            setJNTOrders(response.data.orders);
+            const resData = response.data.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setJNTOrders(resData);
         } catch (error) {
             console.error(error);
         }

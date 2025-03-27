@@ -61,8 +61,8 @@ const EcommerceHeader = ({ toggleSidebar }) => {
     <header className="w-full lg:w-[calc(100%-50px)] lg:mr-[50px] flex flex-col">
       <div className="w-full py-4 px-4 md:px-12 flex justify-between items-center gap-2 lg:gap-10">
         <div className="logo">
-          <Link to="/" className="logo-link">
-            <img src={modyStoreLogo} className="w-20" />
+          <Link to="/" className="logo-link" aria-label="Go to the home page">
+            <img src={modyStoreLogo} className="w-20 h-auto" alt="diva store" />
           </Link>
         </div>
 
@@ -80,9 +80,10 @@ const EcommerceHeader = ({ toggleSidebar }) => {
                       key={product._id}
                       to={`/products/${product._id}`}
                       className="flex items-center gap-4 px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      aria-label="A link to a single product"
                     >
-                      <div className="w-16">
-                        <img src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} alt={product.mainImage.alt} />
+                      <div className="w-16 h-auto">
+                        <img src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)} alt={product.mainImage.alt} className="w-full h-full" />
                       </div>
                       <div className="flex flex-col gap-1">
                         <div className="font-medium">{product.name}</div>
@@ -98,8 +99,8 @@ const EcommerceHeader = ({ toggleSidebar }) => {
         </div>
 
         <div className="user-controls">
-          <button className="max-w-content py-2 px-2 md:px-4 bg-green-400 text-gray-100 rounded-full duration-500 hover:bg-green-500 hover:text-white">
-            <a href="https://wa.me/01011789966" target="_blanck" className="flex items-center justify-center gap-2">
+          <button type="button" name="header-whatsapp-btn" className="max-w-content py-2 px-2 md:px-4 bg-green-400 text-gray-100 rounded-full duration-500 hover:bg-green-500 hover:text-white">
+            <a href="https://wa.me/01011789966" target="_blanck" className="flex items-center justify-center gap-2" aria-label="Chat with us on Whatsapp" >
               <span className="hidden md:block"> ابعتلنا واتساب</span>
               <FaWhatsapp className="w-6 h-6" />
             </a>
@@ -111,7 +112,8 @@ const EcommerceHeader = ({ toggleSidebar }) => {
 
         <div className="flex items-center gap-2 rounded-full py-1 pr-1 pl-4 bg-white cursor-pointer duration-500 hover:opacity-85" onClick={toggleSidebar}>
           <Menu className="w-10 h-10 bg-indigo-600 text-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer opacity-85 group-hover:opacity-100" />
-          <span>عرض الأقسام</span>
+          {/* <span className="hidden md:block">عرض الأقسام</span> */}
+          <span>الأقسام</span>
         </div>
         <nav className="hidden lg:flex justify-center items-center gap-8">
           {storeMainNav.map((item, index) => (
@@ -121,7 +123,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <div>
             <Link to='/signed-orders'>
               <UserRound className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer hover:bg-indigo-200" />
@@ -132,8 +134,8 @@ const EcommerceHeader = ({ toggleSidebar }) => {
               <Heart className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer hover:bg-indigo-200" />
             </Link>
           </div>
-          <div className="group flex items-center gap-2 duration-500 p-2 rounded-full cursor-pointer hover:bg-indigo-200" onClick={toggleCart}>
-            <ShoppingCart className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer opacity-85 group-hover:opacity-100" />
+          <div className="group flex items-center gap-2 duration-500 rounded-full cursor-pointer" onClick={toggleCart}>
+            <ShoppingCart className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer group-hover:bg-indigo-200" />
             <span>{totalPrice} EGP</span>
           </div>
         </div>

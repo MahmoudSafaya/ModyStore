@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import {axiosMain} from '../api/axios';
+import { axiosMain } from '../api/axios';
 
 // Secret key for hashing (keep this secure)
 const SECRET_KEY = import.meta.env.VITE_CART_SECRET_KEY;
@@ -78,12 +78,26 @@ export const CartProvider = ({ children }) => {
         //     cartItem.selectedVariant === selectedVariant
         // );
         fetchProductsNames();
-        
-        const existingItem = cart.find(cartItem => cartItem._id === item._id  );
+
+        const existingItem = cart.find(cartItem => cartItem._id === item._id);
 
         if (existingItem) {
+            let newCart = cart.map((cartItem) => {
+                if (cartItem._id === item._id) {
+                    return {
+                        ...cartItem,
+                        quantity: quantity,
+                        quantityPrice: cartItem.quantityPrice + cartItem.price
+                    };
+                }
+                return cartItem;
+            });
+
+            setCart(newCart);
+            setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
+            saveCartItems(newCart);
             setIsCartOpen(true);
-            toast('المنتج موجود بالفعل في سلة التسوق.', {
+            toast('تمت إضافة المنتج من جديد إلى سلة التسوق.', {
                 style: {
                     textAlign: 'center',
                     color: '#485363'
@@ -132,30 +146,30 @@ export const CartProvider = ({ children }) => {
 
     // Increase item quantity
     const increaseQuantity = (product) => {
-        const totalStock = product.variants.reduce((total, item) => total + item.stock, 0);
-    
+        // const totalStock = product.variants.reduce((total, item) => total + item.stock, 0);
+
         let newCart = cart.map((item) => {
             if (item._id === product._id) {
-                if (item.quantity < totalStock) {
-                    return {
-                        ...item,
-                        quantity: item.quantity + 1,
-                        quantityPrice: item.quantityPrice + item.price
-                    };
-                } else {
-                    toast('عفوا, الكمية المطلوبة ليست متوفرة في الوقت الحالي.', {
-                        style: { textAlign: 'center' }
-                    });
-                }
+                // if (item.quantity < totalStock) {
+                return {
+                    ...item,
+                    quantity: item.quantity + 1,
+                    quantityPrice: item.quantityPrice + item.price
+                };
+                // } else {
+                //     toast('عفوا, الكمية المطلوبة ليست متوفرة في الوقت الحالي.', {
+                //         style: { textAlign: 'center' }
+                //     });
+                // }
             }
             return item;
         });
-    
+
         setCart(newCart);
         setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
         saveCartItems(newCart);
     };
-    
+
     // Decrease item quantity (or remove if it reaches 0)
     const decreaseQuantity = (product) => {
         let newCart = cart.map((item) =>
