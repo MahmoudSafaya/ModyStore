@@ -39,7 +39,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <button type="button" name="admin-menu-btn" onClick={toggleSidebar} className="w-full">
             <div className={`flex items-center text-indigo-600 justify-between gap-4 px-6 py-6 hover:bg-gray-100 ${isOpen ? '' : 'justify-center'}`}>
               {isOpen && (<div>
-                <img src={modyStoreLogo} className="w-12 h-12" alt="Diva Store" />
+                <img src={modyStoreLogo} className="w-14 h-auto object-cover" alt="Diva Store" />
               </div>)}
               <div className="hidden lg:block text-xl">{isOpen ? <ChevronsRight /> : <ChevronsLeft />}</div>
               <div className="lg:hidden text-xl"><Menu /></div>

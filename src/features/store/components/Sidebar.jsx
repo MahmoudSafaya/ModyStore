@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className={`flex items-center text-indigo-600 gap-4 px-6 py-6 h-20 hover:bg-gray-100 justify-between duration-1000 ${isOpen ? '' : 'lg:px-0 lg:justify-center lg:gap-0'}`}>
               {/* {isOpen && <span className="text-base">جميع الأقسام</span>} */}
               <div>
-                <img src={modyStoreLogo} alt="diva store" className={`w-14 h-auto object-cover duration-1000 object-cover ${isOpen ? '' : 'lg:hidden'}`} />
+                <img src={modyStoreLogo} alt="diva store" className={`w-14 h-auto duration-1000 object-cover ${isOpen ? '' : 'lg:hidden'}`} />
               </div>
               <div className="hidden lg:block text-xl">{isOpen ? <ChevronsRight /> : <ChevronsLeft />}</div>
               <div className="lg:hidden text-xl"><X /></div>

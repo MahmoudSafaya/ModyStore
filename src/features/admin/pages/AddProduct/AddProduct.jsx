@@ -13,6 +13,7 @@ import { axiosAuth } from "../../../../api/axios";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../../context/AppContext";
 import Loading from "../../../../shared/components/Loading";
+import { FaMoneyBill1Wave } from "react-icons/fa6";
 
 const AddProduct = () => {
     const [thumbnail, setThumbnail] = useState(null);
@@ -83,6 +84,7 @@ const AddProduct = () => {
         discount: 0,
         category: "",
         badge: "",
+        soldCount: 0,
         isFeatured: true,
         mainImage: null,
         images: null,
@@ -98,6 +100,7 @@ const AddProduct = () => {
             formData.append('name', values.name)
             formData.append('description', values.description)
             formData.append('badge', values.badge)
+            formData.append('soldCount', values.soldCount)
             formData.append('price', values.price)
             formData.append('discount', values.discount)
             formData.append('category', values.category)
@@ -278,12 +281,24 @@ const AddProduct = () => {
                                     {/* Category Details */}
                                     <ProductCategory setFieldValue={setFieldValue} />
 
-                                    {/* Tag Badge*/}
+                                    {/* Tag Badge */}
                                     <div className="custom-bg-white mt-8">
                                         <h2 className="custom-header">العلامة</h2>
                                         <div className="relative">
                                             <Field type="text" name="badge" id="badge" className="custom-input-field w-full" placeholder="اكتب علامة مميزة للمنتج ..." />
                                             <Tag className="w-10 lg:w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
+                                        </div>
+                                    </div>
+
+                                    {/* Tag soldCount */}
+                                    <div className="custom-bg-white mt-8">
+                                        <h2 className="custom-header">عدد القطع المباعه</h2>
+                                        <div className="relative">
+                                            <Field type="number" name="soldCount" id="soldCount" 
+                                            className="custom-input-field w-full" 
+                                            placeholder="القطع المباعه من هذا المنتج..." 
+                                            onFocus={(e) => e.target.select()} />
+                                            <FaMoneyBill1Wave className="w-10 lg:w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
                                         </div>
                                     </div>
                                 </div>

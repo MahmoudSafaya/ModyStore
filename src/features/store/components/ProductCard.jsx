@@ -5,7 +5,16 @@ import { useCart } from '../../../context/CartContext';
 import { useFavorites } from '../../../context/FavoritesContext';
 import { useApp } from '../../../context/AppContext';
 import { Toaster } from "react-hot-toast";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaCartPlus } from "react-icons/fa";
+import { LuPackage2 } from "react-icons/lu";
+
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import { Autoplay } from 'swiper/modules';
+
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
@@ -60,7 +69,29 @@ const ProductCard = ({ product }) => {
                     {product.name.length > 32 ? product.name.slice(0, 32) + '...' : product.name}
                 </Link>
             </h3>
+            <Swiper
+                direction="vertical"
+                loop={true}
+                autoplay={{ delay: 3000 }}
+                speed={1000}
+                modules={[Autoplay]}
+                className="max-h-max h-5 w-full !items-start"
+            >
+                <SwiperSlide className="flex items-center justify-start">
+                    <p className='text-gray-500 text-sm flex items-center gap-2 whitespace-nowrap'>
+                      <LuPackage2 className='text-orange-500' />  
+                      <span>باقي {product.variants.reduce((total, item) => total + item.stock, 0)} قطعة في المخزون</span>
+                    </p>
+                </SwiperSlide>
+                <SwiperSlide className="flex items-center justify-start">
+                    <p className='text-gray-500 text-sm flex items-center gap-2'>
+                       <FaCartPlus className='text-green-500' /> 
+                       <span>تم بيع {product.soldCount} قطعة مؤخرًا</span>
+                    </p>
+                </SwiperSlide>
+            </Swiper>
             <div className='flex flex-col gap-2'>
+
                 <p className="text-gray-500 text-sm">{proCategory}</p>
 
                 {/* {product.ratings?.average > 0 ? (

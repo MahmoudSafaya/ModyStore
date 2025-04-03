@@ -9,6 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { FaStar } from "react-icons/fa";
 import { Helmet } from "react-helmet-async";
 import ImageGallery from "../components/ImageGallery";
+import { MdLocalShipping } from "react-icons/md";
 
 const ProductDetails = ({ }) => {
     const { addToCart } = useCart();
@@ -207,7 +208,7 @@ const ProductDetails = ({ }) => {
                         {/* Image Section */}
                         <div className="w-full md:w-3/5 lg:w-1/2 2xl:w-1/3">
 
-                            <ImageGallery product={product}  />
+                            <ImageGallery product={product} />
 
                         </div>
 
@@ -305,6 +306,12 @@ const ProductDetails = ({ }) => {
                                 </div>
                             </div>
 
+                            {/* Shipping Info */}
+                            <div className="flex items-center gap-1">
+                                <MdLocalShipping className="w-5 h-5 text-indigo-500" />
+                                <p className="text-gray-700">التوصيل خلال 2 إلى 5 أيام</p>
+                            </div>
+
                             {/* Buttons */}
                             <div className="flex md:flex-col lg:flex-row gap-6">
                                 <button
@@ -320,9 +327,6 @@ const ProductDetails = ({ }) => {
                                     أضف إلى السلة
                                 </button>
                             </div>
-
-                            {/* Shipping Info */}
-                            {/* <p className="text-gray-500 mt-4">يتم التوصيل خلال 2 إلى 5 أيام عمل</p> */}
 
 
                             {/* Product Description */}

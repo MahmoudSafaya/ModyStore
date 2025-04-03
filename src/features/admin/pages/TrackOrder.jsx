@@ -5,7 +5,7 @@ import Loading from '../../../shared/components/Loading';
 import { TbDatabaseExclamation } from "react-icons/tb";
 
 const TrackOrder = () => {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [orderData, setOrderData] = useState([]);
 
     const location = useLocation();
@@ -16,10 +16,11 @@ const TrackOrder = () => {
 
     useEffect(() => {
         const fetchOrderTrack = async () => {
+            setLoading(true);
             try {
-                setLoading(true);
                 const res = await axiosAuth.get(`/jnt/orders/track/${orderId}`);
                 setOrderData(res.data.data);
+                console.log(res);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -32,7 +33,7 @@ const TrackOrder = () => {
         }
     }, [orderId]);
 
-    if (loading) return <Loading loading={loading} />
+    if (loading) return <Loading />
 
     if (!orderData || orderData.length < 1) {
         return (
@@ -48,20 +49,26 @@ const TrackOrder = () => {
 
     return (
         <div>
-            <h1 className='mb-8'>Track Order: {orderData[0].billCode}</h1>
+            <h1 className='mb-8'>تتبع الطلب: {orderData[0].billCode}</h1>
             <div className=' flex flex-col gap-6'>
-                {orderData && orderData[0].details.map((detail, index) => {
+                {orderData.length > 0 && orderData[0].details.map((detail, index) => {
                     return (
                         <div key={index} className={`custom-bg-white ${index !== 0 ? 'opacity-50' : ''}`}>
-                            <div className='flex flex-col items-center justify-center gap-2'>
-                                <div className='min-w-40 text-gray-800 text-center flex md:block flex-col gap-2'>
-                                    <span className='font-semibold'>{detail.scanType} -</span>
-                                    <span> {detail.scanTime}</span>
+                            {detail.status ? (
+                                <div className='flex items-center justify-center'>
+                                    {detail.status}
                                 </div>
-                                <div className='flex-grow text-gray-500 mx-4 md:mx-12 text-center'>
-                                    {detail.desc}
+                            ) : (
+                                <div className='flex flex-col items-center justify-center gap-2'>
+                                    <div className='min-w-40 text-gray-800 text-center flex md:block flex-col gap-2'>
+                                        <span className='font-semibold'>{detail.scanType} -</span>
+                                        <span> {detail.scanTime}</span>
+                                    </div>
+                                    <div className='flex-grow text-gray-500 mx-4 md:mx-12 text-center'>
+                                        {detail.desc}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     )
                 })}

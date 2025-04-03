@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }) => {
   }, [auth, navigate]);
 
   if (loading) {
-    return <Loading loading={loading} />; // Show a loading indicator
+    return <Loading />; // Show a loading indicator
   }
 
   const login = (accessToken) => {

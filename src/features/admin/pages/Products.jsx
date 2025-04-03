@@ -141,7 +141,7 @@ const Products = () => {
     }));
   }, []);
 
-  if (loading) return <Loading loading={loading} />;
+  if (loading) return <Loading />;
 
 
   return (
@@ -150,11 +150,11 @@ const Products = () => {
       <div className="custom-bg-white flex flex-col md:flex-row items-center gap-4">
         <div className='w-full md:w-auto flex-grow'>
           <div className="relative w-full">
-            <input type="text" name="product-search" id="product-search" className="custom-input-field w-full" placeholder="بحث عن منتج..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
+            <input type="text" name="product-search" id="product-search" autoComplete='off' className="custom-input-field w-full" placeholder="بحث عن منتج..." value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
             <Search className="w-20 h-[calc(100%-2px)] my-[1px] ml-[1px] text-2xl p-2 rounded-l-lg bg-gray-100 text-gray-400 absolute top-0 left-0 border border-gray-200" />
           </div>
         </div>
-        <button type='button' name='products-all-delete-btn' className={`min-w-30 w-full md:w-auto lg:whitespace-nowrap py-3 px-2 text-center rounded-lg shadow-md bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`} onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}>
+        <button type='button' name='products-all-delete-btn' className={`min-w-30 w-full md:w-auto lg:whitespace-nowrap py-3 px-2 text-center rounded-lg shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`} onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}>
           حذف الاختيارات
         </button>
       </div>
@@ -357,7 +357,7 @@ const Products = () => {
                     </div>
                     <div className='w-full md:w-auto flex items-center gap-4'>
                       <label htmlFor={`${variant.size}-${variant.color}`}>
-                        <input type="text" name={`${variant.size}-${variant.color}`} id={`${variant.size}-${variant.color}`} className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => handleBarcodeChange(e, variant.barCode)} />
+                        <input type="number" name={`${variant.size}-${variant.color}`} id={`${variant.size}-${variant.color}`} className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => handleBarcodeChange(e, variant.barCode)} />
                       </label>
                       <A_BillOfLading
                         variant={variant.barCode}

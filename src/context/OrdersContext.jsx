@@ -62,9 +62,9 @@ export const OrdersProvider = ({ children }) => {
             const response = await axiosAuth.post(
                 `/jnt/orders/print/${orderID}`,
                 {
-                    printcod: 0,
-                    printSize: 0,
-                    showCustomerOrderId: 0
+                    printcod: 1,
+                    printSize: 3,
+                    showCustomerOrderId: 1
                 },
                 {
                     responseType: 'blob', // Important for handling binary data like PDFs

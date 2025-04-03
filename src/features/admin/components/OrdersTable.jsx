@@ -68,9 +68,9 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
         try {
             const orderIds = checkedOrders?.map(item => item._id);
             const res = await axiosAuth.post('/jnt/orders/print/all', {
-                printCod: 0,
-                printSize: 0,
-                showCustomerOrderId: 0,
+                printCod: 1,
+                printSize: 3,
+                showCustomerOrderId: 1,
                 ids: orderIds,
             },
                 {

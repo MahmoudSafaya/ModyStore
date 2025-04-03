@@ -7,6 +7,7 @@ export const ProductSchema = Yup.object().shape({
     discount: Yup.number(),
     category: Yup.string().required('هذا الحقل مطلوب'),
     badge: Yup.string(),
+    soldCount: Yup.number(),
     mainImage: Yup.mixed().required('هذا الحقل مطلوب'),
     images: Yup.mixed().required("أضف صورة واحدة علي الأقل"),
     isActive: Yup.boolean(),

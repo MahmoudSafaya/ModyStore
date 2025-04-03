@@ -13,7 +13,7 @@ const Cart = () => {
         <div className='flex items-center justify-between text-gray-700 p-2 md:p-4 lg:p-6 border-b border-gray-300'>
           <h2 className='font-bold text-xl'>قائمة التسوق</h2>
           <div className='flex items-center gap-1 cursor-pointer duration-500 hover:text-gray-800 hover:bg-indigo-100 py-2 px-4 rounded-full' onClick={toggleCart}>
-            <span className='text-base'>إغلاق</span>
+            <span className='text-base'>أكمل التسوق</span>
             <X className='w-5 h-5' />
           </div>
         </div>

@@ -13,7 +13,7 @@ const Footer = () => {
 
     return (
         <footer className='w-full lg:w-[calc(100%-50px)] lg:mr-[50px] flex flex-col bg-white'>
-            <div className='py-8 px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-14'>
+            <div className='py-8 px-4 md:px-12 flex flex-col md:flex-row items-start justify-between gap-14'>
                 <div>
                     <div className='text-center mb-4'>
                         <Link to='/' aria-label="Go to the home page">

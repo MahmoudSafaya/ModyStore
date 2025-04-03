@@ -122,8 +122,6 @@ const OrderForm = () => {
             }),
         };
         try {
-            console.log(senderAddress);
-            console.log(visitorOrderData);
             const response = await axiosMain.post('/visitors/orders/', visitorOrderData);
             if (response.status === 201) {
                 toast.success('تم تسجيل طلبك بنجاح!');
@@ -132,7 +130,8 @@ const OrderForm = () => {
             setSubmitting(false);
             resetForm();
             values.receiver.prov = '';
-            addToFavorites(visitorOrderData);
+            addToSignedOrders(response.data);
+            navigate('/signed-orders')
         } catch (error) {
             console.error(error);
         }
@@ -152,22 +151,22 @@ const OrderForm = () => {
         return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
     };
 
-    // Function to save favorites to local storage
+    // Function to save signed orders to local storage
     const saveUserOrders = (orderItems) => {
-        const encryptedFAVs = encryptData(orderItems);
-        localStorage.setItem('signed-orders', encryptedFAVs);
+        const encryptedSigned = encryptData(orderItems);
+        localStorage.setItem('signed-orders', encryptedSigned);
     };
 
-    // Add item to favorites
-    const addToFavorites = (orderItem) => {
-        const encryptedFAVs = localStorage.getItem('signed-orders');
-        if (!encryptedFAVs) {
+    // Add item to signed orders
+    const addToSignedOrders = (orderItem) => {
+        const encryptedSigned = localStorage.getItem('signed-orders');
+        if (!encryptedSigned) {
             saveUserOrders([orderItem]);
             return;
         }
         try {
-            const existingOrders = decryptData(encryptedFAVs);
-            const newSignedOrders = [...existingOrders, orderItem];
+            const existingOrders = decryptData(encryptedSigned);
+            const newSignedOrders = [orderItem, ...existingOrders];
             saveUserOrders(newSignedOrders);
         } catch (error) {
             console.error('Failed to decrypt data:', error);
