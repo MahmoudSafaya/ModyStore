@@ -15,6 +15,8 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
     const [checkedAll, setCheckedAll] = useState(false);
     const [checkedOrders, setCheckedOrders] = useState([]);
     const { isDelete, setIsDelete, successNotify, deleteNotify, errorNotify } = useApp();
+    const [isSigning, setIsSigning] = useState(false);
+    const [isDeletingAll, setIsDeletingAll] = useState(false);
     
     const handleCheckOrder = (orderID) => {
         if (checkedOrders.some(item => item._id === orderID)) {
@@ -51,6 +53,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
     };
 
     const signAllSelected = async () => {
+        setIsSigning(true);
         try {
             // Iterate over each product in the array
             for (const item of checkedOrders) {
@@ -58,9 +61,12 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                 await axiosAuth.post(`/jnt/orders/${item._id}`);
             }
             successNotify('تم تسجيل جميع الاوردرارت المحددة بنجاح.');
+            setCheckedOrders([]);
             fetchOrders();
         } catch (error) {
             console.error('Error deleting products:', error);
+        } finally {
+            setIsSigning(false)
         }
     };
 
@@ -106,6 +112,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
 
     const deleteAllSelected = async () => {
         if (inConfirmed) {
+            setIsDeletingAll(true);
             try {
                 // Iterate over each product in the array
                 for (const item of checkedOrders) {
@@ -117,8 +124,11 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
             } catch (error) {
                 console.error('Error deleting products:', error);
                 errorNotify('حدثت مشكلة أثناء الحذف, الرجاء المحاولة مرة اخري.');
+            } finally {
+                setIsDeletingAll(false);
             }
         } else {
+            setIsDeletingAll(true);
             try {
                 // Iterate over each product in the array
                 for (const item of checkedOrders) {
@@ -130,6 +140,8 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
             } catch (error) {
                 console.error('Error deleting products:', error);
                 errorNotify('حدثت مشكلة أثناء الحذف, الرجاء المحاولة مرة اخري.');
+            } finally {
+                setIsDeletingAll(false);
             }
         }
         setCheckedOrders([]);
@@ -145,10 +157,10 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                             type="button"
                             name="all-sign-btn"
                             onClick={signAllSelected}
-                            className={`min-w-30 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
-                            disabled={!checkedOrders.length > 0}
+                            className={`min-w-30 md:min-w-40 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-indigo-100 text-indigo-500 hover:bg-indigo-200 duration-500 ${!checkedOrders.length > 0 || isSigning ? 'opacity-25' : ''}`}
+                            disabled={!checkedOrders.length > 0 || isSigning}
                         >
-                            تسجيل الاختيارات
+                            {isSigning ? 'جار التسجيل...' : 'تسجيل الاختيارات'}
                         </button>
                     )}
                     {inConfirmed && (
@@ -156,7 +168,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                             type="button"
                             name="jt-all-print-btn"
                             onClick={printAllSelected}
-                            className={`min-w-30 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-green-100 text-green-500 hover:bg-green-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
+                            className={`min-w-30 md:min-w-40 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-green-100 text-green-500 hover:bg-green-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
                         disabled={!checkedOrders.length > 0}
                         >
                             طباعة الاختيارات
@@ -165,10 +177,11 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                     <button
                         type="button"
                         name="all-delete-btn"
-                        className={`min-w-30 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
-                        onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} disabled={!checkedOrders.length > 0}
+                        className={`min-w-30 md:min-w-40 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 || isDeletingAll ? 'opacity-25' : ''}`}
+                        onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} 
+                        disabled={!checkedOrders.length > 0 || isDeletingAll}
                     >
-                        حذف الاختيارات
+                        {isDeletingAll ? 'جار الحذف...' : 'حذف الاختيارات'}
                     </button>
                 </div>
 

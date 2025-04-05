@@ -50,11 +50,11 @@ const ProductCard = ({ product }) => {
                 )}
             </div>
             {product.badge && (
-                <span className="absolute top-2 left-2 z-40 bg-red-500 text-white text-xs px-3 py-1 rounded-full">
+                <span className="absolute top-2 left-2 z-40 bg-red-500 text-white text-xs px-3 py-1 rounded-md">
                     {product.badge}
                 </span>
             )}
-            <div className="relative w-full h-80 overflow-hidden rounded-lg">
+            <div className="relative w-full h-80 2xl:h-100 overflow-hidden rounded-lg">
                 <Link to={`/products/${product._id}`} className='w-full h-full'>
                     <img
                         src={encodeURI(`${baseUrl}/${product.mainImage.url.replace(/\\/g, '/')}`)}
@@ -110,7 +110,7 @@ const ProductCard = ({ product }) => {
                 </div>
                 <button
                     type='button'
-                    name='add-to-cart-btn' className="bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(product, 1, selectedVariant)}>
+                    name='add-to-cart-btn' className="bg-indigo-500 text-white px-4 py-2 rounded w-full duration-500 hover:bg-indigo-600" onClick={() => addToCart(false, product, 1, selectedVariant)}>
                     أضف إلى السلة
                 </button>
             </div>

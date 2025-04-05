@@ -20,8 +20,8 @@ Font.register({
   ]
 })
 
-// Reference font
-const styles = {
+// Styles
+const styles = StyleSheet.create({
   page: {
     display: "flex",
     alignItems: "center",
@@ -34,41 +34,57 @@ const styles = {
     justifyContent: "center",
   },
   pageText: {
-    fontFamily: 'rubik',
+    fontFamily: "rubik",
     fontSize: 10,
     marginBottom: 2,
-    textAlign: 'center',
-  }
+    textAlign: "center",
+  },
+  barcodeImage: {
+    width: 200,
+    height: 50,
+  },
+});
+
+// Helper to generate barcode base64
+const generateBarcodeImage = (text) => {
+  const canvas = document.createElement("canvas");
+  JsBarcode(canvas, text, {
+    format: "CODE128",
+    height: 50,
+    displayValue: true,
+  });
+  return canvas.toDataURL("image/png");
 };
 
-// Component to create PDF with the barcode
-export const BarcodePDF = ({ variant, stock, billName }) => {
+// React component to prepare barcodes and render PDF
+export const BarcodePDFWrapper = ({ variant, stock, billName }) => {
+  const [barcodes, setBarcodes] = useState([]);
+
+  useEffect(() => {
+    const count = stock > 0 ? stock : 1;
+    const generated = Array.from({ length: count }, () =>
+      generateBarcodeImage(variant)
+    );
+    setBarcodes(generated);
+  }, [variant, stock]);
+
   return (
-    <Document>
-      {Array.from({ length: stock > 0 ? stock : 1 }, (_, index) => {
-        const canvas = document.createElement("canvas");
-        JsBarcode(canvas, variant, {
-          format: "CODE128",
-          height: 50,
-          displayValue: true,
-        });
-
-        // Convert canvas to data URL
-        const barcodeDataURL = canvas.toDataURL("image/png");
-
-        return (
-          <Page key={index} style={styles.page} size={{ width: 216, height: 100 }}>
+    barcodes.length > 0 && (
+      <Document>
+        {barcodes.map((src, index) => (
+          <Page
+            key={index}
+            style={styles.page}
+            size={{ width: 216, height: 100 }}
+          >
             <View style={styles.pageView}>
               <Text style={styles.pageText}>{billName}</Text>
-              <Image
-                src={barcodeDataURL}
-                style={{ width: 200, height: 50 }}
-              />
+              <Image src={src} style={styles.barcodeImage} />
             </View>
           </Page>
-        );
-      })}
-    </Document>
+        ))}
+      </Document>
+    )
   );
 };
 

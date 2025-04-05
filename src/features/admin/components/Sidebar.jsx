@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const adminNav = [
     { icon: <House />, label: "الرئيسية", link: '/admin' },
     { icon: <PackagePlus />, label: "تسجيل اوردر", link: '/admin/place-order' },
-    { icon: <PackageOpen />, label: "قائمة الطلبات", link: '/admin/orders' },
+    { icon: <PackageOpen />, label: "طلبات J&T", link: '/admin/orders' },
     { icon: <IoStorefrontOutline />, label: "طلبات الموقع", link: '/admin/unconfirmed-orders' },
   ];
   const storeNav = [

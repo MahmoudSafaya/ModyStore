@@ -125,11 +125,6 @@ const EcommerceHeader = ({ toggleSidebar }) => {
 
         <div className="flex items-center gap-2 md:gap-4">
           <div>
-            <Link to='/signed-orders'>
-              <UserRound className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer hover:bg-indigo-200" />
-            </Link>
-          </div>
-          <div>
             <Link to='/favorites'>
               <Heart className="w-10 h-10 bg-white rounded-full p-2 duration-500 text-gray-700 cursor-pointer hover:bg-indigo-200" />
             </Link>

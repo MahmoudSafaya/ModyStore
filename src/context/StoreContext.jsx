@@ -8,9 +8,8 @@ export const StoreProvider = ({ children }) => {
 
   const storeMainNav = [
     { label: "الرئيسية", link: '/' },
-    // { label: "متجرنا", link: '/products' },
     { label: "من نحن", link: '/about-us' },
-    // { label: "الشحن والاسترجاع", link: '/shippment' },
+    { label: "تتبع الاوردر", link: '/signed-orders' },
   ];
 
   return (

@@ -19,6 +19,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
       setLoading(true);
       try {
         const res = await axiosAuth.get("/products/search");
+        console.log(res);
         setFirstOptions(res.data.products);
       } catch (error) {
         console.error(error);
@@ -110,7 +111,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
                     onFocus={() => setShowFirstOptions((prev) => ({ ...prev, [index]: true }))}
                     onBlur={(e) => {
                       handleBlur(e);
-                      handleInputBlur(selections[index], index, firstOptions);
+                      // handleInputBlur(selections[index], index, firstOptions);
                       setTimeout(() => setShowFirstOptions((prev) => ({ ...prev, [index]: false })), 200);
                     }}
                   />

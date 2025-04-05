@@ -71,23 +71,35 @@ export const CartProvider = ({ children }) => {
     };
 
     // Add item to cart
-    const addToCart = (item, quantity, selectedVariant) => {
-        // Check if item already exists in the cart
-        // const existingItem = cart.find(cartItem =>
-        //     cartItem._id === item._id &&
-        //     cartItem.selectedVariant === selectedVariant
-        // );
+    const addToCart = (fromBuyNow, item, quantity, selectedVariant) => {
         fetchProductsNames();
 
         const existingItem = cart.find(cartItem => cartItem._id === item._id);
 
+        // Auto-select variant if only one exists (avoid mutation)
+        let finalSelectedVariant = typeof selectedVariant === 'string' ? selectedVariant : null;
+        if (item.variants.length === 1) {
+            finalSelectedVariant = `${item.name} ${item.variants[0].color} (${item.variants[0].size})`;
+        }
+
         if (existingItem) {
+            // Ensure the user has selected a valid variant
+            if (item.variants.length > 1 && !selectedVariant) {
+                toast(`من فضلك, اختر مقاس أو لون مناسب لك أولاً.`, {
+                    duration: 3000,
+                    style: { textAlign: 'center' },
+                });
+                navigate(`/products/${item._id}`);
+                return;
+            }
+
             let newCart = cart.map((cartItem) => {
                 if (cartItem._id === item._id) {
                     return {
-                        ...cartItem,
+                        ...item,
                         quantity: quantity,
-                        quantityPrice: cartItem.quantityPrice + cartItem.price
+                        quantityPrice: cartItem.quantityPrice + cartItem.price,
+                        selectedVariant: finalSelectedVariant,
                     };
                 }
                 return cartItem;
@@ -96,7 +108,7 @@ export const CartProvider = ({ children }) => {
             setCart(newCart);
             setTotalPrice(calculateTotalPrice(newCart)); // ✅ Update total price
             saveCartItems(newCart);
-            setIsCartOpen(true);
+            !fromBuyNow ? setIsCartOpen(true) : '';
             toast('تمت إضافة المنتج من جديد إلى سلة التسوق.', {
                 style: {
                     textAlign: 'center',
@@ -104,12 +116,6 @@ export const CartProvider = ({ children }) => {
                 }
             });
             return;
-        }
-
-        // Auto-select variant if only one exists (avoid mutation)
-        let finalSelectedVariant = typeof selectedVariant === 'string' ? selectedVariant : null;
-        if (item.variants.length === 1) {
-            finalSelectedVariant = `${item.name} ${item.variants[0].color} (${item.variants[0].size})`;
         }
 
         // Ensure the user has selected a valid variant
@@ -137,7 +143,7 @@ export const CartProvider = ({ children }) => {
         setCart(updatedCart);
         setTotalPrice(calculateTotalPrice(updatedCart));
         saveCartItems(updatedCart);
-        setIsCartOpen(true);
+        !fromBuyNow ? setIsCartOpen(true) : '';
 
         toast.success('تم إضافة المنتج إلى سلة التسوق.');
     };

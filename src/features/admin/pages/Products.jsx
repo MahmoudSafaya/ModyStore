@@ -9,6 +9,8 @@ import { useAuth } from '../../../context/AuthContext';
 import { useApp } from '../../../context/AppContext';
 import { A_BillOfLading, A_DeleteConfirmModal } from '../components';
 import { IoStorefrontOutline } from "react-icons/io5";
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import { BarcodePDFWrapper } from '../components/BillOfLading';
 
 const Products = () => {
   const { loading, setLoading } = useAuth();
@@ -23,6 +25,8 @@ const Products = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [activePDFBarcode, setActivePDFBarcode] = useState(null);
 
   const baseUrl = import.meta.env.VITE_SERVER_URL;
   const navigate = useNavigate();
@@ -137,7 +141,7 @@ const Products = () => {
   const handleBarcodeChange = useCallback((e, barCode) => {
     setBarcodeNums(prev => ({
       ...prev,
-      [barCode]: Number(e.target.value)
+      [barCode]: Number(e.target.value) > 100 ? 100 : Number(e.target.value)
     }));
   }, []);
 
@@ -336,13 +340,14 @@ const Products = () => {
       {/* Product Info Popup */}
       {selectedProduct && (
         <div className='fixed inset-0 flex items-center justify-center z-100 bg-[#00000035] overflow-y-auto'>
-          <div className='w-5/6 lg:w-3/5 xl:w-1/2 custom-bg-white my-12'>
+          <div className='w-5/6 lg:w-4/5 2xl:w-1/2 custom-bg-white my-12'>
             <div className="relative flex items-center justify-between mb-8">
               <p className='flex-grow text-center font-semibold'>{selectedProduct.name}</p>
               <div className='w-7 h-7 p-1 absolute top-0 left-0 bg-gray-100 rounded-full flex items-center justify-center'>
                 <X className='w-full cursor-pointer duration-500 hover:rotate-90' onClick={() => {
                   setSelectedProduct('');
                   setPopupPurpose('');
+                  setActivePDFBarcode(null);
                 }} />
               </div>
             </div>
@@ -357,13 +362,43 @@ const Products = () => {
                     </div>
                     <div className='w-full md:w-auto flex items-center gap-4'>
                       <label htmlFor={`${variant.size}-${variant.color}`}>
-                        <input type="number" name={`${variant.size}-${variant.color}`} id={`${variant.size}-${variant.color}`} className='w-full custom-input-field md:max-w-20 text-center' placeholder='0' value={barcodeNums[variant.barCode] || variant.stock} onChange={(e) => handleBarcodeChange(e, variant.barCode)} />
+                        <input
+                          type="number"
+                          name={`${variant.size}-${variant.color}`}
+                          id={`${variant.size}-${variant.color}`}
+                          className='w-full custom-input-field md:max-w-20 text-center'
+                          placeholder='0'
+                          value={barcodeNums[variant.barCode] || (variant.stock > 100 ? 100 : Number(variant.stock))}
+                          onChange={(e) => handleBarcodeChange(e, variant.barCode)}
+                          onFocus={() => setActivePDFBarcode(null)}
+                        />
                       </label>
-                      <A_BillOfLading
-                        variant={variant.barCode}
-                        stock={barcodeNums ? barcodeNums[variant.barCode] : Number(variant.stock)}
-                        billName={`${selectedProduct.name.slice(0, 20)} ${variant.size} (${variant.color})`}
-                      />
+                      {/* Button to show the PDFDownloadLink */}
+                      {activePDFBarcode !== variant.barCode && (
+                        <button
+                          onClick={() => setActivePDFBarcode(variant.barCode)}
+                          className="w-full md:w-40 bg-gray-500 text-slate-100 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 hover:bg-gray-700 cursor-pointer text-center"
+                        >
+                          تجهيز الباركود
+                        </button>
+                      )}
+
+                      {/* Conditionally render the PDFDownloadLink */}
+                      {activePDFBarcode === variant.barCode && (
+                        <PDFDownloadLink
+                          document={
+                            <BarcodePDFWrapper
+                              variant={variant.barCode}
+                              stock={barcodeNums ? barcodeNums[variant.barCode] : Number(variant.stock) > 100 ? 100 : Number(variant.stock)}
+                              billName={`${selectedProduct.name.slice(0, 20)} ${variant.size} (${variant.color})`}
+                            />
+                          }
+                          fileName="barcode.pdf"
+                          className="w-full md:w-40 bg-green-500 text-slate-100 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 hover:bg-green-600 cursor-pointer text-center"
+                        >
+                          {({ loading }) => (loading ? 'جاري التحميل...' : 'اضغط للطباعة')}
+                        </PDFDownloadLink>
+                      )}
                     </div>
                   </div>
                 )

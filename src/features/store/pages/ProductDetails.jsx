@@ -135,10 +135,10 @@ const ProductDetails = ({ }) => {
 
     const handleBuyNow = (product, quantity) => {
         if (product.variants.length <= 1) {
-            addToCart(product, quantity);
+            addToCart(true, product, quantity);
             navigate('/checkout');
         } else if (finalVariant) {
-            addToCart(product, quantity, finalVariant);
+            addToCart(true, product, quantity, finalVariant);
             navigate('/checkout');
         } else {
             toast(
@@ -323,7 +323,7 @@ const ProductDetails = ({ }) => {
                                 <button
                                     type='button'
                                     name='pro-cartitem-btn'
-                                    className="w-full lg:min-w-40 lg:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(product, quantity, finalVariant)}>
+                                    className="w-full lg:min-w-40 lg:w-auto bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-sm" onClick={() => addToCart(false, product, quantity, finalVariant)}>
                                     أضف إلى السلة
                                 </button>
                             </div>

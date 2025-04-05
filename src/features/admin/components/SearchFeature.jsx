@@ -61,7 +61,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
     setOrderNumber('');
     setTrackingNumber('');
     setReceiverPhone('');
-    setDateRange([new Date(), new Date()]);
+    setDateRange([monthEarlier, new Date()]);
     fetchOrders();
   };
   

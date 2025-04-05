@@ -4,36 +4,46 @@ import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
 import { ImBoxAdd, ImBoxRemove } from "react-icons/im";
 import { MdOutlinePrint } from "react-icons/md";
-import { BarcodePDF } from "../components/BillOfLading";
+import { BarcodePDFWrapper } from "../components/BillOfLading";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const HandleStorage = () => {
   const [scanType, setScanType] = useState("");
   const [result, setResult] = useState(null);
   const [barcodeInput, setBarcodeInput] = useState("");
+  const [barcodeAmount, setBarcodeAmount] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const { successNotify, deleteNotify, errorNotify } = useApp();
   const bufferRef = useRef("");
 
   const handleScan = async (barcode, type) => {
     if (!type || !barcode.trim()) return errorNotify("اكتب الباركود أولًا!");
 
+    setLoading(true);
     try {
       const endpoint =
         type === "withdraw"
           ? `/products/variants/${barcode}/decrease-stock`
           : `/products/variants/${barcode}/add-stock`;
 
-      const res = await axiosAuth.patch(endpoint);
-      setResult(res.data.responseVariant);
+      for (let i = 1; i <= Number(barcodeAmount); i++) {
+        const res = await axiosAuth.patch(endpoint);
+        if (i === Number(barcodeAmount)) {
+          setResult(res.data.responseVariant);
+        }
+      }
 
       type === "withdraw"
-        ? deleteNotify("تم سحب قطعة من المخزون")
-        : successNotify("تم إضافة قطعة إلى المخزون");
+        ? deleteNotify("تم السحب من المخزون")
+        : successNotify("تمت الإضافة إلى المخزون");
 
       // setBarcodeInput("");
     } catch (error) {
       console.error(error);
       errorNotify("الباركود خطأ, تأكد منه وحاول مرة أخري.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,33 +79,55 @@ const HandleStorage = () => {
       <p>اختر العملية المراد تنفيذها, ثم افحص الباركود.</p>
 
       <div className="custom-bg-white mt-8">
-        <form className="flex items-center justify-between flex-col md:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
-          <div className="flex-grow flex items-center gap-2">
-            <label>الباركود:</label>
-            <input
-              id="barcodeInput"
-              name="barcodeInput"
-              className="custom-input-field"
-              autoComplete="off"
-              value={barcodeInput}
-              onChange={(e) => setBarcodeInput(e.target.value)}
-            />
+        <form className="flex items-center justify-between flex-col lg:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
+          <div className="flex flex-grow flex-col items-center justify-between md:flex-row gap-4">
+            <div className="flex-grow flex items-center gap-2">
+              <label htmlFor="barcodeInput">الباركود:</label>
+              <input
+                type="text"
+                id="barcodeInput"
+                name="barcodeInput"
+                className="custom-input-field flex-grow"
+                placeholder="اكتب الباركود الخاص بالمنتج"
+                autoComplete="off"
+                value={barcodeInput}
+                onChange={(e) => setBarcodeInput(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label htmlFor="barcodeInput">الكمية:</label>
+              <input
+                type="number"
+                id="barcodeAmount"
+                name="barcodeAmount"
+                className="custom-input-field !w-20 text-center"
+                placeholder="الكمية"
+                min="1"
+                autoComplete="off"
+                value={barcodeAmount}
+                onChange={(e) => setBarcodeAmount(e.target.value)}
+                onFocus={(e) => e.target.select()}
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
             <button
               type="button"
               name="withdraw-btn"
-              className="min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-gray-600 text-white duration-500 hover:bg-gray-700"
+              className={`min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-gray-600 text-white duration-500 hover:bg-gray-700 ${loading ? 'opacity-25' : ''}`}
               onClick={() => handleAction("withdraw")}
+              disabled={loading}
             >
               سحب
             </button>
             <button
               type="button"
               name="deposit-btn"
-              className="min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-green-400 text-white duration-500 hover:bg-green-500"
+              className={`min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-green-400 text-white duration-500 hover:bg-green-500 ${loading ? 'opacity-25' : ''}`}
               onClick={() => handleAction("deposit")}
+              disabled={loading}
             >
               إضافة
             </button>
@@ -151,9 +183,9 @@ const HandleStorage = () => {
                   <td className="p-3">{result.price || "-"}</td>
                   <td className="p-3">
                     <PDFDownloadLink
-                      document={<BarcodePDF
+                      document={<BarcodePDFWrapper
                         variant={result.barCode}
-                        stock={result.stock}
+                        stock={result.stock > 100 ? 100 : result.stock}
                         billName={`${result.name.slice(0, 20)} ${result.size} (${result.color})`}
                       />}
                       fileName="barcode.pdf"
