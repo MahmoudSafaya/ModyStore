@@ -109,8 +109,8 @@ const AddProduct = () => {
             variations.forEach((variant, index) => {
                 if (variant.stock >= 0) { // Ensure stock exists before adding variant
                     if (variant.barCode) formData.append(`variants[${index}][barCode]`, variant.barCode);
-                    if (variant.color) formData.append(`variants[${index}][color]`, variant.color);
-                    if (variant.size) formData.append(`variants[${index}][size]`, variant.size);
+                    if (variant.color) formData.append(`variants[${index}][color]`, (variant.color).replace(/\s+/g, ' ').trim());
+                    if (variant.size) formData.append(`variants[${index}][size]`, (variant.size).replace(/\s+/g, ' ').trim());
                     formData.append(`variants[${index}][stock]`, variant.stock);
                 }
             });
@@ -156,8 +156,8 @@ const AddProduct = () => {
                 } else if (key === "variants") {
                     values.variants.forEach((variant, index) => {
                         if (variant.stock) { // Ensure stock exists before adding variant
-                            if (variant.color) formData.append(`variants[${index}][color]`, variant.color);
-                            if (variant.size) formData.append(`variants[${index}][size]`, variant.size);
+                            if (variant.color) formData.append(`variants[${index}][color]`, (variant.color).replace(/\s+/g, ' ').trim());
+                            if (variant.size) formData.append(`variants[${index}][size]`, (variant.size).replace(/\s+/g, ' ').trim());
                             formData.append(`variants[${index}][stock]`, variant.stock);
                         }
                     });

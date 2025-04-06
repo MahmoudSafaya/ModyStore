@@ -8,6 +8,7 @@ import { StoreProvider } from "./context/StoreContext";
 import { AppProvider } from "./context/AppContext";
 import { lazy, Suspense } from "react";
 import Loading from "./shared/components/Loading";
+import ScrollToTop from "./ScrollToTop";
 
 const StoreRoutes = lazy(() => import("./routes/StoreRoutes"));
 const AdminRoutes = lazy(() => import("./routes/AdminRoutes"));
@@ -16,6 +17,7 @@ const App = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <AppProvider>
         <Routes>
           {/* E-commerce Section */}

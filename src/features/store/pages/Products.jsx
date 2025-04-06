@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams, useParams, Link } from "react-router-dom";
 import { Filter } from "lucide-react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
@@ -17,6 +17,8 @@ const Products = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    const productsArea = useRef(null);
 
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -80,6 +82,8 @@ const Products = () => {
             newParams.set("page", page);
             setSearchParams(newParams);
         }
+        // Scroll to the start of Products
+        productsArea.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     // Handle category click
@@ -145,7 +149,7 @@ const Products = () => {
                 </div>
             ) : (
                 <>
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-8" ref={productsArea}>
                         <h2 className="text-2xl font-semibold">أحدث المنتجات</h2>
                         <div className="flex flex-col gap-2">
                             <button type="button" name="filter-icon-btn" className={`group flex items-center gap-2 text-gray-700 ${showFilters && 'text-indigo-400'}`} onClick={() => setShowFilters(!showFilters)}>
