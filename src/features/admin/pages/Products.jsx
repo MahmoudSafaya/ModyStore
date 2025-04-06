@@ -109,7 +109,7 @@ const Products = () => {
   };
 
   const handleEditClick = (productID) => {
-    navigate(`/admin/add-product?product=${productID}`);
+    navigate(`/admin/add-product/${productID}`);
   };
 
   useEffect(() => {
@@ -394,7 +394,8 @@ const Products = () => {
                             />
                           }
                           fileName="barcode.pdf"
-                          className="w-full md:w-40 bg-green-500 text-slate-100 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 hover:bg-green-600 cursor-pointer text-center"
+                          className={`w-full md:w-40 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 text-center ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-slate-100 cursor-pointer'
+                            }`}
                         >
                           {({ loading }) => (loading ? 'جاري التحميل...' : 'اضغط للطباعة')}
                         </PDFDownloadLink>

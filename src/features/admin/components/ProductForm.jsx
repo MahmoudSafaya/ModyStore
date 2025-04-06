@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Field, FieldArray, ErrorMessage } from "formik";
 import { axiosAuth } from "../../../api/axios";
 import Loading from "../../../shared/components/Loading";
+import { useApp } from "../../../context/AppContext";
 
 const ProductForm = ({ values, setFieldValue, handleBlur }) => {
   const [firstOptions, setFirstOptions] = useState([]);
@@ -14,12 +15,18 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
   const [loading, setLoading] = useState(false);
   const [clientNotes, setClientNotes] = useState(values.remark.split('- ملحوظة العميل:')[1]);
 
+  const [cateValue, setCateValue] = useState('');
+  const { getAllCategories, categories } = useApp();
+
   useEffect(() => {
     const fetchProductsNames = async () => {
       setLoading(true);
       try {
-        const res = await axiosAuth.get("/products/search");
-        console.log(res);
+        const res = await axiosAuth.get("/products/search", {
+          params: {
+            categoryId: cateValue
+          }
+        });
         setFirstOptions(res.data.products);
       } catch (error) {
         console.error(error);
@@ -28,8 +35,9 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
       }
     };
 
+    getAllCategories();
     fetchProductsNames();
-  }, []);
+  }, [cateValue]);
 
   useEffect(() => {
     if (values.items && values.items.length > 0) {
@@ -83,15 +91,29 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
   };
 
   return (
-    <div className="mt-8">
+    <div>
       <FieldArray name="items">
         {({ push }) => (
           <div>
             {values.items.map((_, index) => (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 border-b border-gray-300 pb-8"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 border-b border-gray-300 pb-8 pt-8"
               >
+                <div className="relative w-full">
+                  <label className="custom-label-field">
+                    قسم المنتج:
+                  </label>
+                  <select name='categoryId' className='custom-input-field' value={cateValue} onChange={e => setCateValue(e.target.value)}>
+                    <option value="">الكل</option>
+                    {categories && categories.map(cate => {
+                      return (
+                        <option key={cate._id} value={cate._id}>{cate.name}</option>
+                      )
+                    })}
+                  </select>
+                </div>
+
                 <div className="relative w-full">
                   <label className="custom-label-field">
                     اسم المنتج:
@@ -183,7 +205,7 @@ const ProductForm = ({ values, setFieldValue, handleBlur }) => {
             <button
               type="button"
               name="add-product-btn"
-              className="w-full md:w-auto md:min-w-60 mt-4 px-4 py-2 bg-indigo-500 text-white rounded-lg duration-500 hover:bg-indigo-600"
+              className="w-full md:w-auto md:min-w-60 mt-8 px-4 py-2 bg-indigo-500 text-white rounded-lg duration-500 hover:bg-indigo-600"
               onClick={() => {
                 const newIndex = values.items.length;
                 setSelections((prev) => ({ ...prev, [newIndex]: "" }));

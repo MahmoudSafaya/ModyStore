@@ -186,7 +186,7 @@ const ProductDetails = ({ }) => {
             {product && (
                 <div>
                     <Helmet>
-                        <title>{`${product.name} - Buy Now | Diva Store`}</title>
+                        <title>{`${product.name} - Diva Store`}</title>
                         <meta name="description" content={product.description} />
                         <meta name="keywords" content={`buy ${product.name}, e-commerce, Diva Store`} />
 

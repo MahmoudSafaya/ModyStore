@@ -6,6 +6,7 @@ import { ImBoxAdd, ImBoxRemove } from "react-icons/im";
 import { MdOutlinePrint } from "react-icons/md";
 import { BarcodePDFWrapper } from "../components/BillOfLading";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { format } from 'date-fns';
 
 const HandleStorage = () => {
   const [scanType, setScanType] = useState("");
@@ -13,6 +14,7 @@ const HandleStorage = () => {
   const [barcodeInput, setBarcodeInput] = useState("");
   const [barcodeAmount, setBarcodeAmount] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [animate, setAnimate] = useState(false);
 
   const { successNotify, deleteNotify, errorNotify } = useApp();
   const bufferRef = useRef("");
@@ -32,13 +34,16 @@ const HandleStorage = () => {
         if (i === Number(barcodeAmount)) {
           setResult(res.data.responseVariant);
         }
+        console.log(res);
       }
 
       type === "withdraw"
         ? deleteNotify("تم السحب من المخزون")
         : successNotify("تمت الإضافة إلى المخزون");
 
-      // setBarcodeInput("");
+      setAnimate(true);
+      setTimeout(() => setAnimate(false), 2000); // No return needed here        
+
     } catch (error) {
       console.error(error);
       errorNotify("الباركود خطأ, تأكد منه وحاول مرة أخري.");
@@ -112,24 +117,25 @@ const HandleStorage = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="w-full md:w-auto flex flex-col md:flex-row items-center gap-4">
             <button
               type="button"
               name="withdraw-btn"
-              className={`min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-gray-600 text-white duration-500 hover:bg-gray-700 ${loading ? 'opacity-25' : ''}`}
+              className={`w-full md:min-w-40 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-gray-600 text-white duration-500 hover:bg-gray-700 ${loading ? 'opacity-25' : ''}`}
               onClick={() => handleAction("withdraw")}
               disabled={loading}
             >
-              سحب
+              {loading && scanType === 'withdraw' ? 'جار السحب...' : 'سحب'}
             </button>
             <button
               type="button"
               name="deposit-btn"
-              className={`min-w-30 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-green-400 text-white duration-500 hover:bg-green-500 ${loading ? 'opacity-25' : ''}`}
+              className={`w-full md:min-w-40 py-3 px-5 border-none outline-none rounded-lg shadow-md bg-green-400 text-white duration-500 hover:bg-green-500 ${loading ? 'opacity-25' : ''}`}
               onClick={() => handleAction("deposit")}
               disabled={loading}
             >
-              إضافة
+              {loading && scanType === 'deposit' ? 'جار الإضافة...' : 'إضافة'}
+
             </button>
           </div>
         </form>
@@ -162,40 +168,58 @@ const HandleStorage = () => {
       </div>
 
       {result && (
-        <div className="custom-bg-white mt-8">
-          <div className="bg-white rounded-xl overflow-x-auto scrollbar">
-            <table className="w-full text-center text-gray-700">
-              <thead className="border-b border-gray-300 font-bold whitespace-nowrap">
-                <tr>
-                  {["الباركود", "المخزون", "الاسم", "المقاس", "اللون", "السعر"].map((header) => (
-                    <th key={header} className="p-3">{header}</th>
-                  ))}
-                  <th>الإجراءات</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="duration-500 hover:bg-gray-50 text-gray-600 whitespace-nowrap">
-                  <td className="p-3">{result.barCode || "-"}</td>
-                  <td className="p-3 text-indigo-500 font-bold">{result.stock || "0"}</td>
-                  <td className="p-3">{result.name?.length > 25 ? `${result.name.slice(0, 25)}...` : result.name || "-"}</td>
-                  <td className="p-3">{result.size || "-"}</td>
-                  <td className="p-3">{result.color || "-"}</td>
-                  <td className="p-3">{result.price || "-"}</td>
-                  <td className="p-3">
-                    <PDFDownloadLink
-                      document={<BarcodePDFWrapper
-                        variant={result.barCode}
-                        stock={result.stock > 100 ? 100 : result.stock}
-                        billName={`${result.name.slice(0, 20)} ${result.size} (${result.color})`}
-                      />}
-                      fileName="barcode.pdf"
-                    >
-                      <MdOutlinePrint className="w-6 h-6 mx-auto cursor-pointer duration-500 hover:text-green-400 hover:scale-110" />
-                    </PDFDownloadLink>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <div>
+          <div className="custom-bg-white mt-8">
+            <div className="bg-white rounded-xl overflow-x-auto scrollbar">
+              <table className="w-full text-center text-gray-700">
+                <thead className="border-b border-gray-300 font-bold whitespace-nowrap">
+                  <tr>
+                    {["الباركود", "المخزون", "الاسم", "المقاس", "اللون", "السعر"].map((header) => (
+                      <th key={header} className="p-3">{header}</th>
+                    ))}
+                    <th>الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="duration-500 hover:bg-gray-50 text-gray-600 whitespace-nowrap">
+                    <td className="p-3">{result.barCode || "-"}</td>
+                    <td className={`p-3 text-indigo-500 text-xl font-bold duration-500 ${animate ? "animate-pulse text-indigo-700" : ""}`}>
+                      {result.stock || "0"}
+                      </td>
+                    <td className="p-3">{result.name?.length > 25 ? `${result.name.slice(0, 25)}...` : result.name || "-"}</td>
+                    <td className="p-3">{result.size || "-"}</td>
+                    <td className="p-3">{result.color || "-"}</td>
+                    <td className="p-3">{result.price || "-"}</td>
+                    <td className="p-3">
+                      <PDFDownloadLink
+                        document={<BarcodePDFWrapper
+                          variant={result.barCode}
+                          stock={result.stock > 100 ? 100 : result.stock}
+                          billName={`${result.name.slice(0, 20)} ${result.size} (${result.color})`}
+                        />}
+                        fileName="barcode.pdf"
+                      >
+                        <MdOutlinePrint className="w-6 h-6 mx-auto cursor-pointer duration-500 hover:text-green-400 hover:scale-110" />
+                      </PDFDownloadLink>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="custom-bg-white mt-8 flex flex-col md:flex-row items-center justify-around gap-4 text-gray-700">
+            <div className="flex flex-col justify-center items-center gap-4">
+              <p className="font-bold">عدد عمليات السحب اليوم لهذا المتغير: <span className="text-gray-500 whitespace-nowrap">{format(new Date(), "PP")}</span></p>
+              <p className="min-w-14 max-w-max py-2 px-4 rounded-lg bg-indigo-500 text-white text-center shadow-sm">
+                {result.dayWithdraw}
+              </p>
+            </div>
+            <div className="hidden md:block self-stretch w-[1px] bg-gray-300"></div>
+            <div className="flex flex-col justify-center items-center gap-4">
+              <p className="font-bold">عدد جميع عمليات السحب لهذا المتغير</p>
+              <p className="min-w-14 max-w-max py-2 px-4 rounded-lg bg-gray-500 text-white text-center shadow-sm">{result.totalWithdraw}</p>
+            </div>
           </div>
         </div>
       )}

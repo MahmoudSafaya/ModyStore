@@ -25,7 +25,7 @@ const AdminLayout = () => {
                 {/* Open Graph for social sharing */}
                 <meta property="og:title" content="Diva Store - Dashboard" />
                 <meta property="og:description" content="Diva Store - Dashboard" />
-                <meta property="og:image" content="https://i.imgur.com/u82eXKK.png" />
+                <meta property="og:image" content="https://i.ibb.co/cK3y2NMt/diva-store-logo.png" />
                 <meta property="og:url" content={`https://divastore.com/admin`} />
                 <meta property="og:type" content="product" />
 
@@ -33,7 +33,7 @@ const AdminLayout = () => {
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="Diva Store - Dashboard" />
                 <meta name="twitter:description" content="Diva Store - Dashboard" />
-                <meta name="twitter:image" content="https://i.imgur.com/u82eXKK.png" />
+                <meta name="twitter:image" content="https://i.ibb.co/cK3y2NMt/diva-store-logo.png" />
             </Helmet>
             <A_Header isOpen={isOpen} toggleSidebar={toggleSidebar} />
             <A_Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />

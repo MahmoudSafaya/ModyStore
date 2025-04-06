@@ -240,7 +240,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
                 </div>
               </div>
 
-              <button type="submit" name="new-order-btn" className="block mt-8 w-full md:w-auto md:min-w-60 p-3 text-center bg-indigo-500 text-white font-bold hover:bg-indigo-400 hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto">
+              <button type="submit" name="new-order-btn" className="block mt-8 w-full md:w-auto md:min-w-60 p-3 text-center bg-indigo-500 text-white font-bold hover:bg-indigo-400 hover:shadow-lg transition-all duration-500 rounded-xl shadow-md mx-auto" disabled={isSubmitting}>
                 {editMode ? (isSubmitting ? 'جار التعديل...' : '  تعديل') : (isSubmitting ? 'جار التسجيل...' : 'تسجيل')}
               </button>
             </Form>

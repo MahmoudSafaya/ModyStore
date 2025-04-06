@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { GrStatusGoodSmall } from "react-icons/gr";
 import ProductVariations from "./components/ProductVariations";
 import { Tag } from "lucide-react";
@@ -31,17 +31,14 @@ const AddProduct = () => {
     const { successNotify, errorNotify } = useApp();
 
     const navigate = useNavigate();
-    const location = useLocation();
     const baseUrl = import.meta.env.VITE_SERVER_URL;
 
-    // Extract the category ID from the query string
-    const [searchParams] = useSearchParams();
-    const paramID = searchParams.get("product"); // Get the product ID from URL
+    const { productId } = useParams();
 
     const getProductById = async () => {
         try {
             setLoading(true);
-            const res = await axiosAuth.get(`/products/${paramID}`);
+            const res = await axiosAuth.get(`/products/${productId}`);
             setSelectedProduct(res.data);
             setThumbnail(`${baseUrl}/${res.data.mainImage.url.replace(/\\/g, '/')}`);
             setProductImages(res.data.images)
@@ -56,17 +53,10 @@ const AddProduct = () => {
     }
 
     useEffect(() => {
-        if (paramID && paramID.length > 10) {
+        if (productId && productId.length > 10) {
             getProductById()
         }
-    }, [paramID]);
-
-
-    useEffect(() => {
-        if (paramID && paramID.length > 10) {
-            navigate(`${location.pathname}?product=${paramID}`, { replace: true });
-        }
-    }, [paramID]); // Ensure paramID is in the dependency array
+    }, [productId]);
 
 
     const handleThumbnailUpload = (e) => {
@@ -126,7 +116,7 @@ const AddProduct = () => {
             });
 
             try {
-                await axiosAuth.put(`/products/${paramID}`, formData, {
+                await axiosAuth.put(`/products/${productId}`, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data"
                     },
@@ -145,7 +135,7 @@ const AddProduct = () => {
             } catch (error) {
                 console.error("Error editing product:", error.response?.data || error.message);
                 setTimeout(() => {
-                    navigate(`/admin/add-product?product=${paramID}`);
+                    navigate(`/admin/add-product/${productId}`);
                 }, 300);
             }
         } else {
@@ -259,7 +249,7 @@ const AddProduct = () => {
                                             ) : (
                                                 <span className="text-purple-600 text-center">اضغط لتحميل صوره المنتج الرئيسية </span>
                                             )}
-                                        <ErrorMessage name="mainImage" component="div" className="text-red-400 text-xs absolute -bottom-5 right-2" />
+                                            <ErrorMessage name="mainImage" component="div" className="text-red-400 text-xs absolute -bottom-5 right-2" />
                                         </div>
                                     </div>
 
@@ -294,10 +284,10 @@ const AddProduct = () => {
                                     <div className="custom-bg-white mt-8">
                                         <h2 className="custom-header">عدد القطع المباعه</h2>
                                         <div className="relative">
-                                            <Field type="number" name="soldCount" id="soldCount" 
-                                            className="custom-input-field w-full" 
-                                            placeholder="القطع المباعه من هذا المنتج..." 
-                                            onFocus={(e) => e.target.select()} />
+                                            <Field type="number" name="soldCount" id="soldCount"
+                                                className="custom-input-field w-full"
+                                                placeholder="القطع المباعه من هذا المنتج..."
+                                                onFocus={(e) => e.target.select()} />
                                             <FaMoneyBill1Wave className="w-10 lg:w-20 h-full text-2xl p-2 rounded-l-lg bg-indigo-200 text-indigo-500 absolute top-0 left-0 border border-indigo-200" />
                                         </div>
                                     </div>

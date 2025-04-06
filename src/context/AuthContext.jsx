@@ -77,7 +77,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = (accessToken) => {
     setAuth(jwtDecode.jwtDecode(accessToken));  // Decode and store user role
-    console.log(auth);
 
     Cookies.set("accessToken", accessToken, { expires: 1, path: "/" });
     sessionStorage.setItem("accessToken", accessToken);

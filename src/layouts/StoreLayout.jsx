@@ -15,14 +15,13 @@ const StoreLayout = () => {
             <Helmet>
                 <title>Diva Store</title>
                 <meta name="description" content="Discover the latest releases at the best prices, shop now and enjoy special discounts." />
-                <meta name="keywords" content="diving, Diva store, scuba gear, snorkel, underwater equipment" />
                 <meta name="author" content="Diva Store" />
                 <meta name="robots" content="index, follow" />
 
                 {/* <!-- Open Graph --> */}
                 <meta property="og:title" content="Diva Store - Best Shopping Experience" />
                 <meta property="og:description" content="Discover the latest releases at the best prices, shop now and enjoy special discounts." />
-                <meta property="og:image" content="https://i.imgur.com/u82eXKK.png" />
+                <meta property="og:image" content="https://i.ibb.co/cK3y2NMt/diva-store-logo.png" />
                 <meta property="og:url" content="https://divastoree.com" />
                 <meta property="og:type" content="website" />
 
@@ -30,7 +29,7 @@ const StoreLayout = () => {
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="Diva Store" />
                 <meta name="twitter:description" content="Your best source for shopping experience." />
-                <meta name="twitter:image" content="https://i.imgur.com/u82eXKK.png" />
+                <meta name="twitter:image" content="https://i.ibb.co/cK3y2NMt/diva-store-logo.png" />
             </Helmet>
             <S_Header toggleSidebar={toggleSidebar} />
             <S_Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />

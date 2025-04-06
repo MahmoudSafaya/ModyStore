@@ -42,6 +42,7 @@ const AdminRoutes = () => {
                         <Route element={<A_RequireAuth allowedRoles={["admin"]} />}>
                             <Route path="/" element={<A_Home />} />
                             <Route path="/add-product" element={<A_AddProduct />} />
+                            <Route path="/add-product/:productId" element={<A_AddProduct />} />
                             <Route path="/products" element={<A_Products />} />
                             <Route path="/handle-storage" element={<A_HandleStorage />} />
                             <Route path="/settings" element={<A_Settings />} />

@@ -20,7 +20,6 @@ const TrackOrder = () => {
             try {
                 const res = await axiosAuth.get(`/jnt/orders/track/${orderId}`);
                 setOrderData(res.data.data);
-                console.log(res);
             } catch (error) {
                 console.error(error);
             } finally {
