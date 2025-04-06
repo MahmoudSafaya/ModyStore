@@ -38,7 +38,7 @@ const TotalOrderValueField = () => {
   return (
     <div>
       <label className="custom-label-field" htmlFor="itemsValue">
-        إجمالى سعر الأوردر:
+        إجمالى سعر الاوردر:
       </label>
       <Field
         type="text"
@@ -46,7 +46,7 @@ const TotalOrderValueField = () => {
         name="itemsValue"
         className="custom-input-field"
         autoComplete="new-password"
-        placeholder="إجمالي سعر الأوردر"
+        placeholder="إجمالي سعر الاوردر"
         value={totalOrderVal}
         onChange={handleChange} // Optimized with useCallback
       />
@@ -123,7 +123,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
     } else {
       try {
         await axiosAuth.post('/jnt/orders/', values);
-        successNotify('تم تسجل الأوردر بنجاح');
+        successNotify('تم تسجل الاوردر بنجاح');
         actions.resetForm();
         values.receiver.prov = '';
         setShippingPrice(0);
@@ -169,7 +169,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
                 <A_ProductForm values={values} info={info} setFieldValue={setFieldValue} handleBlur={handleBlur} />
 
                 {/* Remark field */}
-                <h2 className="font-bold mb-4 mt-8 text-center">بيانات الأوردر</h2>
+                <h2 className="font-bold mb-4 mt-8 text-center">بيانات الاوردر</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {/* Total price */}
                   <TotalOrderValueField />
@@ -202,7 +202,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
 
                   {/* Order Type */}
                   <div className="flex flex-col gap-2">
-                    <label className="text-gray-500 cursor-pointer" htmlFor="goodsType">نوع الأوردر:</label>
+                    <label className="text-gray-500 cursor-pointer" htmlFor="goodsType">نوع الاوردر:</label>
                     <Field as="select" id="goodsType" name="goodsType" className='custom-input-field max-h-40 text-gray-800' >
                       <option value="">اختر نوع المنتج</option>
                       <option value="ITN1">Clothes</option>
@@ -231,7 +231,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
                       as="textarea"
                       id="description"
                       name="remark"
-                      placeholder="ملاحظات الأوردر"
+                      placeholder="ملاحظات الاوردر"
                       className='custom-input-field min-h-30 resize-none'
                     />
                     <ErrorMessage name="remark" component="div" className="error-message" />

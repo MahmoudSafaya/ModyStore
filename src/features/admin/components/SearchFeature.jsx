@@ -88,7 +88,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
             value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value)}
             className="custom-input-field w-full"
-            placeholder="ادخل رقم الأوردر"
+            placeholder="ادخل رقم الاوردر"
             autoComplete="new-password"
           />
         </div>

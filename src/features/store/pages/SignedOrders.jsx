@@ -165,7 +165,7 @@ const SignedOrders = () => {
                                             </div>
 
                                             <div className="group max-w-max mx-auto flex items-center gap-2 text-gray-700 cursor-pointer" onClick={() => handleTrackOrder(signOrder._id)}>
-                                                <span className="font-medium duration-500 group-hover:text-indigo-500">تتبع الأوردر</span>
+                                                <span className="font-medium duration-500 group-hover:text-indigo-500">تتبع الاوردر</span>
                                                 <FaMapLocationDot className="w-6 h-6 duration-500 group-hover:text-indigo-500" />
                                             </div>
                                         </div>

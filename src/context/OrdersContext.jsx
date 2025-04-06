@@ -47,7 +47,7 @@ export const OrdersProvider = ({ children }) => {
             await axiosAuth.post(`/jnt/orders/${orderID}`);
             setOrderPopup({ display: false, editing: false, info: {} })
             getUnconfirmedOrders();
-            toast.success('تم تسجيل الأوردر بنجاح علي J&T.', {
+            toast.success('تم تسجيل الاوردر بنجاح علي J&T.', {
                 style: {
                     textAlign: 'center'
                 }

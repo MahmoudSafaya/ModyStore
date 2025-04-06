@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useOrders } from "../../../context/OrdersContext";
 import { X, SquareArrowOutUpLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -6,13 +6,15 @@ import toast, { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
 import { A_DeleteConfirmModal } from ".";
 import { format } from 'date-fns';
-
+import { axiosAuth } from "../../../api/axios";
 
 const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
   const naviagte = useNavigate();
 
-  const { setOrderPopup, confirmOrderToJNT, printOrderPdf } = useOrders();
-  const { isDelete, setIsDelete } = useApp();
+  const { setOrderPopup, printOrderPdf, getUnconfirmedOrders } = useOrders();
+  const { isDelete, setIsDelete, errorNotify } = useApp();
+
+  const [isSigning, setIsSigning] = useState(false);
 
   const { _id, itemsValue, remark, sender, receiver, items } = info;
 
@@ -21,9 +23,27 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
     toast.success('تم النسخ!')
   }
   const handleTrackOrder = (orderId) => {
-    // 67b9feba60f8678956eaa268
     naviagte(`/admin/track-order?orderId=${orderId}`)
     setOrderPopup({ display: false, editing: false, info: {} })
+  }
+
+  const confirmOrderToJNT = async (orderID) => {
+    setIsSigning(true);
+    try {
+      await axiosAuth.post(`/jnt/orders/${orderID}`);
+      setOrderPopup({ display: false, editing: false, info: {} })
+      getUnconfirmedOrders();
+      toast.success('تم تسجيل الاوردر بنجاح علي J&T.', {
+        style: {
+          textAlign: 'center'
+        }
+      })
+    } catch (error) {
+      console.error(error);
+      errorNotify('حدث خطا أثناء تسجيل الاوردر, الرجاء المحاولة لاحقا.')
+    } finally {
+      setIsSigning(false);
+    }
   }
 
   return (
@@ -93,7 +113,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
 
           {/* Product Info */}
           <div className="flex flex-col gap-8 mt-4">
-            <h2 className="text-gray-800 font-bold text-center">بيانات الأوردر</h2>
+            <h2 className="text-gray-800 font-bold text-center">بيانات الاوردر</h2>
             <div className="flex flex-wrap justify-center gap-4">
               {items && items.map(product => {
                 return (
@@ -103,7 +123,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
                   </div>
                 )
               })}
-              <DetailBox itemName={'سعر الأوردر:'} itemValue={itemsValue} />
+              <DetailBox itemName={'سعر الاوردر:'} itemValue={itemsValue} />
               <DetailBox itemName={'ملاحظات العميل:'} itemValue={remark} />
             </div>
           </div>
@@ -112,9 +132,15 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
           <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mt-4">
             <div className="w-full md:w-auto">
               {!inConfirmed && (
-                <button type="button" name="order-sign-btn" className="w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600" onClick={() => {
-                  confirmOrderToJNT(info._id)
-                }}>تسجيل</button>
+                <button
+                  type="button"
+                  name="order-sign-btn"
+                  className={`w-full md:w-auto min-w-30 py-3 px-5 rounded-lg shadow-sm bg-indigo-500 text-white duration-500 hover:bg-indigo-600 ${isSigning ? 'opacity-25' : ''}`}
+                  onClick={() => confirmOrderToJNT(info._id)}
+                  disabled={isSigning}
+                >
+                  {isSigning ? 'جار التسجيل...' : 'تسجيل'}
+                </button>
               )}
             </div>
             <div className="w-full md:w-auto flex items-center justify-between gap-6">

@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast';
 import { A_DeleteConfirmModal } from "./";
 import { useApp } from "../../../context/AppContext";
 import { axiosAuth } from "../../../api/axios";
+import { format } from "date-fns";
 
 const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders }) => {
     const { orderPopup, setOrderPopup } = useOrders();
@@ -17,7 +18,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
     const { isDelete, setIsDelete, successNotify, deleteNotify, errorNotify } = useApp();
     const [isSigning, setIsSigning] = useState(false);
     const [isDeletingAll, setIsDeletingAll] = useState(false);
-    
+
     const handleCheckOrder = (orderID) => {
         if (checkedOrders.some(item => item._id === orderID)) {
             const newOrders = checkedOrders.filter(item => item._id !== orderID);
@@ -37,13 +38,13 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
     }
 
     useEffect(() => {
-        if(checkedOrders.length > 0 && checkedOrders.length === orders.length) {
+        if (checkedOrders.length > 0 && checkedOrders.length === orders.length) {
             setCheckedAll(true);
         } else {
             setCheckedAll(false);
         }
     }, [checkedOrders]);
-    
+
     // Handle page change
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -103,7 +104,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
             // fetchOrders();
         } catch (error) {
             console.error('Error deleting products:', error);
-            if(error.status == 404) {
+            if (error.status == 404) {
                 errorNotify('عفوا, لم يتم العثور علي اي طلبات!')
             }
         }
@@ -169,7 +170,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                             name="jt-all-print-btn"
                             onClick={printAllSelected}
                             className={`min-w-30 md:min-w-40 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-green-100 text-green-500 hover:bg-green-200 duration-500 ${!checkedOrders.length > 0 ? 'opacity-25' : ''}`}
-                        disabled={!checkedOrders.length > 0}
+                            disabled={!checkedOrders.length > 0}
                         >
                             طباعة الاختيارات
                         </button>
@@ -178,7 +179,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                         type="button"
                         name="all-delete-btn"
                         className={`min-w-30 md:min-w-40 lg:whitespace-nowrap py-2 px-4 rounded-lg duration-500 shadow-sm bg-red-100 text-red-500 hover:bg-red-200 duration-500 ${!checkedOrders.length > 0 || isDeletingAll ? 'opacity-25' : ''}`}
-                        onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })} 
+                        onClick={() => setIsDelete({ purpose: 'delete-selected', itemName: 'جميع الاختيارات' })}
                         disabled={!checkedOrders.length > 0 || isDeletingAll}
                     >
                         {isDeletingAll ? 'جار الحذف...' : 'حذف الاختيارات'}
@@ -209,19 +210,15 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                                         </label>
                                     </th>
                                     <th className="p-3">رقم الطلب</th>
+                                    <th className="p-3">تاريخ الطلب</th>
                                     <th className="p-3">اسم العميل</th>
                                     <th className="p-3">رقم الهاتف</th>
-                                    <th className="p-3">المنتجات</th>
+                                    <th className="p-3">المنتجات المطلوبة</th>
                                     <th className="p-3">محافظة العميل</th>
                                     <th className="p-3">مدينة العميل</th>
                                     <th className="p-3">منطقة العميل</th>
                                     <th className="p-3">شارع العميل</th>
                                     <th className="p-3">سعر الطلب</th>
-                                    <th className="p-3">اسم الراسل</th>
-                                    <th className="p-3">محافظة الراسل</th>
-                                    <th className="p-3">مدينة الراسل</th>
-                                    <th className="p-3">منطقة الراسل</th>
-                                    <th className="p-3">شارع الراسل</th>
                                     <th className="p-3">الإجراءات</th>
                                 </tr>
                             </thead>
@@ -249,21 +246,27 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                                         <td className="p-3 cursor-pointer duration-300 hover:text-indigo-400 hover:underline" onClick={() => setOrderPopup({ display: true, editing: false, info: order })}>
                                             {inConfirmed ? order.billCode : order.txlogisticId}
                                         </td>
+                                        <td className="p-3 text-sm">
+                                            {format(new Date(order.createdAt), 'PPpp')}
+                                        </td>
                                         <td className="p-3">
                                             {order.receiver.name}
                                         </td>
                                         <td className="p-3">{order.receiver.mobile}</td>
-                                        <td className="p-3 min-w-35">{order.items.length}</td>
+                                        <td className="p-3 min-w-35">
+                                            <div className="flex flex-col items-center justify-center gap-1">
+                                                {order.items && order.items.map(orderItem => {
+                                                    return (
+                                                        <p key={orderItem._id} className="text-sm">{orderItem.itemName}</p>
+                                                    )
+                                                })}
+                                            </div>
+                                        </td>
                                         <td className="p-3">{order.receiver.prov}</td>
                                         <td className="p-3">{order.receiver.city}</td>
                                         <td className="p-3">{order.receiver.area}</td>
                                         <td className="p-3">{order.receiver.street.slice(0, 20)}</td>
-                                        <td className="p-3 font-semibold">{order.itemsValue}</td>
-                                        <td className="p-3">{order.sender.name}</td>
-                                        <td className="p-3">{order.sender.prov}</td>
-                                        <td className="p-3">{order.sender.city}</td>
-                                        <td className="p-3">{order.sender.area}</td>
-                                        <td className="p-3">{order.sender.street.slice(0, 20)}</td>
+                                        <td className="p-3 font-semibold text-gray-800">{order.itemsValue}</td>
                                         <td className="p-3 flex items-center">
                                             {!inConfirmed && (
                                                 <div className='px-4 py-2 cursor-pointer duration-500 hover:text-indigo-500 hover:rotate-45' onClick={() => setOrderPopup({ display: false, editing: true, info: order })}>
@@ -295,8 +298,8 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                 {orders.length > 0 && (
                     <div className="flex justify-center mt-4">
                         <button
-                        type="button"
-                        name="next-arrow"
+                            type="button"
+                            name="next-arrow"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
                             className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
@@ -307,8 +310,8 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                         {/* Page Numbers */}
                         {Array.from({ length: totalPages }, (_, index) => (
                             <button
-                            type="button"
-                            name="page-nav-btn"
+                                type="button"
+                                name="page-nav-btn"
                                 key={index + 1}
                                 onClick={() => handlePageChange(index + 1)}
                                 className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
@@ -319,8 +322,8 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                         ))}
 
                         <button
-                        type="button"
-                        name="prev-btn"
+                            type="button"
+                            name="prev-btn"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
                             className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
