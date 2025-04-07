@@ -3,18 +3,19 @@ import { axiosAuth } from "../../../api/axios";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
 import { ImBoxAdd, ImBoxRemove } from "react-icons/im";
-import { MdOutlinePrint } from "react-icons/md";
-import { BarcodePDFWrapper } from "../components/BillOfLading";
+import BarcodePDFWrapper from "../components/BarcodePDFWrapper";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { format } from 'date-fns';
+import BeatLoader from "react-spinners/BeatLoader";
 
 const HandleStorage = () => {
   const [scanType, setScanType] = useState("");
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState();
   const [barcodeInput, setBarcodeInput] = useState("");
   const [barcodeAmount, setBarcodeAmount] = useState(1);
   const [loading, setLoading] = useState(false);
   const [animate, setAnimate] = useState(false);
+  const [activePDFBarcode, setActivePDFBarcode] = useState(false);
 
   const { successNotify, deleteNotify, errorNotify } = useApp();
   const bufferRef = useRef("");
@@ -79,7 +80,19 @@ const HandleStorage = () => {
   }, [scanType]);
 
   return (
-    <div className="text-center">
+    <div className="text-center relative">
+      {
+        loading && (
+          <div className="w-full h-full fixed top-0 left-0 z-100 bg-[#FFFFFF60] flex justify-center items-center">
+            <BeatLoader
+                loading={loading}
+                color={'oklch(0.585 0.233 277.117)'}
+                size={25}
+            />
+          </div>
+        )
+      }
+
       <h2 className="custom-header font-bold">فحص الباركود</h2>
       <p>اختر العملية المراد تنفيذها, ثم افحص الباركود.</p>
 
@@ -185,22 +198,37 @@ const HandleStorage = () => {
                     <td className="p-3">{result.barCode || "-"}</td>
                     <td className={`p-3 text-indigo-500 text-xl font-bold duration-500 ${animate ? "animate-pulse text-indigo-700" : ""}`}>
                       {result.stock || "0"}
-                      </td>
+                    </td>
                     <td className="p-3">{result.name?.length > 25 ? `${result.name.slice(0, 25)}...` : result.name || "-"}</td>
                     <td className="p-3">{result.size || "-"}</td>
                     <td className="p-3">{result.color || "-"}</td>
                     <td className="p-3">{result.price || "-"}</td>
                     <td className="p-3">
-                      <PDFDownloadLink
-                        document={<BarcodePDFWrapper
-                          variant={result.barCode}
-                          stock={result.stock > 100 ? 100 : result.stock}
-                          billName={`${result.name.slice(0, 20)} ${result.size} (${result.color})`}
-                        />}
-                        fileName="barcode.pdf"
-                      >
-                        <MdOutlinePrint className="w-6 h-6 mx-auto cursor-pointer duration-500 hover:text-green-400 hover:scale-110" />
-                      </PDFDownloadLink>
+
+                      {/* Button to show the PDFDownloadLink */}
+                      {!activePDFBarcode && (
+                        <button
+                          onClick={() => setActivePDFBarcode(result.barCode)}
+                          className="w-full md:w-40 bg-gray-500 text-slate-100 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 hover:bg-gray-700 cursor-pointer text-center"
+                        >
+                          تجهيز الباركود
+                        </button>
+                      )}
+
+                      {/* Conditionally render the PDFDownloadLink */}
+                      {activePDFBarcode && (
+                        <PDFDownloadLink
+                          document={<BarcodePDFWrapper
+                            variant={result?.barCode}
+                            stock={result?.stock > 100 ? 100 : result?.stock}
+                            billName={`${result?.name.slice(0, 20)} ${result?.size} (${result?.color})`}
+                          />}
+                          fileName="barcode.pdf"
+                          className="w-full md:w-40 inline-block bg-green-500 text-slate-100 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 hover:bg-green-600 cursor-pointer text-center"
+                        >
+                          {({ loading }) => (loading ? 'جاري التحميل...' : 'اضغط للطباعة')}
+                        </PDFDownloadLink>
+                      )} 
                     </td>
                   </tr>
                 </tbody>

@@ -7,10 +7,10 @@ import Loading from '../../../shared/components/Loading';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
 import { useApp } from '../../../context/AppContext';
-import { A_BillOfLading, A_DeleteConfirmModal } from '../components';
+import { A_DeleteConfirmModal } from '../components';
 import { IoStorefrontOutline } from "react-icons/io5";
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { BarcodePDFWrapper } from '../components/BillOfLading';
+import BarcodePDFWrapper from '../components/BarcodePDFWrapper';
 
 const Products = () => {
   const { loading, setLoading } = useAuth();
@@ -394,8 +394,7 @@ const Products = () => {
                             />
                           }
                           fileName="barcode.pdf"
-                          className={`w-full md:w-40 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 text-center ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-slate-100 cursor-pointer'
-                            }`}
+                          className="w-full md:w-40 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 text-center bg-green-500 hover:bg-green-600 text-slate-100 cursor-pointer"
                         >
                           {({ loading }) => (loading ? 'جاري التحميل...' : 'اضغط للطباعة')}
                         </PDFDownloadLink>

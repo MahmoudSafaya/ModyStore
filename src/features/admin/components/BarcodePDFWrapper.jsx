@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import JsBarcode from "jsbarcode";
 import {
   Document,
@@ -57,21 +57,20 @@ const generateBarcodeImage = (text) => {
 };
 
 // React component to prepare barcodes and render PDF
-export const BarcodePDFWrapper = ({ variant, stock, billName }) => {
-  const [barcodes, setBarcodes] = useState([]);
+const BarcodePDFWrapper = ({ variant, stock, billName }) => {
+  const [barcodeImage, setBarcodeImage] = useState(null);
 
   useEffect(() => {
-    const count = stock > 0 ? stock : 1;
-    const generated = Array.from({ length: count }, () =>
-      generateBarcodeImage(variant)
-    );
-    setBarcodes(generated);
-  }, [variant, stock]);
+    const image = generateBarcodeImage(variant);
+    setBarcodeImage(image);
+  }, [variant]);
+
+  const count = stock > 0 ? stock : 1;
 
   return (
-    barcodes.length > 0 && (
+    barcodeImage && (
       <Document>
-        {barcodes.map((src, index) => (
+        {Array.from({ length: count }).map((_, index) => (
           <Page
             key={index}
             style={styles.page}
@@ -79,7 +78,7 @@ export const BarcodePDFWrapper = ({ variant, stock, billName }) => {
           >
             <View style={styles.pageView}>
               <Text style={styles.pageText}>{billName}</Text>
-              <Image src={src} style={styles.barcodeImage} />
+              <Image src={barcodeImage} style={styles.barcodeImage} />
             </View>
           </Page>
         ))}
@@ -88,19 +87,5 @@ export const BarcodePDFWrapper = ({ variant, stock, billName }) => {
   );
 };
 
-const BillOfLading = ({ variant, stock, billName }) => {
 
-  return (
-    <div className="w-full md:w-auto text-center">
-      <PDFDownloadLink
-        document={<BarcodePDF variant={variant} stock={stock} billName={billName} />}
-        fileName="barcode.pdf"
-        className="w-full md:w-auto inline-block bg-green-500 text-slate-100 font-bold p-2 px-4 rounded-lg shadow-md duration-500 hover:bg-green-600 cursor-pointer"
-      >
-        {({ loading }) => (loading ? "جار إنشاء الملف..." : "طباعة كود شحن")}
-      </PDFDownloadLink>
-    </div>
-  );
-};
-
-export default BillOfLading;
+export default BarcodePDFWrapper;

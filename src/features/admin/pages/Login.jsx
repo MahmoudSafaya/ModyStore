@@ -3,6 +3,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { axiosMain } from '../../../api/axios';
 import ParticlesBg from '../../../shared/components/ParticlesBg';
 import modyStoreLogo from '../../../assets/diva-store-logo.png'
+import { Helmet } from 'react-helmet-async';
 
 const Login = () => {
   const { login } = useAuth();
@@ -30,6 +31,24 @@ const Login = () => {
 
   return (
     <div className='w-screen h-screen'>
+      <Helmet>
+        <title>Diva Store - Dashboard Login</title>
+        <meta name="description" content="Diva Store - Dashboard" />
+        <meta name="keywords" content="Diva Store - Dashboard" />
+
+        {/* Open Graph for social sharing */}
+        <meta property="og:title" content="Diva Store - Dashboard" />
+        <meta property="og:description" content="Diva Store - Dashboard" />
+        <meta property="og:image" content="https://i.ibb.co/cK3y2NMt/diva-store-logo.png" />
+        <meta property="og:url" content={`https://divastore.com/admin`} />
+        <meta property="og:type" content="product" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Diva Store - Dashboard" />
+        <meta name="twitter:description" content="Diva Store - Dashboard" />
+        <meta name="twitter:image" content="https://i.ibb.co/cK3y2NMt/diva-store-logo.png" />
+      </Helmet>
 
       <div className="absolute top-0 left-0 z-100 w-full h-full flex items-center justify-center">
         <div className="w-5/6 md:w-1/2 lg:w-1/3 bg-[#ffffffb0] text-gray-700 py-14 p-8 rounded-xl shadow-md text-gray-800 flex flex-col items-center justify-center gap-8">
