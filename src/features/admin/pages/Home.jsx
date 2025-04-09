@@ -131,7 +131,7 @@ const Home = () => {
       </div>
 
       {/* Table With Search */}
-      <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} fetchOrders={getTodayOrders} setCurrentPage={setCurrentPage} setTotalPages={setTotalPages} />
+      <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} fetchOrders={getTodayOrders} currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} setTotalPages={setTotalPages} />
     </div>
   );
 };

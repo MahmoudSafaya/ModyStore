@@ -7,7 +7,7 @@ import { useOrders } from "../../../context/OrdersContext";
 import JNTAddresses from "../../../shared/components/JNTAddresses";
 import { Toaster } from "react-hot-toast";
 import { useApp } from "../../../context/AppContext";
-
+import BeatLoader from "react-spinners/BeatLoader";
 
 const TotalOrderValueField = () => {
   const { shippingPrice } = useApp();
@@ -59,6 +59,7 @@ const TotalOrderValueField = () => {
 const NewOrder = ({ editMode, info, handleOrderPopup }) => {
   const { getUnconfirmedOrders, currentPage } = useOrders();
   const { shippingPrice, setShippingPrice, successNotify, errorNotify, senderAddress, fetchSenderAddress } = useApp();
+  const [loading, setLoading] = useState(false);
 
   const initialValues = info || {
     length: '',
@@ -110,6 +111,7 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
 
   const handleOrderSubmit = async (values, actions) => {
     if (editMode) {
+      setLoading(true);
       try {
         await axiosAuth.put(`/visitors/orders/${values._id}`, values);
         getUnconfirmedOrders(currentPage);
@@ -119,8 +121,12 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
         setShippingPrice(0);
       } catch (error) {
         console.error(error)
+        errorNotify('حدث خطا أثناء التسجيل, الرجاء المحاولة لاحقا.');
+      } finally {
+        setLoading(false);
       }
     } else {
+      setLoading(true)
       try {
         await axiosAuth.post('/jnt/orders/', values);
         successNotify('تم تسجل الاوردر بنجاح');
@@ -130,7 +136,10 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
         fetchSenderAddress();
 
       } catch (error) {
-        console.error(error)
+        console.error(error);
+        errorNotify('حدث خطا أثناء التسجيل, الرجاء المحاولة لاحقا.');
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -138,6 +147,15 @@ const NewOrder = ({ editMode, info, handleOrderPopup }) => {
 
   return (
     <div>
+      {loading && (
+        <div className="w-full h-full fixed top-0 left-0 z-120 bg-[#FFFFFF70] flex justify-center items-center">
+          <BeatLoader
+            color={'oklch(0.585 0.233 277.117)'}
+            size={25}
+          />
+        </div>
+      )}
+
       <Formik
         initialValues={initialValues}
         validationSchema={newOrderSchema}

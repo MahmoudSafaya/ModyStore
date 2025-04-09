@@ -25,7 +25,7 @@ const CustomDatePicker = ({ startDate, endDate, onChange }) => {
 };
 
 
-const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, setCurrentPage, setTotalPages }) => {
+const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, setCurrentPage, setTotalPages, setFilter }) => {
   const [itemName, setItemName] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
@@ -62,6 +62,9 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, setCurrentPage, se
       }
       setCurrentPage(1);
       setTotalPages(1);
+      if (inConfirmed) {
+        setFilter('all');
+      }
     } catch (error) {
       console.error(error);
       errorNotify('حدث خطأ, الرجاء المحاول مرة أخري!');
@@ -74,6 +77,9 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, setCurrentPage, se
     setReceiverPhone('');
     setDateRange([monthEarlier, new Date()]);
     fetchOrders(1);
+    if (inConfirmed) {
+      setFilter('');
+    }
   };
 
 

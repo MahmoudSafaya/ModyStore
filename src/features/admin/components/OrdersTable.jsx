@@ -12,7 +12,7 @@ import { axiosAuth } from "../../../api/axios";
 import { format } from "date-fns";
 import BeatLoader from "react-spinners/BeatLoader";
 
-const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders, setOrders, setTotalPages }) => {
+const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurrentPage, totalPages, fetchOrders, setOrders, setTotalPages, filter, setFilter }) => {
     const { orderPopup, setOrderPopup } = useOrders();
     const [checkedAll, setCheckedAll] = useState(false);
     const [checkedOrders, setCheckedOrders] = useState([]);
@@ -20,10 +20,10 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
     const [isSigning, setIsSigning] = useState(false);
     const [isPrinting, setIsPrinting] = useState(false);
     const [isDeletingAll, setIsDeletingAll] = useState(false);
-    const [filter, setFilter] = useState('all');
 
     const handleFilterChange = (e) => {
         setFilter(e.target.name);
+        setCheckedOrders([]);
     };
 
     const handleCheckOrder = (orderID) => {
@@ -70,7 +70,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
             }
             successNotify('تم تسجيل جميع الاوردرارت المحددة بنجاح.');
             setCheckedOrders([]);
-            fetchOrders();
+            fetchOrders(1);
         } catch (error) {
             console.error('Error deleting products:', error);
         } finally {
@@ -109,7 +109,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
             document.body.removeChild(link);
             URL.revokeObjectURL(fileURL);
             successNotify('تم طباعة الاوردرارت المحددة بنجاح.');
-            fetchOrders();
+            fetchOrders(1);
         } catch (error) {
             console.error('Error deleting products:', error);
             if (error.status == 404) {
@@ -130,7 +130,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                     await axiosAuth.delete(`/jnt/orders/${item._id}`);
                 }
                 deleteNotify("تم حذف الطلبات المحددة بنجاح.");
-                fetchOrders();
+                fetchOrders(1);
             } catch (error) {
                 console.error('Error deleting products:', error);
                 errorNotify('حدثت مشكلة أثناء الحذف, الرجاء المحاولة مرة اخري.');
@@ -146,7 +146,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                     await axiosAuth.delete(`/visitors/orders/${item._id}`);
                 }
                 deleteNotify("تم حذف الطلبات المحددة بنجاح.");
-                fetchOrders();
+                fetchOrders(1);
             } catch (error) {
                 console.error('Error deleting products:', error);
                 errorNotify('حدثت مشكلة أثناء الحذف, الرجاء المحاولة مرة اخري.');
@@ -239,41 +239,43 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                     </button>
                 </div>
 
+
+                {inConfirmed && (
+                    <div className={`flex items-center gap-4 mb-6 ${orders?.length > 0 ? '' : 'opacity-75'}`}>
+                        <button
+                            type="button"
+                            name="all"
+                            onClick={handleFilterChange}
+                            className={`max-w-max py-2 px-6 whitespace-nowrap rounded-lg border-none outline-none duration-500 ${filter === 'all' ? 'bg-indigo-500 hover:bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                                }`}
+                        >
+                            الكل
+                        </button>
+                        <button
+                            type="button"
+                            name="printed"
+                            onClick={handleFilterChange}
+                            className={`max-w-max py-2 px-6 whitespace-nowrap rounded-lg border-none outline-none duration-500 ${filter === 'printed' ? 'bg-indigo-500 hover:bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                                }`}
+                        >
+                            طبع سابقآ
+                        </button>
+                        <button
+                            type="button"
+                            name="unprinted"
+                            onClick={handleFilterChange}
+                            className={`max-w-max py-2 px-6 whitespace-nowrap rounded-lg border-none outline-none duration-500 ${filter === 'unprinted' ? 'bg-indigo-500 hover:bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                                }`}
+                        >
+                            غير مطبوع
+                        </button>
+                    </div>
+                )}
+
                 <div className="overflow-x-auto overflow-y-hidden scrollbar">
                     {orders?.length > 0 ? (
                         <div>
-                            {inConfirmed && (
-                                <div className="flex items-center gap-4">
-                                    <button
-                                        type="button"
-                                        name="all"
-                                        onClick={handleFilterChange}
-                                        className={`max-w-max py-2 px-6 whitespace-nowrap rounded-lg border-none outline-none duration-500 ${filter === 'all' ? 'bg-indigo-500 hover:bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                                            }`}
-                                    >
-                                        الكل
-                                    </button>
-                                    <button
-                                        type="button"
-                                        name="printed"
-                                        onClick={handleFilterChange}
-                                        className={`max-w-max py-2 px-6 whitespace-nowrap rounded-lg border-none outline-none duration-500 ${filter === 'printed' ? 'bg-indigo-500 hover:bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                                            }`}
-                                    >
-                                        طبع سابقآ
-                                    </button>
-                                    <button
-                                        type="button"
-                                        name="unprinted"
-                                        onClick={handleFilterChange}
-                                        className={`max-w-max py-2 px-6 whitespace-nowrap rounded-lg border-none outline-none duration-500 ${filter === 'unprinted' ? 'bg-indigo-500 hover:bg-indigo-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
-                                            }`}
-                                    >
-                                        غير مطبوع
-                                    </button>
-                                </div>
-                            )}
-                            <table className="w-full bg-white mt-4">
+                            <table className="w-full bg-white">
                                 <thead className="text-gray-700 border-b border-gray-300 font-bold text-center whitespace-nowrap">
                                     <tr>
                                         <th>
@@ -354,7 +356,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                                                 <div className="flex flex-col items-center justify-center gap-1">
                                                     {order.items && order.items.map(orderItem => {
                                                         return (
-                                                            <p key={orderItem._id} className="text-sm">{orderItem.itemName}</p>
+                                                            <p key={orderItem._id} className="text-sm">{orderItem.englishName || orderItem.itemName}</p>
                                                         )
                                                     })}
                                                 </div>
@@ -484,7 +486,7 @@ const OrdersTable = ({ inConfirmed, orders, handleDelete, currentPage, setCurren
                     <A_DeleteConfirmModal itemName={isDelete.itemName} deleteFun={deleteAllSelected} setIsDelete={setIsDelete} />
                 )}
 
-                {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} handleDelete={handleDelete} />}
+                {orderPopup.display && <A_OrderInfo info={orderPopup.info} inConfirmed={inConfirmed} handleDelete={handleDelete} fetchOrders={fetchOrders} />}
                 {orderPopup.editing && <A_OrderEdit />}
             </div>
             {/* Success notify*/}

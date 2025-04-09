@@ -4,10 +4,10 @@ import BeatLoader from "react-spinners/BeatLoader";
 const DeleteConfirmModal = ({ itemName, deleteFun, setIsDelete }) => {
     const [loading, setLoading] = useState(false);
 
-    const handleClick = () => {
+    const handleClick = async () => {
         setLoading(true);
         try {
-            deleteFun();
+            await deleteFun();
         } catch (error) {
             console.error(error);
         } finally {

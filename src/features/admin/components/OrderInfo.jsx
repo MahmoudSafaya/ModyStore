@@ -7,14 +7,16 @@ import { useApp } from "../../../context/AppContext";
 import { A_DeleteConfirmModal } from ".";
 import { format } from 'date-fns';
 import { axiosAuth } from "../../../api/axios";
+import BeatLoader from "react-spinners/BeatLoader";
 
-const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
+const OrderInfo = ({ info, inConfirmed, handleDelete, fetchOrders }) => {
   const naviagte = useNavigate();
 
   const { setOrderPopup, printOrderPdf, getUnconfirmedOrders } = useOrders();
   const { isDelete, setIsDelete, errorNotify } = useApp();
 
   const [isSigning, setIsSigning] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   const { _id, itemsValue, remark, sender, receiver, items } = info;
 
@@ -46,8 +48,29 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
     }
   }
 
+  const handlePrintOrder = async (orderId) => {
+    setIsPrinting(true);
+    try {
+      await printOrderPdf(orderId);
+      fetchOrders(1);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsPrinting(false);
+    }
+  }
+
   return (
     <div>
+      {(isSigning || isPrinting) && (
+        <div className="w-full h-full fixed top-0 left-0 z-120 bg-[#FFFFFF70] flex justify-center items-center">
+          <BeatLoader
+            color={'oklch(0.585 0.233 277.117)'}
+            size={25}
+          />
+        </div>
+      )}
+
       <div className="w-full h-full fixed top-0 left-0 z-100 bg-[#00000070] py-16 overflow-y-auto">
         <div className="w-5/6 relative mx-auto flex flex-col gap-6 bg-white rounded-xl shadow-md py-8 px-4 md:px-8">
           <div
@@ -77,7 +100,7 @@ const OrderInfo = ({ info, inConfirmed, handleDelete }) => {
               </p>
 
               {inConfirmed && (
-                <button type="button" name="waybill-btn" onClick={() => printOrderPdf(_id)} className="max-w-max py-2 px-4 bg-green-500 text-white rounded-lg duration-500 hover:bg-green-600">طباعة البوليصة</button>
+                <button type="button" name="waybill-btn" onClick={() => handlePrintOrder(_id)} className="max-w-max py-2 px-4 bg-green-500 text-white rounded-lg duration-500 hover:bg-green-600">طباعة البوليصة</button>
               )}
             </div>
           </div>

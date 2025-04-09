@@ -32,7 +32,7 @@ const ProductCard = ({ product }) => {
     const proCategory = categories.map(item => item._id === product.category ? item.name : '');
 
     return (
-        <div className="group bg-white p-4 rounded-xl shadow-md relative overflow-hidden h-full flex flex-col justify-between">
+        <div className="group bg-white p-3 md:p-4 rounded-xl shadow-md relative overflow-hidden h-full flex flex-col justify-between">
             <div className="max-w-max absolute top-4 -right-14 z-20 opacity-0 duration-500 group-hover:right-4 group-hover:opacity-100 rounded-lg bg-white shadow-md flex flex-col">
                 <Link to={`/products/${product._id}`}>
                     <div className="w-12 h-12 flex items-center justify-center cursor-pointer duration-500 text-gray-600 hover:text-indigo-500 border-b border-gray-300">
@@ -116,7 +116,7 @@ const ProductCard = ({ product }) => {
                 </button>
             </div>
 
-            <Toaster />
+            <Toaster toastOptions={{ duration: 3000 }} />
         </div>
     )
 }

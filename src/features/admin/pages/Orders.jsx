@@ -11,6 +11,7 @@ const Orders = () => {
   const [totalPages, setTotalPages] = useState(1);
   const { deleteNotify } = useApp();
   const { setOrderPopup } = useOrders();
+  const [filter, setFilter] = useState('');
 
   const fetchOrders = async (page) => {
     try {
@@ -46,11 +47,11 @@ const Orders = () => {
     <div>
       <div className="custom-bg-white">
         {/* Search Features */}
-        <A_SearchFeature inConfirmed={true} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} setCurrentPage={setCurrentPage} setTotalPages={setTotalPages} />
+        <A_SearchFeature inConfirmed={true} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} setCurrentPage={setCurrentPage} setTotalPages={setTotalPages} setFilter={setFilter} />
       </div>
 
       {/* Table With Search */}
-      <A_OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} setTotalPages={setTotalPages} />
+      <A_OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} setTotalPages={setTotalPages} filter={filter} setFilter={setFilter} />
 
       {/* Toaster notify*/}
       <Toaster toastOptions={{ duration: 3000 }} />
