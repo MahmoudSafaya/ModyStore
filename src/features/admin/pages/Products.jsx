@@ -10,6 +10,7 @@ import { A_DeleteConfirmModal } from '../components';
 import { IoStorefrontOutline } from "react-icons/io5";
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import BarcodePDFWrapper from '../components/BarcodePDFWrapper';
+import { format } from 'date-fns';
 
 const Products = () => {
   const { categories, isDelete, setIsDelete, deleteNotify } = useApp();
@@ -193,6 +194,7 @@ const Products = () => {
                 <th className="p-3">سعر البيع</th>
                 <th className="p-3">الخصم</th>
                 <th className="p-3">المراجعات</th>
+                <th className="p-3">تاريخ الإضافة</th>
                 <th className="p-3">الإجراءات</th>
               </tr>
             </thead>
@@ -268,6 +270,9 @@ const Products = () => {
                       -
                     </td>
                   )}
+                  <td className='p-3 text-sm text-gray-600'>
+                    {format(new Date(product.createdAt), "PPpp")}
+                  </td>
                   <td className="p-3">
                     <div className='inline-block px-4 cursor-pointer duration-500 hover:text-indigo-500 hover:rotate-45' onClick={() => handleEditClick(product._id)}>
                       <FaRegEdit className="w-5 h-5" />

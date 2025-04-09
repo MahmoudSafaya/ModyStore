@@ -34,10 +34,15 @@ const Products = () => {
                 if (categoryId) {
                     params.category = categoryId; // Add categoryId to the query params
                 }
+                const defaultParams = {
+                    limit: 12,
+                    ...params
+                };
                 const response = await axiosMain.get('/products', {
-                    params,
+                    params: defaultParams, // Use 'params' instead of 'defaultParams'
                 });
-                setProducts(response.data.Products);
+                const sortedData = response.data.Products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setProducts(sortedData);
                 setCurrentPage(response.data.currentPage);
                 setTotalPages(response.data.totalPages);
             } catch (error) {
