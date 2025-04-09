@@ -85,7 +85,6 @@ const HandleStorage = () => {
         loading && (
           <div className="w-full h-full fixed top-0 left-0 z-100 bg-[#FFFFFF60] flex justify-center items-center">
             <BeatLoader
-                loading={loading}
                 color={'oklch(0.585 0.233 277.117)'}
                 size={25}
             />
@@ -219,9 +218,9 @@ const HandleStorage = () => {
                       {activePDFBarcode && (
                         <PDFDownloadLink
                           document={<BarcodePDFWrapper
-                            variant={result?.barCode}
-                            stock={result?.stock > 100 ? 100 : result?.stock}
-                            billName={`${result?.name.slice(0, 20)} ${result?.size} (${result?.color})`}
+                            variant={result.barCode}
+                            stock={result.stock > 100 ? 100 : result.stock}
+                            billName={`${result.name.slice(0, 20)} ${result.size === '-' ? '' : result.size} ${result.color === '-' ? '' : `(${result.color})`}`}
                           />}
                           fileName="barcode.pdf"
                           className="w-full md:w-40 inline-block bg-green-500 text-slate-100 font-semibold p-2 px-4 rounded-lg shadow-sm duration-500 hover:bg-green-600 cursor-pointer text-center"

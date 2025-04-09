@@ -193,37 +193,81 @@ const Products = () => {
 
                     {/* Pagination Controls */}
                     {products.length > 0 && (
-                        <div className="flex justify-center mt-12">
+                        <div className="flex justify-center overflow-auto scrollbar mt-4 pb-2">
                             <button
-                                type='button'
-                                name='pros-nxt-btn'
+                                type="button"
+                                name="prev-btn"
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                                className="p-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
                             >
                                 <ChevronRight />
                             </button>
 
-                            {/* Page Numbers */}
-                            {Array.from({ length: totalPages }, (_, index) => (
+                            {/* First Page */}
+                            {currentPage > 2 && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={() => handlePageChange(1)}
+                                        className={`px-3 py-2 mx-1 rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "bg-gray-200"}`}
+                                    >
+                                        1
+                                    </button>
+                                    {currentPage > 3 && <span className="p-2 mx-1 text-xl">...</span>}
+                                </>
+                            )}
+
+                            {/* Previous Page */}
+                            {currentPage > 1 && (
                                 <button
-                                    key={index + 1}
-                                    type='button'
-                                    name='pros-page-btn'
-                                    onClick={() => handlePageChange(index + 1)}
-                                    className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
-                                        }`}
+                                    type="button"
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    className="px-3 py-2 mx-1 rounded bg-gray-200"
                                 >
-                                    {index + 1}
+                                    {currentPage - 1}
                                 </button>
-                            ))}
+                            )}
+
+                            {/* Current Page */}
+                            <button
+                                type="button"
+                                className="px-3 py-2 mx-1 rounded bg-indigo-500 text-white"
+                            >
+                                {currentPage}
+                            </button>
+
+                            {/* Next Page */}
+                            {currentPage < totalPages && (
+                                <button
+                                    type="button"
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    className="px-3 py-2 mx-1 rounded bg-gray-200"
+                                >
+                                    {currentPage + 1}
+                                </button>
+                            )}
+
+                            {/* Last Page */}
+                            {currentPage < totalPages - 1 && (
+                                <>
+                                    {currentPage < totalPages - 2 && <span className="p-2 mx-1 text-xl">...</span>}
+                                    <button
+                                        type="button"
+                                        onClick={() => handlePageChange(totalPages)}
+                                        className={`px-3 py-2 mx-1 rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "bg-gray-200"}`}
+                                    >
+                                        {totalPages}
+                                    </button>
+                                </>
+                            )}
 
                             <button
-                                type='button'
-                                name='pros-prv-btn'
+                                type="button"
+                                name="next-btn"
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+                                className="p-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
                             >
                                 <ChevronLeft />
                             </button>

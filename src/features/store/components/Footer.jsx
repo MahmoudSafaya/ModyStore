@@ -13,7 +13,7 @@ const Footer = () => {
 
     return (
         <footer className='w-full lg:w-[calc(100%-50px)] lg:mr-[50px] flex flex-col bg-white'>
-            <div className='py-8 px-4 md:px-12 flex flex-col md:flex-row items-center md:items-start justify-between gap-14'>
+            <div className='py-8 px-4 md:px-12 flex flex-col md:flex-row items-center md:items-start justify-between gap-12'>
                 <div>
                     <div className='text-center mb-4'>
                         <Link to='/' aria-label="Go to the home page">
@@ -37,12 +37,12 @@ const Footer = () => {
                 </div>
 
 
-                <div className='text-center'>
+                <div className='w-full text-center'>
                     <h2 className='font-bold mb-4'>خريطة الموقع</h2>
-                    <div className='grid grid-cols-2 gap-3 justify-center items-center'>
+                    <div className='w-full flex flex-wrap gap-3 justify-center items-center'>
                         {storeMainNav && storeMainNav.map((item, index) => {
                             return (
-                                <Link to={item.link} key={index} className='duration-500 hover:text-indigo-500' aria-label="one of the main links">
+                                <Link to={item.link} key={index} className='min-w-1/5 duration-500 hover:text-indigo-500' aria-label="one of the main links">
                                     {item.label}
                                 </Link>
                             )
@@ -50,9 +50,9 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div className='text-center'>
+                <div className='w-full text-center'>
                     <h2 className='font-bold mb-4'> الأقسام</h2>
-                    <div className="flex flex-wrap gap-3 justify-center items-center">
+                    <div className="w-full flex flex-wrap gap-3 justify-center items-center">
                         {mainCategories && mainCategories.map(item => {
                             return (
                                 <Link to={`/products/category/${item._id}`} key={item._id} className='min-w-1/5 duration-500 hover:text-indigo-500' aria-label="One of the main categories links">

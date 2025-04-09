@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { axiosAuth } from "../../../api/axios";
 import { Search } from "lucide-react";
 import { useApp } from "../../../context/AppContext";
+import { FaCheck } from "react-icons/fa";
 
 const CustomDatePicker = ({ startDate, endDate, onChange }) => {
   return (
@@ -24,10 +25,13 @@ const CustomDatePicker = ({ startDate, endDate, onChange }) => {
 };
 
 
-const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
+const SearchFeature = ({ inConfirmed, setOrders, fetchOrders, setCurrentPage, setTotalPages }) => {
+  const [itemName, setItemName] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
+  const [printVal, setPrintVal] = useState(false);
+
   const { deleteNotify, errorNotify } = useApp();
 
   const date = new Date();
@@ -38,19 +42,26 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
 
   const handleQuery = async () => {
     try {
-      const res = await axiosAuth.post('/orders/search', {
+      const requestBody = {
         confirmed: inConfirmed ? '1' : '0',
         receiverphone: receiverPhone,
         billCode: trackingNumber,
         txlogisticId: orderNumber,
+        itemName: itemName,
         startDate: dateRange[0],
-        endDate: dateRange[1]
-      });
+        endDate: dateRange[1],
+      };
+      if (printVal) {
+        requestBody.printed = '1';
+      }
+      const res = await axiosAuth.post('/orders/search', requestBody);
       const activeData = res.data.filter(item => item.deleted !== '1').sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setOrders(activeData);
       if (activeData.length === 0) {
         deleteNotify('لم يتم العثور علي اي بيانات!')
       }
+      setCurrentPage(1);
+      setTotalPages(1);
     } catch (error) {
       console.error(error);
       errorNotify('حدث خطأ, الرجاء المحاول مرة أخري!');
@@ -62,9 +73,9 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
     setTrackingNumber('');
     setReceiverPhone('');
     setDateRange([monthEarlier, new Date()]);
-    fetchOrders();
+    fetchOrders(1);
   };
-  
+
 
   return (
     <div>
@@ -85,11 +96,22 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
         <div>
           <input
             type="text"
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
+            className="custom-input-field w-full"
+            placeholder="ادخل اسم المنتج"
+            autoComplete="off"
+          />
+        </div>
+
+        <div>
+          <input
+            type="text"
             value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value)}
             className="custom-input-field w-full"
             placeholder="ادخل رقم الاوردر"
-            autoComplete="new-password"
+            autoComplete="off"
           />
         </div>
 
@@ -100,7 +122,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
             onChange={(e) => setReceiverPhone(e.target.value)}
             className="custom-input-field w-full"
             placeholder="ادخل رقم موبيل العميل"
-            autoComplete="new-password"
+            autoComplete="off"
           />
         </div>
 
@@ -112,8 +134,30 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
               onChange={(e) => setTrackingNumber(e.target.value)}
               className="custom-input-field w-full"
               placeholder="ادخل رقم البوليصة"
-              autoComplete="new-password"
+              autoComplete="off"
             />
+          </div>
+        )}
+
+        {inConfirmed && (
+          <div className='p-3 justify-self-start'>
+            <label className="flex items-center justify-center h-5">
+              <input
+                type="checkbox"
+                className="hidden"
+                checked={printVal}
+                onChange={() => setPrintVal(!printVal)}
+              />
+              <div
+                className={`w-5 h-5 p-1 flex items-center justify-center rounded-sm border duration-500 cursor-pointer ${printVal ? "bg-indigo-500 border-indigo-500" : "border-gray-300"
+                  }`}
+              >
+                {printVal && (
+                  <FaCheck className='text-white' />
+                )}
+              </div>
+              <span className="mr-2 text-gray-800">مطبوع</span>
+            </label>
           </div>
         )}
       </div>
@@ -122,7 +166,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
           type="button"
           name="search-query-btn"
           onClick={handleQuery}
-          className="min-w-30 bg-indigo-500 text-slate-100 py-2 px-4 rounded-lg duration-500 shadow-sm hover:bg-indigo-600"
+          className="min-w-30 bg-indigo-500 text-slate-100 py-2 px-4 rounded-lg border-none outline-none duration-500 shadow-sm hover:bg-indigo-600"
         >
           بحث
         </button>
@@ -130,7 +174,7 @@ const SearchFeature = ({ inConfirmed, setOrders, fetchOrders }) => {
           type="button"
           name="clear-query-btn"
           onClick={handleClear}
-          className="min-w-30 bg-gray-600 text-slate-100 py-2 px-4 rounded-lg duration-500 shadow-sm hover:bg-gray-700"
+          className="min-w-30 bg-gray-600 text-slate-100 py-2 px-4 rounded-lg border-none outline-none duration-500 shadow-sm hover:bg-gray-700"
         >
           مسح
         </button>

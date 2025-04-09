@@ -13,6 +13,8 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [dashCounts, setDashCounts] = useState({});
   const [todayOrders, setTodayOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const { orderPopup, setOrderPopup } = useOrders();
   const { deleteNotify } = useApp();
@@ -129,7 +131,7 @@ const Home = () => {
       </div>
 
       {/* Table With Search */}
-      <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} fetchOrders={getTodayOrders} />
+      <A_OrdersTable orders={todayOrders} setOrders={setTodayOrders} handleDelete={handleDeleteOrder} fetchOrders={getTodayOrders} setCurrentPage={setCurrentPage} setTotalPages={setTotalPages} />
     </div>
   );
 };

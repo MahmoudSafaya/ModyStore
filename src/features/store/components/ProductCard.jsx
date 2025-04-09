@@ -72,21 +72,22 @@ const ProductCard = ({ product }) => {
             <Swiper
                 direction="vertical"
                 loop={true}
-                autoplay={{ delay: 3000 }}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
                 speed={1000}
                 modules={[Autoplay]}
-                className="max-h-max h-5 w-full !items-start"
+                allowTouchMove={false} // ✅ This disables swiping manually
+                className="max-h-max h-5 w-full !items-start pointer-events-none" // ✅ This disables mouse interactions
             >
                 <SwiperSlide className="flex items-center justify-start">
                     <p className='text-gray-500 text-sm flex items-center gap-2 whitespace-nowrap'>
-                      <LuPackage2 className='text-orange-500' />  
-                      <span>باقي {product.variants.reduce((total, item) => total + item.stock, 0)} قطعة في المخزون</span>
+                        <LuPackage2 className='text-orange-500' />
+                        <span>باقي {product.variants.reduce((total, item) => total + item.stock, 0)} قطعة في المخزون</span>
                     </p>
                 </SwiperSlide>
                 <SwiperSlide className="flex items-center justify-start">
                     <p className='text-gray-500 text-sm flex items-center gap-2'>
-                       <FaCartPlus className='text-green-500' /> 
-                       <span>تم بيع {product.soldCount} قطعة مؤخرًا</span>
+                        <FaCartPlus className='text-green-500' />
+                        <span>تم بيع {product.soldCount} قطعة مؤخرًا</span>
                     </p>
                 </SwiperSlide>
             </Swiper>

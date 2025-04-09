@@ -24,8 +24,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   }
 
   return (
-    <div className={`flex fixed top-0 right-0 z-40 transition-all duration-1000 overflow-hidden ${isOpen ? 'w-[250px] shadow-md lg:shadow-none' : 'w-0 lg:w-[50px]'}`}>
-      <div className={`w-full bg-white text-gray-800 h-screen transition-all duration-1000 overflow-hidden flex flex-col justify-between items-center`}
+    <div className={`flex fixed top-0 right-0 z-40 transition-all duration-1000 overflow-x-hidden scrollbar ${isOpen ? 'w-[250px] shadow-md lg:shadow-none' : 'w-0 lg:w-[50px]'}`}>
+      <div className={`w-full bg-white text-gray-800 h-screen transition-all duration-1000 overflow-x-hidden scrollbar flex flex-col justify-between items-center`}
       >
         <div className="w-full">
           <button 

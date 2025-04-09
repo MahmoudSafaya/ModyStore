@@ -27,7 +27,7 @@ const Cart = () => {
                 <h4 className='text-lg'>إجمالى السعر:</h4>
                 <p className='text-lg text-indigo-400'>EGP {totalPrice}</p>
               </div>
-              <div className='bg-indigo-500 text-white text-center rounded-full mx-4 mb-4 duration-500 hover:bg-indigo-600'>
+              <div className='bg-indigo-500 text-white text-center rounded-lg mx-4 mb-4 duration-500 hover:bg-indigo-600'>
                 <Link to='/checkout' className='block w-full py-2' onClick={toggleCart} aria-label="Signing order button">
                   تسجيل الطلب
                 </Link>

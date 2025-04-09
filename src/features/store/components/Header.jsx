@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Menu, Heart, ShoppingCart, UserRound } from "lucide-react";
+import { Search, Menu, Heart, ShoppingCart } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { useStore } from "../../../context/StoreContext";
 import { useCart } from "../../../context/CartContext";
@@ -30,10 +30,10 @@ const EcommerceHeader = ({ toggleSidebar }) => {
           console.error("Error fetching products:", error);
         }
       };
-  
+
       fetchProducts();
     }
-  }, [searchTerm]);  
+  }, [searchTerm]);
 
   const handleSearch = (event) => {
     const term = event.target.value;
@@ -54,7 +54,7 @@ const EcommerceHeader = ({ toggleSidebar }) => {
   const handleBlur = () => {
     setTimeout(() => {
       setIsDropdownOpen(false);
-    }, 200);
+    }, 350);
   };
 
   return (
@@ -68,7 +68,16 @@ const EcommerceHeader = ({ toggleSidebar }) => {
 
         <div className="flex-grow">
           <div className="relative">
-            <input type="text" name="discount-price" id="discount-price" className="w-full p-2 border border-gray-300 rounded-full focus:border-indigo-300 outline-none" placeholder="ابحث عن منتج..." value={searchTerm} onChange={handleSearch} onBlur={handleBlur} />
+            <input
+              type="text"
+              name="discount-price"
+              id="discount-price"
+              className="w-full p-2 border border-gray-300 rounded-full focus:border-indigo-300 outline-none"
+              placeholder="ابحث عن منتج..."
+              autoComplete="off"
+              value={searchTerm}
+              onChange={handleSearch} 
+              onBlur={handleBlur} />
             <Search className="w-8 h-8 p-2 rounded-full bg-indigo-500 text-white absolute top-[50%] -translate-y-[50%] left-1 border border-indigo-200" />
 
             {isDropdownOpen && searchResults.length > 0 && (

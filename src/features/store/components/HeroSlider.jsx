@@ -41,7 +41,7 @@ const HeroSlider = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[70vh] overflow-hidden">
+    <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -55,8 +55,8 @@ const HeroSlider = () => {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#00000020] text-white px-6">
-            <h1 className="text-4xl font-bold mb-6 drop-shadow-sm text-center">{slide.title}</h1>
-            <p className="text-2xl drop-shadow-sm text-center">{slide.description}</p>
+            <h1 className="text-2xl md:text-4xl font-bold mb-6 drop-shadow-sm text-center">{slide.title}</h1>
+            <p className="text-lg md:text-2xl drop-shadow-sm text-center">{slide.description}</p>
           </div>
         </div>
       ))}

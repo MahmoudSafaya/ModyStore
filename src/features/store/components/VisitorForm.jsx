@@ -210,7 +210,7 @@ const OrderForm = () => {
                             <button
                                 type="submit"
                                 name="visitor-sign-btn"
-                                className="w-full bg-indigo-500 text-white py-2 px-4 rounded-full hover:bg-indigo-600 disabled:bg-gray-400"
+                                className="w-full bg-indigo-500 text-white py-2 px-4 rounded-lg duration-500 hover:bg-indigo-600 disabled:bg-gray-400"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? "تسجيل الاوردر..." : "تسجيل"}
@@ -221,7 +221,7 @@ const OrderForm = () => {
             </Formik>
 
             {/* Success notify*/}
-            <Toaster toastOptions={{ duration: 5000 }} />
+            <Toaster toastOptions={{ duration: 3000 }} />
         </div>
     );
 };

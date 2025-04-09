@@ -17,7 +17,7 @@ const Orders = () => {
       const response = await axiosAuth.get(`/jnt/orders/?page=${page}`);
       const data = response.data;
       setOrders(data.orders);
-      if (data.length > 0) {
+      if (data.orders.length > 0) {
         setCurrentPage(data.currentPage);
         setTotalPages(data.totalPages);
       }
@@ -46,11 +46,11 @@ const Orders = () => {
     <div>
       <div className="custom-bg-white">
         {/* Search Features */}
-        <A_SearchFeature inConfirmed={true} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} />
+        <A_SearchFeature inConfirmed={true} orders={orders} setOrders={setOrders} fetchOrders={fetchOrders} setCurrentPage={setCurrentPage} setTotalPages={setTotalPages} />
       </div>
 
       {/* Table With Search */}
-      <A_OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} />
+      <A_OrdersTable inConfirmed={true} orders={orders} setOrders={setOrders} handleDelete={cancelOrderFromJNT} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={fetchOrders} setTotalPages={setTotalPages} />
 
       {/* Toaster notify*/}
       <Toaster toastOptions={{ duration: 3000 }} />

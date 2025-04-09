@@ -5,7 +5,6 @@ import { FaCheck, FaRegEdit, FaStar } from "react-icons/fa";
 import { axiosAuth } from '../../../api/axios';
 import Loading from '../../../shared/components/Loading';
 import { Toaster } from 'react-hot-toast';
-import { useAuth } from '../../../context/AuthContext';
 import { useApp } from '../../../context/AppContext';
 import { A_DeleteConfirmModal } from '../components';
 import { IoStorefrontOutline } from "react-icons/io5";
@@ -13,8 +12,8 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import BarcodePDFWrapper from '../components/BarcodePDFWrapper';
 
 const Products = () => {
-  const { loading, setLoading } = useAuth();
   const { categories, isDelete, setIsDelete, deleteNotify } = useApp();
+  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [checkedAll, setCheckedAll] = useState(false);
   const [checkedOrders, setCheckedOrders] = useState([]);
@@ -114,7 +113,6 @@ const Products = () => {
 
   useEffect(() => {
     getAllProducts(currentPage);
-    setLoading(false);
   }, [currentPage]);
 
   const deleteProductReview = async (productId, reviewId) => {
@@ -298,37 +296,81 @@ const Products = () => {
 
       {/* Pagination Controls */}
       {products.length > 0 && (
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center overflow-auto scrollbar mt-4 pb-2">
           <button
-            type='button'
-            name='products-nxt-btn'
+            type="button"
+            name="prev-btn"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+            className="p-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
           >
             <ChevronRight />
           </button>
 
-          {/* Page Numbers */}
-          {Array.from({ length: totalPages }, (_, index) => (
+          {/* First Page */}
+          {currentPage > 2 && (
+            <>
+              <button
+                type="button"
+                onClick={() => handlePageChange(1)}
+                className={`px-3 py-2 mx-1 rounded ${currentPage === 1 ? "bg-indigo-500 text-white" : "bg-gray-200"}`}
+              >
+                1
+              </button>
+              {currentPage > 3 && <span className="p-2 mx-1 text-xl">...</span>}
+            </>
+          )}
+
+          {/* Previous Page */}
+          {currentPage > 1 && (
             <button
-              key={index + 1}
-              type='button'
-              name='products-page-btn'
-              onClick={() => handlePageChange(index + 1)}
-              className={`px-4 py-2 mx-1 rounded ${currentPage === index + 1 ? "bg-indigo-500 text-white" : "bg-gray-200"
-                }`}
+              type="button"
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-2 mx-1 rounded bg-gray-200"
             >
-              {index + 1}
+              {currentPage - 1}
             </button>
-          ))}
+          )}
+
+          {/* Current Page */}
+          <button
+            type="button"
+            className="px-3 py-2 mx-1 rounded bg-indigo-500 text-white"
+          >
+            {currentPage}
+          </button>
+
+          {/* Next Page */}
+          {currentPage < totalPages && (
+            <button
+              type="button"
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-2 mx-1 rounded bg-gray-200"
+            >
+              {currentPage + 1}
+            </button>
+          )}
+
+          {/* Last Page */}
+          {currentPage < totalPages - 1 && (
+            <>
+              {currentPage < totalPages - 2 && <span className="p-2 mx-1 text-xl">...</span>}
+              <button
+                type="button"
+                onClick={() => handlePageChange(totalPages)}
+                className={`px-3 py-2 mx-1 rounded ${currentPage === totalPages ? "bg-indigo-500 text-white" : "bg-gray-200"}`}
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
 
           <button
-            type='button'
-            name='products-prev-btn'
+            type="button"
+            name="next-btn"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
+            className="p-2 mx-1 bg-gray-200 rounded disabled:opacity-25"
           >
             <ChevronLeft />
           </button>
@@ -390,7 +432,7 @@ const Products = () => {
                             <BarcodePDFWrapper
                               variant={variant.barCode}
                               stock={barcodeNums ? barcodeNums[variant.barCode] : Number(variant.stock) > 100 ? 100 : Number(variant.stock)}
-                              billName={`${selectedProduct.name.slice(0, 20)} ${variant.size} (${variant.color})`}
+                              billName={`${selectedProduct.name.slice(0, 20)} ${variant.size === '-' ? '' : variant.size} ${variant.color === '-' ? '' : `(${variant.color})`}`}
                             />
                           }
                           fileName="barcode.pdf"

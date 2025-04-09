@@ -6,7 +6,7 @@ import { useApp } from "../../../context/AppContext";
 import { A_OrdersTable, A_SearchFeature } from "../components";
 
 const UnconfirmedOrders = () => {
-    const { setOrderPopup, getUnconfirmedOrders, unconfirmedOrders, setUnconfirmedOrders, currentPage, setCurrentPage, totalPages } = useOrders();
+    const { setOrderPopup, getUnconfirmedOrders, unconfirmedOrders, setUnconfirmedOrders, currentPage, setCurrentPage, totalPages, setTotalPages } = useOrders();
     const { deleteNotify, errorNotify } = useApp();
 
     useEffect(() => {
@@ -30,11 +30,11 @@ const UnconfirmedOrders = () => {
         <div>
             {/* Search Features */}
             <div className="custom-bg-white">
-                <A_SearchFeature orders={unconfirmedOrders} setOrders={setUnconfirmedOrders} fetchOrders={getUnconfirmedOrders} />
+                <A_SearchFeature orders={unconfirmedOrders} setOrders={setUnconfirmedOrders} fetchOrders={getUnconfirmedOrders} setCurrentPage={setCurrentPage} setTotalPages={setTotalPages} />
             </div>
 
             {/* Orders Table */}
-            <A_OrdersTable orders={unconfirmedOrders} setOrders={setUnconfirmedOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={getUnconfirmedOrders} />
+            <A_OrdersTable orders={unconfirmedOrders} setOrders={setUnconfirmedOrders} handleDelete={handleDeleteOrder} totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} fetchOrders={getUnconfirmedOrders} setTotalPages={setTotalPages} />
 
             {/* Toaster notify*/}
             <Toaster toastOptions={{ duration: 3000 }} />
